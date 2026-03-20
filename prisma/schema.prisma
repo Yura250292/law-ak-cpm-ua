@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DocumentRequestStatus {
+  DRAFT
+  PENDING_PAYMENT
+  PAID
+  GENERATING
+  COMPLETED
+  FAILED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILURE
+  REVERSED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  documentRequests DocumentRequest[]
+  payments         Payment[]
+}
+
+model DocumentTemplate {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  title       String
+  description String
+  category    String
+  price       Float
+  promptHint  String?
+  fields      Json
+  isActive    Boolean @default(true)
+  sortOrder   Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  documentRequests DocumentRequest[]
+}
+
+model DocumentRequest {
+  id         String                @id @default(cuid())
+  templateId String
+  userId     String?
+  status     DocumentRequestStatus @default(DRAFT)
+
+  partyData         Json
+  circumstancesData Json
+  requirementsData  Json
+
+  generatedText String?
+  pdfUrl        String?
+
+  contactEmail String
+  contactPhone String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  template DocumentTemplate @relation(fields: [templateId], references: [id])
+  user     User?            @relation(fields: [userId], references: [id])
+  payment  Payment?
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  documentRequestId String        @unique
+  userId            String?
+  amount            Float
+  status            PaymentStatus @default(PENDING)
+  liqpayOrderId     String        @unique
+  liqpayPaymentId   String?
+  liqpayStatus      String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  documentRequest DocumentRequest @relation(fields: [documentRequestId], references: [id])
+  user            User?           @relation(fields: [userId], references: [id])
+}
