@@ -2,83 +2,43 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 
-import { documentFormSchema, type DocumentFormData } from "@/lib/validations";
+import { getFormConfig, getDefaultValues } from "@/lib/form-configs";
 import StepIndicator from "./StepIndicator";
-import PartyDetailsStep from "./steps/PartyDetailsStep";
-import CircumstancesStep from "./steps/CircumstancesStep";
-import RequirementsStep from "./steps/RequirementsStep";
+import DynamicFormStep from "./DynamicFormStep";
 import FormSummary from "./FormSummary";
 import { Button } from "@/components/ui/Button";
-
-const STEPS = ["Сторони", "Обставини", "Вимоги", "Підтвердження"];
-
-/** Fields validated per step for partial validation with form.trigger() */
-const STEP_FIELDS: (keyof DocumentFormData | string)[][] = [
-  [
-    "plaintiff.fullName",
-    "plaintiff.birthDate",
-    "plaintiff.registrationAddress",
-    "plaintiff.phone",
-    "defendant.fullName",
-    "defendant.registrationAddress",
-  ],
-  ["marriageDate", "marriagePlace", "circumstances"],
-  ["demands", "courtName", "contactEmail"],
-];
 
 interface DocumentWizardProps {
   templateId: string;
   templateTitle: string;
+  templateSlug: string;
 }
 
-export function DocumentWizard({ templateId, templateTitle }: DocumentWizardProps) {
+export function DocumentWizard({
+  templateId,
+  templateTitle,
+  templateSlug,
+}: DocumentWizardProps) {
   const router = useRouter();
+  const config = getFormConfig(templateSlug);
+  const STEPS = [...config.steps.map((s) => s.title), "Підтвердження"];
+
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const form = useForm<DocumentFormData>({
-    resolver: zodResolver(documentFormSchema),
-    defaultValues: {
-      plaintiff: {
-        fullName: "",
-        birthDate: "",
-        registrationAddress: "",
-        actualAddress: "",
-        phone: "",
-        ipn: "",
-      },
-      defendant: {
-        fullName: "",
-        birthDate: "",
-        registrationAddress: "",
-        actualAddress: "",
-        phone: "",
-      },
-      marriageDate: "",
-      marriagePlace: "",
-      separationDate: "",
-      hasChildren: false,
-      childrenDetails: "",
-      hasProperty: false,
-      propertyDetails: "",
-      circumstances: "",
-      demands: [""],
-      courtName: "",
-      additionalNotes: "",
-      contactEmail: "",
-      contactPhone: "",
-    },
+  const form = useForm({
+    defaultValues: getDefaultValues(config),
     mode: "onTouched",
   });
 
   const handleNext = async () => {
-    if (currentStep < STEP_FIELDS.length) {
-      const fieldsToValidate = STEP_FIELDS[currentStep];
-      const isValid = await form.trigger(fieldsToValidate as never[]);
+    if (currentStep < config.stepValidationFields.length) {
+      const fieldsToValidate = config.stepValidationFields[currentStep];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const isValid = await form.trigger(fieldsToValidate as any);
       if (!isValid) return;
     }
     setCurrentStep((prev) => Math.min(prev + 1, STEPS.length - 1));
@@ -89,39 +49,44 @@ export function DocumentWizard({ templateId, templateTitle }: DocumentWizardProp
   };
 
   const handleSubmit = async () => {
-    const isValid = await form.trigger();
-    if (!isValid) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const isValid = await form.trigger(config.stepValidationFields.flat() as any);
+    if (!isValid) {
+      // Find the first step with errors and go back to it
+      for (let i = 0; i < config.stepValidationFields.length; i++) {
+        const stepFields = config.stepValidationFields[i];
+        for (const fieldName of stepFields) {
+          const parts = fieldName.split(".");
+          let errorObj: unknown = form.formState.errors;
+          for (const part of parts) {
+            if (errorObj && typeof errorObj === "object") {
+              errorObj = (errorObj as Record<string, unknown>)[part];
+            } else {
+              errorObj = undefined;
+              break;
+            }
+          }
+          if (errorObj) {
+            setCurrentStep(i);
+            return;
+          }
+        }
+      }
+      return;
+    }
 
     setIsSubmitting(true);
     setSubmitError(null);
 
     try {
-      const data = form.getValues();
+      const formData = form.getValues();
 
-      // Restructure flat form data into API expected format
       const payload = {
         templateId,
-        partyData: {
-          plaintiff: data.plaintiff,
-          defendant: data.defendant,
-        },
-        circumstancesData: {
-          marriageDate: data.marriageDate,
-          marriagePlace: data.marriagePlace,
-          separationDate: data.separationDate,
-          hasChildren: data.hasChildren,
-          childrenDetails: data.childrenDetails,
-          hasProperty: data.hasProperty,
-          propertyDetails: data.propertyDetails,
-          circumstances: data.circumstances,
-        },
-        requirementsData: {
-          demands: data.demands,
-          courtName: data.courtName,
-          additionalNotes: data.additionalNotes,
-        },
-        contactEmail: data.contactEmail,
-        contactPhone: data.contactPhone,
+        templateSlug,
+        formData,
+        contactEmail: formData.contactEmail ?? "",
+        contactPhone: formData.contactPhone ?? "",
       };
 
       const response = await fetch("/api/document-request", {
@@ -132,48 +97,56 @@ export function DocumentWizard({ templateId, templateTitle }: DocumentWizardProp
 
       if (!response.ok) {
         const errorBody = await response.json().catch(() => null);
-        throw new Error(errorBody?.error || "Помилка при відправленні заявки");
+        throw new Error(
+          errorBody?.error || "Помилка при відправленні заявки",
+        );
       }
 
       const result = await response.json();
       router.push(`/payment/success?requestId=${result.documentRequestId}`);
     } catch (error) {
       setSubmitError(
-        error instanceof Error ? error.message : "Сталася невідома помилка. Спробуйте ще раз."
+        error instanceof Error
+          ? error.message
+          : "Сталася невідома помилка. Спробуйте ще раз.",
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const renderStep = () => {
-    switch (currentStep) {
-      case 0:
-        return <PartyDetailsStep form={form} />;
-      case 1:
-        return <CircumstancesStep form={form} />;
-      case 2:
-        return <RequirementsStep form={form} />;
-      case 3:
-        return <FormSummary data={form.getValues()} />;
-      default:
-        return null;
-    }
-  };
-
   const isLastStep = currentStep === STEPS.length - 1;
+  const isFormStep = currentStep < config.steps.length;
 
   return (
     <div className="mx-auto max-w-3xl">
       <StepIndicator currentStep={currentStep} steps={STEPS} />
 
       <div className="rounded-xl border border-border bg-white p-6 sm:p-8 shadow-sm">
-        <h2 className="text-xl font-semibold text-primary mb-6">
-          {STEPS[currentStep]}
-        </h2>
+        {/* Step title and description */}
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold text-primary">
+            {STEPS[currentStep]}
+          </h2>
+          {isFormStep && config.steps[currentStep]?.description && (
+            <p className="mt-1 text-sm text-muted">
+              {config.steps[currentStep].description}
+            </p>
+          )}
+        </div>
 
         <form onSubmit={(e) => e.preventDefault()}>
-          {renderStep()}
+          {isFormStep ? (
+            <DynamicFormStep
+              fields={config.steps[currentStep].fields}
+              form={form}
+            />
+          ) : (
+            <FormSummary
+              data={form.getValues() as Record<string, unknown>}
+              config={config}
+            />
+          )}
 
           {submitError && (
             <div className="mt-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">

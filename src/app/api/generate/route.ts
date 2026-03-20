@@ -39,12 +39,14 @@ export async function POST(request: NextRequest) {
       data: { status: "GENERATING" },
     });
 
+    // formData is stored in partyData (new structure)
+    const formData = documentRequest.partyData as Record<string, any>;
+
     const prompt = buildPrompt({
+      templateSlug: documentRequest.template.slug,
       templateTitle: documentRequest.template.title,
       promptHint: documentRequest.template.promptHint ?? "",
-      partyData: documentRequest.partyData as Record<string, unknown>,
-      circumstancesData: documentRequest.circumstancesData as Record<string, unknown>,
-      requirementsData: documentRequest.requirementsData as Record<string, unknown>,
+      formData,
     });
 
     const text = await generateLegalText(prompt);

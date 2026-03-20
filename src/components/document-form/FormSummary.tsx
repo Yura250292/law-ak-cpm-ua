@@ -1,100 +1,111 @@
 "use client";
 
-import type { DocumentFormData } from "@/lib/validations";
+import type { TemplateFormConfig } from "@/lib/form-configs";
 
 interface FormSummaryProps {
-  data: DocumentFormData;
+  data: Record<string, unknown>;
+  config: TemplateFormConfig;
 }
 
-function SummaryField({ label, value }: { label: string; value?: string | null }) {
+/** Resolve a dot-path value from a nested object (e.g. "plaintiff.fullName") */
+function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+  const parts = path.split(".");
+  let current: unknown = obj;
+  for (const part of parts) {
+    if (current == null || typeof current !== "object") return undefined;
+    current = (current as Record<string, unknown>)[part];
+  }
+  return current;
+}
+
+function formatDisplayValue(value: unknown, fieldType: string): string | null {
+  if (value === undefined || value === null || value === "") return null;
+
+  if (fieldType === "checkbox") {
+    return value ? "Так" : "Ні";
+  }
+  if (fieldType === "currency") {
+    return `${value} грн`;
+  }
+  return String(value);
+}
+
+function SummaryField({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
   return (
     <div className="flex flex-col gap-0.5 py-1.5">
-      <dt className="text-xs font-medium text-muted uppercase tracking-wide">{label}</dt>
+      <dt className="text-xs font-medium text-muted uppercase tracking-wide">
+        {label}
+      </dt>
       <dd className="text-sm text-primary">{value}</dd>
     </div>
   );
 }
 
-function SummarySection({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="space-y-2">
-      <h4 className="text-base font-semibold text-primary border-b border-border pb-2">
-        {title}
-      </h4>
-      <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">{children}</dl>
-    </section>
-  );
-}
-
-export default function FormSummary({ data }: FormSummaryProps) {
+export default function FormSummary({ data, config }: FormSummaryProps) {
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted">
-        Перевірте введені дані перед відправленням. За потреби поверніться на попередній крок для
-        внесення змін.
+        Перевірте введені дані перед відправленням. За потреби поверніться на
+        попередній крок для внесення змін.
       </p>
 
-      {/* Позивач */}
-      <SummarySection title="Позивач">
-        <SummaryField label="ПІБ" value={data.plaintiff.fullName} />
-        <SummaryField label="Дата народження" value={data.plaintiff.birthDate} />
-        <SummaryField label="Адреса реєстрації" value={data.plaintiff.registrationAddress} />
-        <SummaryField label="Фактична адреса" value={data.plaintiff.actualAddress} />
-        <SummaryField label="Телефон" value={data.plaintiff.phone} />
-        <SummaryField label="ІПН" value={data.plaintiff.ipn} />
-      </SummarySection>
+      {config.steps.map((step, stepIdx) => {
+        // Check if any field in this step has a displayable value
+        const hasAnyValue = step.fields.some((field) => {
+          const val = getNestedValue(data, field.name);
+          return val !== undefined && val !== null && val !== "" && val !== false;
+        });
 
-      {/* Відповідач */}
-      <SummarySection title="Відповідач">
-        <SummaryField label="ПІБ" value={data.defendant.fullName} />
-        <SummaryField label="Дата народження" value={data.defendant.birthDate} />
-        <SummaryField label="Адреса реєстрації" value={data.defendant.registrationAddress} />
-        <SummaryField label="Фактична адреса" value={data.defendant.actualAddress} />
-        <SummaryField label="Телефон" value={data.defendant.phone} />
-      </SummarySection>
+        if (!hasAnyValue) return null;
 
-      {/* Обставини */}
-      <SummarySection title="Обставини справи">
-        <SummaryField label="Дата реєстрації шлюбу" value={data.marriageDate} />
-        <SummaryField label="Місце реєстрації" value={data.marriagePlace} />
-        <SummaryField label="Дата припинення відносин" value={data.separationDate} />
-        <SummaryField
-          label="Спільні діти"
-          value={data.hasChildren ? data.childrenDetails || "Так" : "Ні"}
-        />
-        <SummaryField
-          label="Спільне майно"
-          value={data.hasProperty ? data.propertyDetails || "Так" : "Ні"}
-        />
-        <div className="md:col-span-2">
-          <SummaryField label="Опис обставин" value={data.circumstances} />
-        </div>
-      </SummarySection>
+        return (
+          <section key={stepIdx} className="space-y-2">
+            <h4 className="text-base font-semibold text-primary border-b border-border pb-2">
+              {step.title}
+            </h4>
+            <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">
+              {step.fields.map((field) => {
+                const rawValue = getNestedValue(data, field.name);
+                const displayValue = formatDisplayValue(rawValue, field.type);
 
-      {/* Вимоги */}
-      <SummarySection title="Позовні вимоги">
-        <div className="md:col-span-2">
-          <dt className="text-xs font-medium text-muted uppercase tracking-wide mb-1">Вимоги</dt>
-          <dd>
-            <ol className="list-decimal list-inside space-y-1">
-              {data.demands.map((demand, i) => (
-                <li key={i} className="text-sm text-primary">
-                  {demand}
-                </li>
-              ))}
-            </ol>
-          </dd>
-        </div>
-        <SummaryField label="Назва суду" value={data.courtName} />
-        <SummaryField label="Додаткові зауваження" value={data.additionalNotes} />
-      </SummarySection>
+                // For select fields, show the option label instead of the raw value
+                if (field.type === "select" && field.options && rawValue) {
+                  const option = field.options.find(
+                    (o) => o.value === String(rawValue),
+                  );
+                  if (option) {
+                    return (
+                      <SummaryField
+                        key={field.name}
+                        label={field.label}
+                        value={option.label}
+                      />
+                    );
+                  }
+                }
 
-      {/* Контакти */}
-      <SummarySection title="Контактна інформація">
-        <SummaryField label="Email" value={data.contactEmail} />
-        <SummaryField label="Телефон" value={data.contactPhone} />
-      </SummarySection>
+                // Textarea fields span full width
+                if (field.type === "textarea" && displayValue) {
+                  return (
+                    <div key={field.name} className="md:col-span-2">
+                      <SummaryField label={field.label} value={displayValue} />
+                    </div>
+                  );
+                }
+
+                return (
+                  <SummaryField
+                    key={field.name}
+                    label={field.label}
+                    value={displayValue}
+                  />
+                );
+              })}
+            </dl>
+          </section>
+        );
+      })}
     </div>
   );
 }

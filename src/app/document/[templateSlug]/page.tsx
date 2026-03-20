@@ -61,7 +61,7 @@ export default async function DocumentPage({ params }: PageProps) {
         {/* Form section */}
         <section className="bg-surface py-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <DocumentWizard templateId={template.id} templateTitle={template.title} />
+            <DocumentWizard templateId={template.id} templateTitle={template.title} templateSlug={template.slug} />
           </div>
         </section>
       </main>
