@@ -97,19 +97,46 @@ export function DocumentWizard({ templateId, templateTitle }: DocumentWizardProp
 
     try {
       const data = form.getValues();
+
+      // Restructure flat form data into API expected format
+      const payload = {
+        templateId,
+        partyData: {
+          plaintiff: data.plaintiff,
+          defendant: data.defendant,
+        },
+        circumstancesData: {
+          marriageDate: data.marriageDate,
+          marriagePlace: data.marriagePlace,
+          separationDate: data.separationDate,
+          hasChildren: data.hasChildren,
+          childrenDetails: data.childrenDetails,
+          hasProperty: data.hasProperty,
+          propertyDetails: data.propertyDetails,
+          circumstances: data.circumstances,
+        },
+        requirementsData: {
+          demands: data.demands,
+          courtName: data.courtName,
+          additionalNotes: data.additionalNotes,
+        },
+        contactEmail: data.contactEmail,
+        contactPhone: data.contactPhone,
+      };
+
       const response = await fetch("/api/document-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ templateId, ...data }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
         const errorBody = await response.json().catch(() => null);
-        throw new Error(errorBody?.message || "Помилка при відправленні заявки");
+        throw new Error(errorBody?.error || "Помилка при відправленні заявки");
       }
 
       const result = await response.json();
-      router.push(`/payment?requestId=${result.id}`);
+      router.push(`/payment/success?requestId=${result.documentRequestId}`);
     } catch (error) {
       setSubmitError(
         error instanceof Error ? error.message : "Сталася невідома помилка. Спробуйте ще раз."
