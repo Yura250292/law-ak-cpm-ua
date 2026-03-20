@@ -38,25 +38,28 @@ export default async function DocumentPage({ params }: PageProps) {
     <>
       <Header />
 
-      <main className="flex-1 bg-surface">
+      <main className="flex-1">
         {/* Hero section */}
-        <section className="bg-primary text-white py-10 sm:py-14">
+        <section className="bg-primary py-12 text-white sm:py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-3">{template.title}</h1>
+            <h1 className="text-3xl font-bold sm:text-4xl">
+              {template.title}
+            </h1>
             {template.description && (
-              <p className="text-white/80 max-w-2xl text-sm sm:text-base leading-relaxed">
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/60">
                 {template.description}
               </p>
             )}
-            <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm font-medium">
-              <span>Вартість:</span>
-              <span className="text-lg font-bold">{template.price} грн</span>
+            <div className="mt-6">
+              <span className="inline-block rounded-xl bg-accent px-4 py-2 text-lg font-bold text-primary">
+                {template.price} грн
+              </span>
             </div>
           </div>
         </section>
 
-        {/* Form */}
-        <section className="py-8 sm:py-12">
+        {/* Form section */}
+        <section className="bg-surface py-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <DocumentWizard templateId={template.id} templateTitle={template.title} />
           </div>

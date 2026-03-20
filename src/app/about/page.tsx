@@ -11,6 +11,14 @@ export const metadata = {
     "Дізнайтеся більше про досвід та підхід нашого юриста до вирішення правових питань.",
 };
 
+const qualifications = [
+  "Багаторічний досвід у сімейному, цивільному та господарському праві",
+  "Вища юридична освіта та постійне підвищення кваліфікації",
+  "Успішне представництво інтересів клієнтів у судах усіх інстанцій",
+  "Впровадження сучасних технологій у юридичну практику",
+  "Підготовка юридичних документів відповідно до чинного законодавства",
+];
+
 const values = [
   {
     title: "Індивідуальний підхід",
@@ -18,7 +26,7 @@ const values = [
       "Кожна справа розглядається з урахуванням усіх обставин та особливостей конкретної ситуації клієнта.",
   },
   {
-    title: "Прозорість та чесність",
+    title: "Прозорість",
     description:
       "Відкрита комунікація щодо перспектив справи, термінів та вартості послуг без прихованих платежів.",
   },
@@ -41,43 +49,50 @@ export default function AboutPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-primary py-16 text-white">
+        <section className="bg-primary py-20 text-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold sm:text-4xl lg:text-5xl">
-              Про юриста
-            </h1>
-            <p className="mt-4 max-w-2xl text-lg text-white/80">
+            <h1 className="text-4xl font-bold sm:text-5xl">Про юриста</h1>
+            <p className="mt-4 max-w-2xl text-lg text-white/60">
               Професійна юридична допомога з багаторічним досвідом у сімейному,
               цивільному та господарському праві.
             </p>
           </div>
         </section>
 
-        {/* About Section */}
-        <section className="py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Bio Section */}
+        <section className="bg-white py-20">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div className="grid items-start gap-12 lg:grid-cols-2">
               {/* Photo Placeholder */}
-              <div className="flex items-center justify-center rounded-2xl bg-surface-dark p-16">
+              <div className="flex aspect-square items-center justify-center rounded-2xl bg-surface">
                 <div className="text-center">
-                  <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
-                    <span className="text-5xl">👤</span>
+                  <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-accent/10">
+                    <svg
+                      className="h-10 w-10 text-accent"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                      />
+                    </svg>
                   </div>
-                  <p className="text-lg font-medium text-muted">
+                  <p className="text-sm font-medium text-muted">
                     Фото юриста
-                  </p>
-                  <p className="text-sm text-muted/60">
-                    Буде додано пізніше
                   </p>
                 </div>
               </div>
 
-              {/* Bio */}
+              {/* Bio Text */}
               <div className="space-y-6">
                 <h2 className="text-3xl font-bold text-primary">
                   Досвід та кваліфікація
                 </h2>
-                <div className="space-y-4 text-lg leading-relaxed text-foreground/80">
+                <div className="space-y-4 text-base leading-relaxed text-muted">
                   <p>
                     Маю багаторічний досвід роботи у сфері юридичних послуг.
                     Спеціалізуюся на сімейному, цивільному та господарському
@@ -85,16 +100,23 @@ export default function AboutPage() {
                     документів та представництві інтересів клієнтів у суді.
                   </p>
                   <p>
-                    Вища юридична освіта, постійне підвищення кваліфікації та
-                    відстеження змін у законодавстві дозволяють надавати якісні
-                    юридичні послуги на найвищому рівні.
-                  </p>
-                  <p>
                     Впроваджую сучасні технології у юридичну практику, щоб
                     зробити правову допомогу швидшою та доступнішою для кожного
                     громадянина України.
                   </p>
                 </div>
+
+                {/* Qualification list with accent dots */}
+                <ul className="space-y-3 pt-2">
+                  {qualifications.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-accent" />
+                      <span className="text-sm leading-relaxed text-primary/80">
+                        {item}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
@@ -112,16 +134,31 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="grid gap-8 sm:grid-cols-2">
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
               {values.map((value) => (
                 <div
                   key={value.title}
-                  className="rounded-2xl border border-border bg-white p-8"
+                  className="rounded-2xl border border-border bg-white p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <h3 className="mb-3 text-xl font-semibold text-primary">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-surface">
+                    <svg
+                      className="h-6 w-6 text-accent"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="mb-2 text-lg font-bold text-primary">
                     {value.title}
                   </h3>
-                  <p className="leading-relaxed text-muted">
+                  <p className="text-sm leading-relaxed text-muted">
                     {value.description}
                   </p>
                 </div>
@@ -131,38 +168,89 @@ export default function AboutPage() {
         </section>
 
         {/* Contact Section */}
-        <section className="py-20">
-          <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-primary sm:text-4xl">
-              Зв&apos;язатися зі мною
-            </h2>
-            <p className="mt-4 text-lg text-muted">
-              Маєте питання або потребуєте консультації? Зверніться зручним для
-              вас способом.
-            </p>
+        <section className="bg-white py-20">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+            <div className="rounded-2xl bg-surface p-8 sm:p-12">
+              <h2 className="text-center text-3xl font-bold text-primary">
+                Зв&apos;язатися зі мною
+              </h2>
+              <p className="mt-3 text-center text-muted">
+                Маєте питання або потребуєте консультації? Зверніться зручним для
+                вас способом.
+              </p>
 
-            <div className="mt-10 grid gap-6 sm:grid-cols-3">
-              <div className="rounded-2xl border border-border bg-surface p-6">
-                <span className="mb-3 block text-3xl">📧</span>
-                <p className="font-medium text-primary">Email</p>
-                <p className="mt-1 text-sm text-muted">info@example.com</p>
+              <div className="mt-10 grid gap-6 sm:grid-cols-3">
+                <div className="rounded-xl border border-border bg-white p-6 text-center">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
+                    <svg
+                      className="h-5 w-5 text-accent"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                      />
+                    </svg>
+                  </div>
+                  <p className="font-semibold text-primary">Email</p>
+                  <p className="mt-1 text-sm text-muted">info@example.com</p>
+                </div>
+                <div className="rounded-xl border border-border bg-white p-6 text-center">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
+                    <svg
+                      className="h-5 w-5 text-accent"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"
+                      />
+                    </svg>
+                  </div>
+                  <p className="font-semibold text-primary">Телефон</p>
+                  <p className="mt-1 text-sm text-muted">+380 XX XXX XX XX</p>
+                </div>
+                <div className="rounded-xl border border-border bg-white p-6 text-center">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
+                    <svg
+                      className="h-5 w-5 text-accent"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+                      />
+                    </svg>
+                  </div>
+                  <p className="font-semibold text-primary">Адреса</p>
+                  <p className="mt-1 text-sm text-muted">м. Київ, Україна</p>
+                </div>
               </div>
-              <div className="rounded-2xl border border-border bg-surface p-6">
-                <span className="mb-3 block text-3xl">📞</span>
-                <p className="font-medium text-primary">Телефон</p>
-                <p className="mt-1 text-sm text-muted">+380 XX XXX XX XX</p>
-              </div>
-              <div className="rounded-2xl border border-border bg-surface p-6">
-                <span className="mb-3 block text-3xl">📍</span>
-                <p className="font-medium text-primary">Адреса</p>
-                <p className="mt-1 text-sm text-muted">м. Київ, Україна</p>
-              </div>
-            </div>
 
-            <div className="mt-10">
-              <Link href="/services">
-                <Button>Переглянути послуги</Button>
-              </Link>
+              <div className="mt-10 text-center">
+                <Link href="/services">
+                  <Button className="rounded-xl bg-accent px-8 py-3 font-semibold text-primary transition-all duration-200 hover:bg-accent/90 hover:shadow-lg">
+                    Переглянути послуги
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </section>

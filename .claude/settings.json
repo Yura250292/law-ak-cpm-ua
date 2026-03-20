@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /Users/admin/Budvik -type f \\\\\\(-name tailwind* -o -name postcss* \\\\\\))",
+      "Bash(find /Users/admin/Budvik/src -type f -path */layout* -o -name *layout*)",
+      "Bash(find /Users/admin/Budvik/src/app/api -type f -name *.ts -o -name *.js)",
+      "Bash(grep -r \"liqpay\\\\|wayforpay\\\\|stripe\\\\|payment\" /Users/admin/Budvik/src --include=*.ts --include=*.tsx)",
+      "Bash(find /Users/admin/Budvik -name .env* -o -name env.example)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm)",
+      "Bash(npx create-next-app@latest advokat-site --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm)",
+      "Bash(yes \"No\")",
+      "Bash(npx create-next-app@latest advokat-site --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --turbopack)",
+      "Bash(mv advokat-site/* advokat-site/.* .)",
+      "Bash(rmdir advokat-site:*)",
+      "Bash(npm install:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npm search:*)",
+      "Bash(timeout 15 npx next dev --port 3001)",
+      "Bash(gh repo:*)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:qxxTIfxlUuwYcavOibbgAAEQUDvaqEbN@ballast.proxy.rlwy.net:58877/railway\" npx prisma migrate dev --name init)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:qxxTIfxlUuwYcavOibbgAAEQUDvaqEbN@ballast.proxy.rlwy.net:58877/railway\" npx prisma db seed)",
+      "Bash(gh api:*)",
+      "Bash(curl -sI \"https://law-ak.com.ua\")",
+      "Bash(curl -s \"https://law-ak.com.ua\")",
+      "Bash(curl -sI \"https://law-ak.com.ua/services\")"
+    ],
+    "additionalDirectories": [
+      "/Users/admin/Desktop/Адвокат Сайт/src/app/document"
+    ]
+  }
+}

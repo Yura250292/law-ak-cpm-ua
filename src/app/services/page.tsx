@@ -35,10 +35,10 @@ export default async function ServicesPage() {
         {/* Page Header */}
         <section className="bg-primary py-16 text-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold sm:text-4xl lg:text-5xl">
+            <h1 className="text-4xl font-bold sm:text-5xl">
               Наші послуги
             </h1>
-            <p className="mt-4 max-w-2xl text-lg text-white/80">
+            <p className="mt-4 max-w-2xl text-lg text-white/60">
               Оберіть потрібний тип юридичного документа. Кожен документ
               підготовлений відповідно до чинного законодавства України.
             </p>
@@ -59,26 +59,32 @@ export default async function ServicesPage() {
                 {templates.map((template) => (
                   <Card
                     key={template.id}
-                    className="flex flex-col transition-shadow duration-200 hover:shadow-lg"
+                    className="flex flex-col rounded-2xl border border-border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                   >
                     <CardHeader>
-                      <div className="mb-2">
-                        <span className="inline-block rounded-full bg-accent-light/20 px-3 py-1 text-xs font-medium text-accent">
+                      <div className="mb-3">
+                        <span className="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
                           {template.category}
                         </span>
                       </div>
-                      <CardTitle>{template.title}</CardTitle>
-                      <CardDescription>{template.description}</CardDescription>
+                      <CardTitle className="text-lg font-bold text-primary">
+                        {template.title}
+                      </CardTitle>
+                      <CardDescription className="mt-2 text-sm text-muted">
+                        {template.description}
+                      </CardDescription>
                     </CardHeader>
 
                     <CardContent className="flex-1" />
 
-                    <CardFooter className="flex items-center justify-between">
+                    <CardFooter className="flex items-center justify-between border-t border-border pt-4">
                       <div className="text-lg font-bold text-primary">
                         {template.price.toLocaleString("uk-UA")} грн
                       </div>
                       <Link href={`/document/${template.slug}`}>
-                        <Button>Замовити</Button>
+                        <Button className="rounded-xl bg-accent px-5 py-2 text-sm font-semibold text-primary transition-all duration-200 hover:bg-accent/90 hover:shadow-md">
+                          Замовити
+                        </Button>
                       </Link>
                     </CardFooter>
                   </Card>
