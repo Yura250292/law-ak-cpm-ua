@@ -23,7 +23,13 @@
       "Bash(curl -sI \"https://law-ak.com.ua\")",
       "Bash(curl -s \"https://law-ak.com.ua\")",
       "Bash(curl -sI \"https://law-ak.com.ua/services\")",
-      "WebFetch(domain:erau.unba.org.ua)"
+      "WebFetch(domain:erau.unba.org.ua)",
+      "WebFetch(domain:www.instagram.com)",
+      "Bash(curl -s \"https://law-ak.com.ua/api/document-request\" -X POST -H \"Content-Type: application/json\" -d '{:*)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:qxxTIfxlUuwYcavOibbgAAEQUDvaqEbN@ballast.proxy.rlwy.net:58877/railway\" npx tsx -e \":*)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:qxxTIfxlUuwYcavOibbgAAEQUDvaqEbN@ballast.proxy.rlwy.net:58877/railway\" npx tsx /tmp/check-db.ts)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:qxxTIfxlUuwYcavOibbgAAEQUDvaqEbN@ballast.proxy.rlwy.net:58877/railway\" npx tsx check-db.ts)",
+      "Bash(curl -s \"https://law-ak.com.ua/api/document-request/cmmzwjqgy000104kv7etnpy1y\")"
     ],
     "additionalDirectories": [
       "/Users/admin/Desktop/Адвокат Сайт/src/app/document"

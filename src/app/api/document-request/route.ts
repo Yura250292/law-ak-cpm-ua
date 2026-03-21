@@ -103,39 +103,39 @@ export async function POST(request: NextRequest) {
         data: { generatedText },
       });
 
-      // 4. Generate PDF
-      const pdfBuffer = await generateDocumentPdf(
-        template.title,
-        generatedText
-      );
+      // 4. Try PDF generation + R2 upload (non-critical)
+      let pdfUrl: string | null = null;
+      try {
+        const pdfBuffer = await generateDocumentPdf(template.title, generatedText);
+        const key = `documents/${documentRequest.id}.pdf`;
+        pdfUrl = await uploadToR2(key, pdfBuffer, "application/pdf");
+      } catch (pdfError) {
+        console.error("PDF/R2 failed (non-critical):", pdfError);
+      }
 
-      // 5. Upload to R2
-      const key = `documents/${documentRequest.id}.pdf`;
-      const pdfUrl = await uploadToR2(key, pdfBuffer, "application/pdf");
-
-      // 6. Update pdfUrl, status = COMPLETED
+      // 5. Mark as COMPLETED (text is ready even if PDF failed)
       await prisma.documentRequest.update({
         where: { id: documentRequest.id },
         data: { pdfUrl, status: "COMPLETED" },
       });
 
-      // 7. Try to send email (don't fail if email fails)
-      try {
-        const pdfResponse = await fetch(pdfUrl);
-        if (pdfResponse.ok) {
-          const pdfArrayBuffer = await pdfResponse.arrayBuffer();
-          const emailPdfBuffer = Buffer.from(pdfArrayBuffer);
-          const fileName = `${template.slug ?? template.title}-${documentRequest.id}.pdf`;
-
-          await sendDocumentEmail({
-            to: contactEmail,
-            documentTitle: template.title,
-            pdfBuffer: emailPdfBuffer,
-            fileName,
-          });
+      // 6. Try to send email (non-critical)
+      if (pdfUrl) {
+        try {
+          const pdfResponse = await fetch(pdfUrl);
+          if (pdfResponse.ok) {
+            const pdfArrayBuffer = await pdfResponse.arrayBuffer();
+            const emailPdfBuffer = Buffer.from(pdfArrayBuffer);
+            await sendDocumentEmail({
+              to: contactEmail,
+              documentTitle: template.title,
+              pdfBuffer: emailPdfBuffer,
+              fileName: `${template.slug}-${documentRequest.id}.pdf`,
+            });
+          }
+        } catch (emailError) {
+          console.error("Email failed (non-critical):", emailError);
         }
-      } catch (emailError) {
-        console.error("Email sending failed (non-critical):", emailError);
       }
 
       return NextResponse.json({
