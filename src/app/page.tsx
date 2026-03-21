@@ -116,36 +116,94 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Right column — abstract visual */}
+              {/* Right column — Themis & document templates */}
               <div className="animate-fade-in-up-delay-2 relative flex items-center justify-center">
-                <div className="relative h-[420px] w-full overflow-hidden rounded-3xl bg-surface">
-                  {/* Geometric decorations */}
-                  <div className="absolute left-8 top-8 h-32 w-32 rounded-2xl border-2 border-accent/30 bg-accent/5" />
-                  <div className="absolute bottom-12 right-12 h-40 w-40 rounded-full border-2 border-primary/10 bg-primary/5" />
-                  <div className="absolute right-16 top-16 h-24 w-24 rounded-xl bg-accent/10" />
-                  <div className="absolute bottom-8 left-16 h-20 w-20 rounded-full bg-accent/15" />
-                  {/* Center icon cluster */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary shadow-xl">
-                      <span className="text-4xl">📄</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="h-2 w-2 rounded-full bg-accent" />
-                      <div className="h-2 w-6 rounded-full bg-accent/60" />
-                      <div className="h-2 w-2 rounded-full bg-accent" />
-                    </div>
-                    <p className="text-sm font-medium text-muted">
-                      Юридичні документи
-                    </p>
+                <div className="relative h-[480px] w-full overflow-hidden rounded-3xl bg-surface">
+                  {/* Background decorations */}
+                  <div className="absolute -right-8 -top-8 h-48 w-48 rounded-full bg-accent/8 blur-2xl animate-gentle-pulse" />
+                  <div className="absolute -bottom-8 -left-8 h-40 w-40 rounded-full bg-accent/5 blur-xl animate-gentle-pulse" />
+
+                  {/* Themis SVG */}
+                  <div className="absolute left-1/2 top-4 -translate-x-1/2 animate-scale-in">
+                    <svg width="120" height="160" viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-lg">
+                      {/* Head */}
+                      <circle cx="60" cy="22" r="14" fill="#0B0B0B"/>
+                      {/* Blindfold */}
+                      <rect x="44" y="18" width="32" height="6" rx="3" fill="#FFD600"/>
+                      {/* Body */}
+                      <path d="M52 36 L60 90 L68 36" fill="#0B0B0B"/>
+                      <path d="M48 90 L60 90 L72 90 L76 145 L44 145 Z" fill="#0B0B0B"/>
+                      {/* Arms holding scales */}
+                      <line x1="60" y1="44" x2="20" y2="54" stroke="#0B0B0B" strokeWidth="3" strokeLinecap="round"/>
+                      <line x1="60" y1="44" x2="100" y2="54" stroke="#0B0B0B" strokeWidth="3" strokeLinecap="round"/>
+                      {/* Left scale */}
+                      <line x1="20" y1="54" x2="20" y2="72" stroke="#FFD600" strokeWidth="1.5"/>
+                      <path d="M10 72 Q20 82 30 72" fill="none" stroke="#FFD600" strokeWidth="2"/>
+                      <ellipse cx="20" cy="73" rx="10" ry="3" fill="#FFD600" opacity="0.3"/>
+                      {/* Right scale */}
+                      <line x1="100" y1="54" x2="100" y2="68" stroke="#FFD600" strokeWidth="1.5"/>
+                      <path d="M90 68 Q100 78 110 68" fill="none" stroke="#FFD600" strokeWidth="2"/>
+                      <ellipse cx="100" cy="69" rx="10" ry="3" fill="#FFD600" opacity="0.3"/>
+                      {/* Sword */}
+                      <line x1="60" y1="38" x2="60" y2="2" stroke="#FFD600" strokeWidth="2"/>
+                      <line x1="54" y1="10" x2="66" y2="10" stroke="#FFD600" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
                   </div>
-                  {/* Dotted pattern */}
-                  <div className="absolute right-4 top-4 grid grid-cols-4 gap-2 opacity-20">
-                    {Array.from({ length: 16 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="h-1.5 w-1.5 rounded-full bg-primary"
-                      />
-                    ))}
+
+                  {/* Floating document template cards */}
+                  <div className="absolute left-3 top-[170px] animate-scale-in-delay-1">
+                    <div className="animate-float group w-[140px] rounded-xl border border-border bg-white p-3 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10">
+                        <span className="text-base">📝</span>
+                      </div>
+                      <p className="text-xs font-semibold text-primary leading-tight">Позовна заява</p>
+                      <p className="mt-1 text-[10px] text-muted">Шаблон</p>
+                    </div>
+                  </div>
+
+                  <div className="absolute right-3 top-[155px] animate-scale-in-delay-2">
+                    <div className="animate-float-delay-1 group w-[140px] rounded-xl border border-border bg-white p-3 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
+                        <span className="text-base">📋</span>
+                      </div>
+                      <p className="text-xs font-semibold text-primary leading-tight">Скарга</p>
+                      <p className="mt-1 text-[10px] text-muted">Зразок</p>
+                    </div>
+                  </div>
+
+                  <div className="absolute left-[15%] bottom-[85px] animate-scale-in-delay-2">
+                    <div className="animate-float-delay-2 group w-[140px] rounded-xl border border-border bg-white p-3 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-green-50">
+                        <span className="text-base">⚖️</span>
+                      </div>
+                      <p className="text-xs font-semibold text-primary leading-tight">Договір</p>
+                      <p className="mt-1 text-[10px] text-muted">Шаблон</p>
+                    </div>
+                  </div>
+
+                  <div className="absolute right-[10%] bottom-[70px] animate-scale-in-delay-3">
+                    <div className="animate-float group w-[140px] rounded-xl border border-border bg-white p-3 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50">
+                        <span className="text-base">🏛️</span>
+                      </div>
+                      <p className="text-xs font-semibold text-primary leading-tight">Заява до суду</p>
+                      <p className="mt-1 text-[10px] text-muted">Зразок</p>
+                    </div>
+                  </div>
+
+                  {/* Bottom accent bar */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1.5 animate-shimmer rounded-b-3xl" />
+
+                  {/* Decorative scales of justice watermark */}
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-[0.06]">
+                    <svg width="80" height="50" viewBox="0 0 80 50" fill="currentColor">
+                      <rect x="38" y="0" width="4" height="50" rx="2"/>
+                      <rect x="20" y="48" width="40" height="4" rx="2"/>
+                      <line x1="40" y1="10" x2="10" y2="18" stroke="currentColor" strokeWidth="3"/>
+                      <line x1="40" y1="10" x2="70" y2="18" stroke="currentColor" strokeWidth="3"/>
+                      <circle cx="10" cy="22" r="8"/>
+                      <circle cx="70" cy="22" r="8"/>
+                    </svg>
                   </div>
                 </div>
               </div>
