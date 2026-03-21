@@ -38,7 +38,7 @@ export default function PaymentSuccessPage() {
         const data: DocumentResult = await res.json();
         setResult(data);
 
-        if (data.status === "COMPLETED" || data.status === "FAILED") {
+        if (data.status === "COMPLETED" || data.status === "PENDING_REVIEW" || data.status === "FAILED") {
           setLoading(false);
           return;
         }
@@ -106,7 +106,7 @@ export default function PaymentSuccessPage() {
           )}
 
           {/* Success state */}
-          {!loading && result?.status === "COMPLETED" && (
+          {!loading && (result?.status === "COMPLETED" || result?.status === "PENDING_REVIEW") && (
             <>
               <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
                 <svg className="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
