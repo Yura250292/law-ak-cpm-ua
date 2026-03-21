@@ -142,12 +142,20 @@ export default function AdminDashboardPage() {
               Адмін-панель
             </span>
           </div>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-white/70 hover:text-white transition"
-          >
-            Вийти
-          </button>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/admin/case-analysis"
+              className="text-sm text-accent hover:text-accent-hover transition font-medium"
+            >
+              Аналіз справи
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="text-sm text-white/70 hover:text-white transition"
+            >
+              Вийти
+            </button>
+          </div>
         </div>
       </header>
 

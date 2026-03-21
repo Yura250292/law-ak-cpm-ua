@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname),
   },
-  serverExternalPackages: ["jspdf"],
+  serverExternalPackages: ["jspdf", "pdf-parse", "mammoth"],
 };
 
 export default nextConfig;
