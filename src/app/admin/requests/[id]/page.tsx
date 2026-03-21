@@ -112,6 +112,7 @@ export default function AdminRequestDetailPage() {
   const [saving, setSaving] = useState(false);
   const [approving, setApproving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -195,6 +196,55 @@ export default function AdminRequestDetailPage() {
       });
     } finally {
       setApproving(false);
+    }
+  }
+
+  async function handleGeneratePdf() {
+    setGeneratingPdf(true);
+    setMessage(null);
+    try {
+      // Save latest edits first
+      await fetch(`/api/admin/requests/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ generatedText: editedText, lawyerNotes }),
+      });
+
+      const res = await fetch(`/api/admin/requests/${id}/generate-pdf`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ generatedText: editedText }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error ?? "Помилка генерації PDF");
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download =
+        res.headers
+          .get("Content-Disposition")
+          ?.match(/filename="(.+)"/)?.[1] ?? "document.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setMessage({
+        type: "success",
+        text: "PDF сформовано та завантажується!",
+      });
+    } catch (error) {
+      setMessage({
+        type: "error",
+        text: error instanceof Error ? error.message : "Помилка генерації PDF",
+      });
+    } finally {
+      setGeneratingPdf(false);
     }
   }
 
@@ -431,25 +481,39 @@ export default function AdminRequestDetailPage() {
 
             {/* Actions */}
             {isEditable && (
-              <div className="flex flex-wrap gap-3 sticky bottom-4">
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="px-6 py-3 text-sm font-semibold rounded-xl border-2 border-primary text-primary bg-white hover:bg-primary hover:text-white transition-all disabled:opacity-50 shadow-sm"
-                >
-                  {saving ? "Зберігаю..." : "Зберегти зміни"}
-                </button>
-                {canApprove && (
+              <div className="sticky bottom-4 bg-white rounded-2xl border border-border p-4 shadow-lg">
+                <div className="flex flex-wrap gap-3">
                   <button
-                    onClick={handleApprove}
-                    disabled={approving}
-                    className="px-6 py-3 text-sm font-bold rounded-xl bg-accent text-primary hover:bg-accent-hover hover:shadow-lg transition-all disabled:opacity-50 shadow-sm"
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="px-5 py-2.5 text-sm font-semibold rounded-xl border-2 border-primary text-primary bg-white hover:bg-primary hover:text-white transition-all disabled:opacity-50"
                   >
-                    {approving
-                      ? "Затверджую..."
-                      : "Затвердити та відправити клієнту"}
+                    {saving ? "Зберігаю..." : "Зберегти зміни"}
                   </button>
-                )}
+                  <button
+                    onClick={handleGeneratePdf}
+                    disabled={generatingPdf}
+                    className="px-5 py-2.5 text-sm font-bold rounded-xl bg-primary text-white hover:bg-primary-light transition-all disabled:opacity-50"
+                  >
+                    {generatingPdf
+                      ? "Формую PDF..."
+                      : "Сформувати та завантажити PDF"}
+                  </button>
+                  {canApprove && (
+                    <button
+                      onClick={handleApprove}
+                      disabled={approving}
+                      className="px-5 py-2.5 text-sm font-bold rounded-xl bg-accent text-primary hover:bg-accent-hover hover:shadow-lg transition-all disabled:opacity-50"
+                    >
+                      {approving
+                        ? "Затверджую..."
+                        : "Затвердити та відправити клієнту"}
+                    </button>
+                  )}
+                </div>
+                <p className="text-[11px] text-muted mt-2">
+                  Сформуйте PDF для перевірки. Після затвердження документ буде відправлено клієнту на email.
+                </p>
               </div>
             )}
           </div>
