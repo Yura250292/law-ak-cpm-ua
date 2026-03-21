@@ -30,17 +30,17 @@ export async function sendDocumentEmail(params: {
         <div style="background: #f7fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px;">
           <p style="font-size: 16px; line-height: 1.6;">Шановний клієнте,</p>
           <p style="font-size: 16px; line-height: 1.6;">
-            Ваш документ <strong>"${documentTitle}"</strong> було успішно згенеровано та додано у вкладення до цього листа.
+            Ваш документ <strong>"${documentTitle}"</strong> підготовлено адвокатом та додано у вкладення до цього листа.
           </p>
-          <div style="background: #ebf8ff; border-left: 4px solid #3182ce; padding: 16px; margin: 20px 0; border-radius: 0 4px 4px 0;">
-            <p style="margin: 0; font-size: 14px; color: #2c5282;">
-              <strong>Зверніть увагу:</strong> Цей документ створено за допомогою штучного інтелекту.
-              Рекомендуємо перевірити його зміст перед подачею до суду та за потреби проконсультуватися з адвокатом.
+          <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px; margin: 20px 0; border-radius: 0 4px 4px 0;">
+            <p style="margin: 0; font-size: 14px; color: #166534;">
+              <strong>Зверніть увагу:</strong> Рекомендуємо ознайомитися зі змістом документа перед подачею до суду.
+              Якщо у вас є додаткові питання — зверніться до адвоката.
             </p>
           </div>
           <p style="font-size: 14px; color: #718096; margin-top: 24px;">
             З повагою,<br>
-            Команда юридичних послуг
+            Адвокат Кабаль Анастасія Ігорівна
           </p>
         </div>
       </body>

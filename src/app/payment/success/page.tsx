@@ -28,7 +28,7 @@ export default function PaymentSuccessPage() {
     if (!requestId) return;
 
     let attempts = 0;
-    const maxAttempts = 30; // 30 * 2s = 60 seconds max
+    const maxAttempts = 30;
 
     const poll = async () => {
       try {
@@ -38,7 +38,12 @@ export default function PaymentSuccessPage() {
         const data: DocumentResult = await res.json();
         setResult(data);
 
-        if (data.status === "COMPLETED" || data.status === "PENDING_REVIEW" || data.status === "FAILED") {
+        // Terminal states
+        if (
+          data.status === "COMPLETED" ||
+          data.status === "PENDING_REVIEW" ||
+          data.status === "FAILED"
+        ) {
           setLoading(false);
           return;
         }
@@ -46,38 +51,23 @@ export default function PaymentSuccessPage() {
         attempts++;
         if (attempts >= maxAttempts) {
           setLoading(false);
-          setError("Генерація займає більше часу, ніж очікувалось. Спробуйте оновити сторінку.");
           return;
         }
 
         setTimeout(poll, 2000);
       } catch {
         setLoading(false);
-        setError("Помилка при отриманні статусу документа");
+        setError("Помилка при отриманні статусу заявки");
       }
     };
 
     poll();
   }, [requestId]);
 
-  const handleDownloadPdf = async () => {
-    if (!result?.pdfUrl) return;
-
-    try {
-      const res = await fetch(result.pdfUrl);
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${result.templateTitle}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch {
-      window.open(result.pdfUrl, "_blank");
-    }
-  };
+  const isSuccess =
+    !loading &&
+    (result?.status === "COMPLETED" ||
+      result?.status === "PENDING_REVIEW");
 
   return (
     <>
@@ -85,101 +75,120 @@ export default function PaymentSuccessPage() {
 
       <main className="flex flex-1 items-center justify-center px-4 py-24">
         <div className="w-full max-w-lg text-center">
-          {/* Loading state */}
+          {/* Loading — заявка обробляється */}
           {loading && (
             <>
               <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-accent/10">
                 <div className="h-10 w-10 animate-spin rounded-full border-4 border-border border-t-accent" />
               </div>
               <h1 className="text-2xl font-bold text-primary">
-                Генеруємо ваш документ...
+                Обробляємо вашу заявку...
               </h1>
               <p className="mt-4 text-base text-muted">
-                AI формує юридичний текст та створює PDF. Це може зайняти до хвилини.
+                Зачекайте, будь ласка. Ваші дані передаються адвокату для підготовки документа.
               </p>
-              {result?.status && (
-                <p className="mt-2 text-sm text-muted/60">
-                  Статус: {result.status === "GENERATING" ? "Генерація тексту..." : result.status === "DRAFT" ? "Обробка..." : result.status}
-                </p>
-              )}
             </>
           )}
 
-          {/* Success state */}
-          {!loading && (result?.status === "COMPLETED" || result?.status === "PENDING_REVIEW") && (
+          {/* Успіх — заявку прийнято */}
+          {isSuccess && (
             <>
               <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
-                <svg className="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                <svg
+                  className="h-10 w-10 text-green-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               </div>
 
               <h1 className="text-3xl font-bold text-primary">
-                Документ готовий!
+                Заявку прийнято!
               </h1>
 
               <p className="mt-4 text-base text-muted">
-                <strong>&ldquo;{result.templateTitle}&rdquo;</strong> успішно згенеровано.
+                Ваш запит на підготовку документа{" "}
+                <strong>&ldquo;{result!.templateTitle}&rdquo;</strong>{" "}
+                прийнято в роботу.
               </p>
 
-              {result.contactEmail && (
-                <p className="mt-2 text-sm text-muted/60">
-                  Також відправлено на {result.contactEmail}
-                </p>
-              )}
+              <div className="mt-6 rounded-2xl bg-surface border border-border p-6 text-left">
+                <h3 className="text-sm font-semibold text-primary mb-3">
+                  Що далі?
+                </h3>
+                <ol className="space-y-3 text-sm text-muted">
+                  <li className="flex gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-primary">
+                      1
+                    </span>
+                    <span>
+                      Адвокат перегляне ваші дані та підготує документ
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-primary">
+                      2
+                    </span>
+                    <span>
+                      Документ буде перевірено на відповідність законодавству
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-primary">
+                      3
+                    </span>
+                    <span>
+                      Готовий документ буде надіслано на вашу пошту{" "}
+                      {result!.contactEmail && (
+                        <strong>{result!.contactEmail}</strong>
+                      )}
+                    </span>
+                  </li>
+                </ol>
+              </div>
 
-              <div className="mt-10 flex flex-col items-center gap-4">
-                {result.pdfUrl && (
-                  <Button size="lg" onClick={handleDownloadPdf}>
-                    <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Завантажити PDF
-                  </Button>
-                )}
+              <p className="mt-6 text-sm text-muted/60">
+                Зазвичай підготовка документа займає від 1 до 24 годин у робочі дні.
+                Якщо у вас є питання — зв&apos;яжіться з нами.
+              </p>
 
-                {result.generatedText && (
-                  <Button
-                    variant={result.pdfUrl ? "outline" : "primary"}
-                    size={result.pdfUrl ? "md" : "lg"}
-                    onClick={() => {
-                      const blob = new Blob([result.generatedText!], { type: "text/plain;charset=utf-8" });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement("a");
-                      a.href = url;
-                      a.download = `${result.templateTitle}.txt`;
-                      document.body.appendChild(a);
-                      a.click();
-                      document.body.removeChild(a);
-                      URL.revokeObjectURL(url);
-                    }}
-                  >
-                    <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Завантажити текст (.txt)
-                  </Button>
-                )}
-
+              <div className="mt-8 flex flex-col items-center gap-4">
                 <Link href="/services">
-                  <Button variant="ghost">
-                    Замовити інший документ
-                  </Button>
+                  <Button variant="outline">Замовити інший документ</Button>
                 </Link>
-
-                <Link href="/" className="text-sm text-muted hover:text-primary transition-colors">
+                <Link
+                  href="/"
+                  className="text-sm text-muted hover:text-primary transition-colors"
+                >
                   На головну
                 </Link>
               </div>
             </>
           )}
 
-          {/* Error / Failed state */}
+          {/* Помилка */}
           {!loading && (result?.status === "FAILED" || error) && (
             <>
               <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-red-100">
-                <svg className="h-10 w-10 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="h-10 w-10 text-red-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </div>
 
@@ -188,33 +197,48 @@ export default function PaymentSuccessPage() {
               </h1>
 
               <p className="mt-4 text-base text-muted">
-                {error || "Не вдалося згенерувати документ. Спробуйте ще раз або зверніться до підтримки."}
+                {error ||
+                  "Не вдалося обробити вашу заявку. Спробуйте ще раз або зверніться до адвоката."}
               </p>
 
               <div className="mt-10 flex flex-col items-center gap-4">
                 <Link href="/services">
                   <Button>Спробувати ще раз</Button>
                 </Link>
-                <Link href="/" className="text-sm text-muted hover:text-primary transition-colors">
+                <Link
+                  href="/"
+                  className="text-sm text-muted hover:text-primary transition-colors"
+                >
                   На головну
                 </Link>
               </div>
             </>
           )}
 
-          {/* No requestId */}
+          {/* Без requestId */}
           {!requestId && !loading && (
             <>
               <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
-                <svg className="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                <svg
+                  className="h-10 w-10 text-green-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               </div>
 
               <h1 className="text-3xl font-bold text-primary">Дякуємо!</h1>
 
               <p className="mt-4 text-base text-muted">
-                Ваш документ буде відправлено на вказану електронну пошту.
+                Вашу заявку прийнято. Адвокат підготує документ та надішле його
+                на вашу електронну пошту.
               </p>
 
               <div className="mt-10">
