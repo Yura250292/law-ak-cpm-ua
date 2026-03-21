@@ -184,6 +184,25 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
+        {/* Case Analysis CTA */}
+        <Link
+          href="/admin/case-analysis"
+          className="flex items-center justify-between bg-primary rounded-2xl p-5 mb-8 group hover:shadow-lg transition-all"
+        >
+          <div>
+            <h3 className="text-white font-bold text-base">
+              Аналіз справи
+            </h3>
+            <p className="text-white/60 text-sm mt-0.5">
+              Завантажте документ — AI проаналізує, знайде практику та
+              запропонує стратегію
+            </p>
+          </div>
+          <span className="text-accent text-2xl group-hover:translate-x-1 transition-transform shrink-0 ml-4">
+            &rarr;
+          </span>
+        </Link>
+
         {/* Filters */}
         <div className="flex items-center gap-3 mb-6 flex-wrap">
           <span className="text-sm font-medium text-muted">Фільтр:</span>
