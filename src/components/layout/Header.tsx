@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 const navLinks = [
   { href: "/", label: "Головна" },
   { href: "/services", label: "Послуги" },
-  { href: "/about", label: "Про юриста" },
+  { href: "/about", label: "Про адвоката" },
 ];
 
 export function Header() {

@@ -22,7 +22,8 @@
       "Bash(gh api:*)",
       "Bash(curl -sI \"https://law-ak.com.ua\")",
       "Bash(curl -s \"https://law-ak.com.ua\")",
-      "Bash(curl -sI \"https://law-ak.com.ua/services\")"
+      "Bash(curl -sI \"https://law-ak.com.ua/services\")",
+      "WebFetch(domain:erau.unba.org.ua)"
     ],
     "additionalDirectories": [
       "/Users/admin/Desktop/Адвокат Сайт/src/app/document"

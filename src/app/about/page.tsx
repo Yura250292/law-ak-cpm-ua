@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/Button";
 export const revalidate = 60;
 
 export const metadata = {
-  title: "Про юриста",
+  title: "Про адвоката",
   description:
-    "Дізнайтеся більше про досвід та підхід нашого юриста до вирішення правових питань.",
+    "Дізнайтеся більше про досвід та підхід нашого адвоката до вирішення правових питань.",
 };
 
 const qualifications = [
@@ -51,7 +51,7 @@ export default function AboutPage() {
         {/* Hero Section */}
         <section className="bg-primary py-20 text-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl font-bold sm:text-5xl">Про юриста</h1>
+            <h1 className="text-4xl font-bold sm:text-5xl">Про адвоката</h1>
             <p className="mt-4 max-w-2xl text-lg text-white/60">
               Професійна юридична допомога з багаторічним досвідом у сімейному,
               цивільному та господарському праві.
@@ -82,7 +82,7 @@ export default function AboutPage() {
                     </svg>
                   </div>
                   <p className="text-sm font-medium text-muted">
-                    Фото юриста
+                    Фото адвоката
                   </p>
                 </div>
               </div>

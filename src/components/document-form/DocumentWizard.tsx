@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { getFormConfig, getDefaultValues } from "@/lib/form-configs";
+import { getTestData } from "@/lib/test-data";
 import StepIndicator from "./StepIndicator";
 import DynamicFormStep from "./DynamicFormStep";
 import FormSummary from "./FormSummary";
@@ -115,11 +116,31 @@ export function DocumentWizard({
     }
   };
 
+  const fillTestData = () => {
+    const data = getTestData(templateSlug);
+    if (!data) return;
+    form.reset(data);
+    setCurrentStep(STEPS.length - 1); // Go straight to confirmation
+  };
+
   const isLastStep = currentStep === STEPS.length - 1;
   const isFormStep = currentStep < config.steps.length;
 
   return (
     <div className="mx-auto max-w-3xl">
+      {/* Dev: fill test data */}
+      {process.env.NODE_ENV !== "production" || true ? (
+        <div className="mb-4 flex justify-end">
+          <button
+            type="button"
+            onClick={fillTestData}
+            className="text-xs text-muted hover:text-primary border border-dashed border-border rounded-lg px-3 py-1.5 transition-colors hover:border-accent hover:bg-accent/5"
+          >
+            🧪 Заповнити тестовими даними
+          </button>
+        </div>
+      ) : null}
+
       <StepIndicator currentStep={currentStep} steps={STEPS} />
 
       <div className="rounded-xl border border-border bg-white p-6 sm:p-8 shadow-sm">

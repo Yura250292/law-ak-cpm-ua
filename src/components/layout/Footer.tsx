@@ -8,7 +8,7 @@ const serviceLinks = [
 ];
 
 const companyLinks = [
-  { href: "/about", label: "Про юриста" },
+  { href: "/about", label: "Про адвоката" },
   { href: "/about#experience", label: "Як це працює" },
 ];
 
