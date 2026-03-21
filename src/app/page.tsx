@@ -8,6 +8,9 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/Card";
+import { ReviewsSection } from "@/components/ReviewsSection";
+import { FAQSection } from "@/components/FAQSection";
+import { generalFAQ } from "@/lib/faq-data";
 
 export const revalidate = 60;
 
@@ -263,6 +266,16 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* ── Reviews Section ── */}
+        <ReviewsSection />
+
+        {/* ── FAQ Section ── */}
+        <FAQSection
+          title="Часті запитання"
+          subtitle="Відповіді на найпоширеніші питання про наші послуги"
+          items={generalFAQ}
+        />
 
         {/* ── CTA Section ── */}
         <section className="relative overflow-hidden bg-primary py-24 text-white">

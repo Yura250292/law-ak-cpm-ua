@@ -3,9 +3,7 @@ import { z } from "zod/v4";
 import { prisma } from "@/lib/prisma";
 import { buildPrompt } from "@/lib/ai/prompt-builder";
 import { generateLegalText } from "@/lib/ai/generate";
-import { generateDocumentPdf } from "@/lib/pdf/generate-pdf";
-import { uploadToR2 } from "@/lib/r2";
-import { sendDocumentEmail } from "@/lib/email/send-document";
+import { notifyLawyerNewRequest } from "@/lib/email/notify-lawyer";
 import type { Prisma } from "@/generated/prisma/client";
 
 const documentRequestBodySchema = z.object({
@@ -103,39 +101,22 @@ export async function POST(request: NextRequest) {
         data: { generatedText },
       });
 
-      // 4. Try PDF generation + R2 upload (non-critical)
-      let pdfUrl: string | null = null;
-      try {
-        const pdfBuffer = await generateDocumentPdf(template.title, generatedText);
-        const key = `documents/${documentRequest.id}.pdf`;
-        pdfUrl = await uploadToR2(key, pdfBuffer, "application/pdf");
-      } catch (pdfError) {
-        console.error("PDF/R2 failed (non-critical):", pdfError);
-      }
-
-      // 5. Mark as COMPLETED (text is ready even if PDF failed)
+      // 4. Mark as PENDING_REVIEW (lawyer will review, edit, and approve)
       await prisma.documentRequest.update({
         where: { id: documentRequest.id },
-        data: { pdfUrl, status: "COMPLETED" },
+        data: { status: "PENDING_REVIEW" },
       });
 
-      // 6. Try to send email (non-critical)
-      if (pdfUrl) {
-        try {
-          const pdfResponse = await fetch(pdfUrl);
-          if (pdfResponse.ok) {
-            const pdfArrayBuffer = await pdfResponse.arrayBuffer();
-            const emailPdfBuffer = Buffer.from(pdfArrayBuffer);
-            await sendDocumentEmail({
-              to: contactEmail,
-              documentTitle: template.title,
-              pdfBuffer: emailPdfBuffer,
-              fileName: `${template.slug}-${documentRequest.id}.pdf`,
-            });
-          }
-        } catch (emailError) {
-          console.error("Email failed (non-critical):", emailError);
-        }
+      // 5. Notify lawyer about new request (non-critical)
+      try {
+        await notifyLawyerNewRequest({
+          requestId: documentRequest.id,
+          documentTitle: template.title,
+          clientEmail: contactEmail,
+          clientName: plaintiffName,
+        });
+      } catch (notifyError) {
+        console.error("Lawyer notification failed (non-critical):", notifyError);
       }
 
       return NextResponse.json({

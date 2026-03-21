@@ -4,6 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { DocumentWizard } from "@/components/document-form/DocumentWizard";
+import { FAQSection } from "@/components/FAQSection";
+import { divorceFAQ, alimonyFAQ, damagesFAQ, servicesFAQ } from "@/lib/faq-data";
+import type { FAQItem } from "@/lib/faq-data";
 
 interface PageProps {
   params: Promise<{ templateSlug: string }>;
@@ -23,6 +26,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+const faqBySlug: Record<string, FAQItem[]> = {
+  "pozov-pro-rozirvannnya-shlyubu": divorceFAQ,
+  "pozov-pro-stygnennya-alimentiv": alimonyFAQ,
+  "pozov-pro-vidshkoduvannya-shkody": damagesFAQ,
+};
+
 export default async function DocumentPage({ params }: PageProps) {
   const { templateSlug } = await params;
 
@@ -33,6 +42,8 @@ export default async function DocumentPage({ params }: PageProps) {
   if (!template) {
     notFound();
   }
+
+  const faqItems = faqBySlug[templateSlug] ?? servicesFAQ;
 
   return (
     <>
@@ -64,6 +75,13 @@ export default async function DocumentPage({ params }: PageProps) {
             <DocumentWizard templateId={template.id} templateTitle={template.title} templateSlug={template.slug} />
           </div>
         </section>
+
+        {/* FAQ section */}
+        <FAQSection
+          title="Часті запитання"
+          subtitle="Відповіді на найпоширеніші питання"
+          items={faqItems}
+        />
       </main>
 
       <Footer />

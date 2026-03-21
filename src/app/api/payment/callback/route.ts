@@ -105,23 +105,34 @@ async function triggerGenerationPipeline(documentRequestId: string) {
     throw new Error(`AI generation failed: ${genRes.status}`);
   }
 
-  // Step 2: Generate PDF
-  const pdfRes = await fetch(`${BASE_URL}/api/generate/pdf`, {
-    method: "POST",
-    headers,
-    body: payload,
+  // Step 2: Set status to PENDING_REVIEW (lawyer will review, edit, approve)
+  await prisma.documentRequest.update({
+    where: { id: documentRequestId },
+    data: { status: "PENDING_REVIEW" },
   });
-  if (!pdfRes.ok) {
-    throw new Error(`PDF generation failed: ${pdfRes.status}`);
-  }
 
-  // Step 3: Send email
-  const emailRes = await fetch(`${BASE_URL}/api/email/send`, {
-    method: "POST",
-    headers,
-    body: payload,
-  });
-  if (!emailRes.ok) {
-    throw new Error(`Email send failed: ${emailRes.status}`);
+  // Step 3: Notify lawyer (non-critical)
+  try {
+    const docReq = await prisma.documentRequest.findUnique({
+      where: { id: documentRequestId },
+      include: { template: true },
+    });
+    if (docReq) {
+      const { notifyLawyerNewRequest } = await import(
+        "@/lib/email/notify-lawyer"
+      );
+      const partyData = docReq.partyData as Record<string, any>;
+      const plaintiffData = partyData?.plaintiff as
+        | Record<string, string>
+        | undefined;
+      await notifyLawyerNewRequest({
+        requestId: documentRequestId,
+        documentTitle: docReq.template.title,
+        clientEmail: docReq.contactEmail,
+        clientName: plaintiffData?.fullName ?? "Клієнт",
+      });
+    }
+  } catch (notifyError) {
+    console.error("Lawyer notification failed (non-critical):", notifyError);
   }
 }

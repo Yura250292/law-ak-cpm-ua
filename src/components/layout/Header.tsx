@@ -7,6 +7,10 @@ import { usePathname } from "next/navigation";
 const navLinks = [
   { href: "/", label: "Головна" },
   { href: "/services", label: "Послуги" },
+  { href: "/practices", label: "Спеціалізації" },
+  { href: "/consultation", label: "Консультація" },
+  { href: "/calculator", label: "Калькулятор" },
+  { href: "/blog", label: "Блог" },
   { href: "/about", label: "Про адвоката" },
 ];
 

@@ -12,6 +12,7 @@ enum DocumentRequestStatus {
   PENDING_PAYMENT
   PAID
   GENERATING
+  PENDING_REVIEW
   COMPLETED
   FAILED
 }
@@ -64,6 +65,7 @@ model DocumentRequest {
 
   generatedText String?
   pdfUrl        String?
+  lawyerNotes   String?
 
   contactEmail String
   contactPhone String?

@@ -2,14 +2,16 @@ import Link from "next/link";
 
 const serviceLinks = [
   { href: "/services", label: "Всі послуги" },
-  { href: "/services#consultation", label: "Юридичні консультації" },
-  { href: "/services#court", label: "Судове представництво" },
-  { href: "/services#documents", label: "Складання документів" },
+  { href: "/practices", label: "Спеціалізації" },
+  { href: "/consultation", label: "Онлайн-консультація" },
+  { href: "/calculator", label: "Калькулятор судового збору" },
 ];
 
 const companyLinks = [
   { href: "/about", label: "Про адвоката" },
-  { href: "/about#experience", label: "Як це працює" },
+  { href: "/blog", label: "Блог" },
+  { href: "/reviews", label: "Відгуки" },
+  { href: "/contact", label: "Контакти" },
 ];
 
 export function Footer() {
