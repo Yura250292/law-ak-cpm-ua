@@ -3,7 +3,7 @@
 export default function TelegramButton() {
   return (
     <a
-      href="https://t.me/k_anastasiya_i"
+      href="https://t.me/Kabal_Anastasiya"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Написати в Telegram"
