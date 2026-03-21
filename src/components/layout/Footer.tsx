@@ -80,21 +80,23 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-white/50">
               <li>
                 <a
-                  href="tel:+380XXXXXXXXX"
+                  href="tel:+380956728005"
                   className="hover:text-accent transition-colors duration-200"
                 >
-                  +380 (XX) XXX-XX-XX
+                  +38 (095) 672-80-05
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@example.com"
+                  href="https://www.instagram.com/k_anastasiya_i/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:text-accent transition-colors duration-200"
                 >
-                  info@example.com
+                  @k_anastasiya_i
                 </a>
               </li>
-              <li>м. Київ, вул. Прикладна, 1</li>
+              <li>м. Львів, Україна</li>
             </ul>
           </div>
         </div>

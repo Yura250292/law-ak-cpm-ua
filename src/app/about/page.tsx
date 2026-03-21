@@ -6,15 +6,16 @@ import { Button } from "@/components/ui/Button";
 export const revalidate = 60;
 
 export const metadata = {
-  title: "Про адвоката",
+  title: "Про адвоката — Кабаль Анастасія Ігорівна",
   description:
-    "Дізнайтеся більше про досвід та підхід нашого адвоката до вирішення правових питань.",
+    "Адвокат Кабаль Анастасія Ігорівна — випускниця юридичного факультету ЛНУ ім. Івана Франка. Спеціалізація: сімейне, цивільне, господарське та адміністративне право. Львів.",
 };
 
 const qualifications = [
-  "Багаторічний досвід у сімейному, цивільному та господарському праві",
-  "Вища юридична освіта та постійне підвищення кваліфікації",
-  "Успішне представництво інтересів клієнтів у судах усіх інстанцій",
+  "Випускниця юридичного факультету ЛНУ імені Івана Франка",
+  "Спеціалізація на сімейному, цивільному, господарському та адміністративному праві",
+  "Понад 20 успішно проведених судових справ",
+  "Представництво інтересів клієнтів у судах усіх інстанцій",
   "Впровадження сучасних технологій у юридичну практику",
   "Підготовка юридичних документів відповідно до чинного законодавства",
 ];
@@ -51,10 +52,13 @@ export default function AboutPage() {
         {/* Hero Section */}
         <section className="bg-primary py-20 text-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl font-bold sm:text-5xl">Про адвоката</h1>
+            <h1 className="text-4xl font-bold sm:text-5xl">
+              Кабаль Анастасія Ігорівна
+            </h1>
             <p className="mt-4 max-w-2xl text-lg text-white/60">
-              Професійна юридична допомога з багаторічним досвідом у сімейному,
-              цивільному та господарському праві.
+              Адвокат у Львові. Спеціалізація — сімейне, цивільне, господарське
+              та адміністративне право. Випускниця юридичного факультету ЛНУ
+              імені Івана Франка.
             </p>
           </div>
         </section>
@@ -94,10 +98,17 @@ export default function AboutPage() {
                 </h2>
                 <div className="space-y-4 text-base leading-relaxed text-muted">
                   <p>
-                    Маю багаторічний досвід роботи у сфері юридичних послуг.
-                    Спеціалізуюся на сімейному, цивільному та господарському
-                    праві. Надаю професійну допомогу у підготовці юридичних
-                    документів та представництві інтересів клієнтів у суді.
+                    Мене звати Анастасія Кабаль — я адвокат зі Львова,
+                    випускниця юридичного факультету Львівського національного
+                    університету імені Івана Франка. Спеціалізуюся на сімейному,
+                    цивільному, господарському та адміністративному праві.
+                  </p>
+                  <p>
+                    За час практики успішно провела понад 20 судових справ —
+                    від розірвання шлюбу та стягнення аліментів до
+                    відшкодування шкоди та господарських спорів. Надаю
+                    професійну допомогу у підготовці юридичних документів та
+                    представництві інтересів клієнтів у судах усіх інстанцій.
                   </p>
                   <p>
                     Впроваджую сучасні технології у юридичну практику, щоб
@@ -196,8 +207,15 @@ export default function AboutPage() {
                       />
                     </svg>
                   </div>
-                  <p className="font-semibold text-primary">Email</p>
-                  <p className="mt-1 text-sm text-muted">info@example.com</p>
+                  <p className="font-semibold text-primary">Instagram</p>
+                  <a
+                    href="https://www.instagram.com/k_anastasiya_i/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 block text-sm text-muted hover:text-accent transition-colors"
+                  >
+                    @k_anastasiya_i
+                  </a>
                 </div>
                 <div className="rounded-xl border border-border bg-white p-6 text-center">
                   <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
@@ -216,7 +234,12 @@ export default function AboutPage() {
                     </svg>
                   </div>
                   <p className="font-semibold text-primary">Телефон</p>
-                  <p className="mt-1 text-sm text-muted">+380 XX XXX XX XX</p>
+                  <a
+                    href="tel:+380956728005"
+                    className="mt-1 block text-sm text-muted hover:text-accent transition-colors"
+                  >
+                    +38 (095) 672-80-05
+                  </a>
                 </div>
                 <div className="rounded-xl border border-border bg-white p-6 text-center">
                   <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
@@ -239,8 +262,8 @@ export default function AboutPage() {
                       />
                     </svg>
                   </div>
-                  <p className="font-semibold text-primary">Адреса</p>
-                  <p className="mt-1 text-sm text-muted">м. Київ, Україна</p>
+                  <p className="font-semibold text-primary">Місто</p>
+                  <p className="mt-1 text-sm text-muted">м. Львів, Україна</p>
                 </div>
               </div>
 
