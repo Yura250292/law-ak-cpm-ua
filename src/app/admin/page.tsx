@@ -95,6 +95,19 @@ export default function AdminDashboardPage() {
     router.push("/admin/login");
   }
 
+  async function handleDelete(requestId: string) {
+    if (!confirm("Видалити цю заявку? Цю дію неможливо скасувати.")) return;
+    try {
+      const res = await fetch(`/api/admin/requests/${requestId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error();
+      fetchData();
+    } catch {
+      alert("Помилка видалення");
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface">
@@ -234,12 +247,20 @@ export default function AdminDashboardPage() {
                       </span>
                     </td>
                     <td className="px-5 py-3.5 text-right">
-                      <Link
-                        href={`/admin/requests/${req.id}`}
-                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-accent text-primary hover:bg-accent-hover transition"
-                      >
-                        Переглянути
-                      </Link>
+                      <div className="flex items-center justify-end gap-2">
+                        <Link
+                          href={`/admin/requests/${req.id}`}
+                          className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-accent text-primary hover:bg-accent-hover transition"
+                        >
+                          Переглянути
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(req.id)}
+                          className="inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded-lg text-red-600 hover:bg-red-50 border border-red-200 transition"
+                        >
+                          Видалити
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

@@ -34,7 +34,7 @@ const STATUS_LABELS: Record<string, string> = {
   DRAFT: "Чернетка",
   PENDING_PAYMENT: "Очікує оплати",
   PAID: "Оплачено",
-  GENERATING: "Генерація",
+  GENERATING: "Генерація AI",
   PENDING_REVIEW: "На перевірці",
   COMPLETED: "Завершено",
   FAILED: "Помилка",
@@ -50,6 +50,56 @@ const STATUS_COLORS: Record<string, string> = {
   FAILED: "bg-red-100 text-red-800",
 };
 
+const FIELD_LABELS: Record<string, string> = {
+  fullName: "ПІБ",
+  birthDate: "Дата народження",
+  ipn: "ІПН",
+  registrationAddress: "Адреса реєстрації",
+  actualAddress: "Фактична адреса",
+  phone: "Телефон",
+  workplace: "Місце роботи",
+  position: "Посада",
+  edrpou: "Код ЄДРПОУ",
+  marriageDate: "Дата реєстрації шлюбу",
+  marriagePlace: "Місце реєстрації шлюбу",
+  separationDate: "Дата припинення спільного проживання",
+  hasChildren: "Є спільні неповнолітні діти",
+  childrenDetails: "Дані дітей",
+  childResidence: "З ким мають проживати діти",
+  hasProperty: "Є питання поділу майна",
+  propertyDetails: "Опис спільного майна",
+  divorceReason: "Причина розірвання шлюбу",
+  courtName: "Назва суду",
+  additionalDemands: "Додаткові вимоги",
+  childName: "ПІБ дитини",
+  childBirthDate: "Дата народження дитини",
+  childBirthCertificate: "Свідоцтво про народження",
+  divorceDate: "Дата розірвання шлюбу",
+  childLivesWithPlaintiff: "Дитина проживає з позивачем",
+  defendantDoesNotSupport: "Відповідач не утримує дитину",
+  childNeeds: "Щомісячні витрати на дитину",
+  defendantIncome: "Відомості про доходи відповідача",
+  alimentType: "Спосіб стягнення аліментів",
+  alimentFixedAmount: "Сума аліментів (грн/міс)",
+  incidentDate: "Дата інциденту",
+  incidentPlace: "Місце інциденту",
+  incidentDescription: "Опис обставин",
+  damageType: "Вид шкоди",
+  materialDamageAmount: "Сума матеріальної шкоди",
+  materialDamageDetails: "Розрахунок матеріальної шкоди",
+  moralDamageAmount: "Сума моральної шкоди",
+  moralDamageJustification: "Обґрунтування моральної шкоди",
+  totalCompensation: "Загальна сума позову",
+  evidence: "Наявні докази",
+};
+
+const SECTION_LABELS: Record<string, string> = {
+  plaintiff: "Позивач",
+  defendant: "Відповідач",
+  child: "Дитина",
+  court: "Суд",
+};
+
 export default function AdminRequestDetailPage() {
   const router = useRouter();
   const params = useParams();
@@ -61,6 +111,7 @@ export default function AdminRequestDetailPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [approving, setApproving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -96,10 +147,7 @@ export default function AdminRequestDetailPage() {
       const res = await fetch(`/api/admin/requests/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          generatedText: editedText,
-          lawyerNotes,
-        }),
+        body: JSON.stringify({ generatedText: editedText, lawyerNotes }),
       });
       if (!res.ok) throw new Error();
       setMessage({ type: "success", text: "Зміни збережено" });
@@ -113,31 +161,23 @@ export default function AdminRequestDetailPage() {
   async function handleApprove() {
     if (
       !confirm(
-        "Затвердити документ та відправити клієнту? Після затвердження текст буде конвертовано в PDF та відправлено на email клієнта."
+        "Затвердити документ та відправити клієнту?\n\nТекст буде конвертовано в PDF та відправлено на email клієнта."
       )
-    ) {
+    )
       return;
-    }
 
-    // Save latest edits first
     setApproving(true);
     setMessage(null);
     try {
-      // Save text changes first
       await fetch(`/api/admin/requests/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          generatedText: editedText,
-          lawyerNotes,
-        }),
+        body: JSON.stringify({ generatedText: editedText, lawyerNotes }),
       });
 
-      // Then approve
       const res = await fetch(`/api/admin/requests/${id}/approve`, {
         method: "POST",
       });
-
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error ?? "Помилка затвердження");
@@ -147,18 +187,35 @@ export default function AdminRequestDetailPage() {
         type: "success",
         text: "Документ затверджено та відправлено клієнту!",
       });
-      // Refresh data
       await fetchRequest();
     } catch (error) {
       setMessage({
         type: "error",
-        text:
-          error instanceof Error
-            ? error.message
-            : "Помилка затвердження",
+        text: error instanceof Error ? error.message : "Помилка затвердження",
       });
     } finally {
       setApproving(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (
+      !confirm(
+        "Ви впевнені, що хочете видалити цю заявку?\n\nЦю дію неможливо скасувати."
+      )
+    )
+      return;
+
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/requests/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error();
+      router.push("/admin");
+    } catch {
+      setMessage({ type: "error", text: "Помилка видалення" });
+      setDeleting(false);
     }
   }
 
@@ -175,10 +232,7 @@ export default function AdminRequestDetailPage() {
       <div className="min-h-screen flex items-center justify-center bg-surface">
         <div className="text-center">
           <p className="text-muted mb-4">Заявку не знайдено</p>
-          <Link
-            href="/admin"
-            className="text-sm text-accent hover:underline"
-          >
+          <Link href="/admin" className="text-sm text-accent hover:underline">
             Повернутись
           </Link>
         </div>
@@ -194,33 +248,44 @@ export default function AdminRequestDetailPage() {
     <div className="min-h-screen bg-surface">
       {/* Header */}
       <header className="bg-primary text-white sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
           <div className="flex items-center gap-4">
             <Link
               href="/admin"
               className="text-white/70 hover:text-white transition text-sm"
             >
-              &larr; Назад
+              &larr; До заявок
             </Link>
-            <span className="text-sm font-medium truncate max-w-[200px] sm:max-w-none">
+            <div className="hidden sm:block h-4 w-px bg-white/20" />
+            <span className="text-sm font-medium truncate max-w-[300px]">
               {request.template.title}
             </span>
           </div>
-          <span
-            className={`px-2.5 py-1 text-xs font-medium rounded-full ${
-              STATUS_COLORS[request.status] ?? "bg-gray-100 text-gray-700"
-            }`}
-          >
-            {STATUS_LABELS[request.status] ?? request.status}
-          </span>
+          <div className="flex items-center gap-3">
+            <span
+              className={`px-2.5 py-1 text-xs font-medium rounded-full ${
+                STATUS_COLORS[request.status] ?? "bg-gray-100 text-gray-700"
+              }`}
+            >
+              {STATUS_LABELS[request.status] ?? request.status}
+            </span>
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className="text-red-300 hover:text-red-100 transition text-sm disabled:opacity-50"
+              title="Видалити заявку"
+            >
+              {deleting ? "..." : "Видалити"}
+            </button>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Message */}
         {message && (
           <div
-            className={`mb-6 px-5 py-3 rounded-xl text-sm font-medium ${
+            className={`mb-5 px-5 py-3 rounded-xl text-sm font-medium ${
               message.type === "success"
                 ? "bg-green-50 text-green-800 border border-green-200"
                 : "bg-red-50 text-red-800 border border-red-200"
@@ -230,37 +295,16 @@ export default function AdminRequestDetailPage() {
           </div>
         )}
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Left: Client info & form data */}
-          <div className="space-y-6">
-            {/* Client info */}
-            <div className="bg-white rounded-2xl border border-border p-6">
-              <h2 className="text-sm font-semibold text-primary mb-4">
-                Клієнт
-              </h2>
-              <div className="space-y-2.5 text-sm">
-                <div>
-                  <span className="text-muted">Email: </span>
-                  <a
-                    href={`mailto:${request.contactEmail}`}
-                    className="text-primary hover:underline"
-                  >
-                    {request.contactEmail}
-                  </a>
-                </div>
-                {request.contactPhone && (
-                  <div>
-                    <span className="text-muted">Телефон: </span>
-                    <a
-                      href={`tel:${request.contactPhone}`}
-                      className="text-primary hover:underline"
-                    >
-                      {request.contactPhone}
-                    </a>
-                  </div>
-                )}
-                <div>
-                  <span className="text-muted">Дата: </span>
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* ══════ LEFT: Client data ══════ */}
+          <div className="space-y-5">
+            {/* Client contact */}
+            <div className="bg-white rounded-2xl border border-border p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-bold text-primary uppercase tracking-wide">
+                  Інформація про клієнта
+                </h2>
+                <span className="text-xs text-muted">
                   {new Date(request.createdAt).toLocaleDateString("uk-UA", {
                     day: "2-digit",
                     month: "long",
@@ -268,44 +312,69 @@ export default function AdminRequestDetailPage() {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
-                </div>
+                </span>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <InfoItem
+                  label="Email"
+                  value={request.contactEmail}
+                  href={`mailto:${request.contactEmail}`}
+                />
+                {request.contactPhone && (
+                  <InfoItem
+                    label="Телефон"
+                    value={request.contactPhone}
+                    href={`tel:${request.contactPhone}`}
+                  />
+                )}
+                <InfoItem
+                  label="Документ"
+                  value={request.template.title}
+                />
+                <InfoItem
+                  label="Категорія"
+                  value={request.template.category}
+                />
                 {request.payment && (
-                  <div>
-                    <span className="text-muted">Оплата: </span>
-                    <span className="font-medium">
-                      {request.payment.amount} грн
-                    </span>
-                    {request.payment.status === "SUCCESS" && (
-                      <span className="ml-1 text-green-600 text-xs">
-                        (оплачено)
-                      </span>
-                    )}
-                  </div>
+                  <>
+                    <InfoItem
+                      label="Оплата"
+                      value={`${request.payment.amount} грн`}
+                    />
+                    <InfoItem
+                      label="Статус оплати"
+                      value={
+                        request.payment.status === "SUCCESS"
+                          ? "Оплачено"
+                          : request.payment.status
+                      }
+                    />
+                  </>
                 )}
               </div>
             </div>
 
-            {/* Form data */}
-            <div className="bg-white rounded-2xl border border-border p-6">
-              <h2 className="text-sm font-semibold text-primary mb-4">
-                Дані клієнта
+            {/* Form data — structured display */}
+            <div className="bg-white rounded-2xl border border-border p-5">
+              <h2 className="text-sm font-bold text-primary uppercase tracking-wide mb-4">
+                Вхідні дані (заповнені клієнтом)
               </h2>
-              <div className="text-sm space-y-1 max-h-[400px] overflow-y-auto">
-                <FormDataDisplay data={request.partyData} />
+              <div className="space-y-4 max-h-[calc(100vh-320px)] overflow-y-auto pr-1">
+                <FormDataStructured data={request.partyData} />
               </div>
             </div>
 
             {/* PDF link */}
             {request.pdfUrl && (
-              <div className="bg-white rounded-2xl border border-border p-6">
-                <h2 className="text-sm font-semibold text-primary mb-3">
-                  PDF документ
+              <div className="bg-white rounded-2xl border border-border p-5">
+                <h2 className="text-sm font-bold text-primary uppercase tracking-wide mb-3">
+                  Готовий PDF
                 </h2>
                 <a
                   href={request.pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-accent text-primary hover:bg-accent-hover transition"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl bg-green-600 text-white hover:bg-green-700 transition"
                 >
                   Завантажити PDF
                 </a>
@@ -313,17 +382,22 @@ export default function AdminRequestDetailPage() {
             )}
           </div>
 
-          {/* Right: Document text editor */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Generated text */}
-            <div className="bg-white rounded-2xl border border-border p-6">
+          {/* ══════ RIGHT: AI result + editor ══════ */}
+          <div className="space-y-5">
+            {/* AI suggestion header */}
+            <div className="bg-white rounded-2xl border border-border p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-primary">
-                  Текст документа
-                </h2>
+                <div>
+                  <h2 className="text-sm font-bold text-primary uppercase tracking-wide">
+                    Рішення AI-помічника
+                  </h2>
+                  <p className="text-xs text-muted mt-1">
+                    Текст згенерований AI на основі даних клієнта. Перевірте посилання на статті та відредагуйте за потреби.
+                  </p>
+                </div>
                 {isEditable && (
-                  <span className="text-xs text-muted">
-                    Ви можете редагувати текст
+                  <span className="shrink-0 px-2.5 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-700">
+                    Редагується
                   </span>
                 )}
               </div>
@@ -331,34 +405,37 @@ export default function AdminRequestDetailPage() {
                 value={editedText}
                 onChange={(e) => setEditedText(e.target.value)}
                 disabled={!isEditable}
-                rows={24}
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface text-sm font-mono leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed transition"
+                rows={28}
+                className="w-full px-4 py-3 rounded-xl border border-border bg-surface text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed transition"
                 placeholder="Згенерований текст документа з'явиться тут..."
               />
             </div>
 
             {/* Lawyer notes */}
-            <div className="bg-white rounded-2xl border border-border p-6">
-              <h2 className="text-sm font-semibold text-primary mb-3">
+            <div className="bg-white rounded-2xl border border-border p-5">
+              <h2 className="text-sm font-bold text-primary uppercase tracking-wide mb-3">
                 Нотатки адвоката
               </h2>
+              <p className="text-xs text-muted mb-2">
+                Внутрішні нотатки — клієнт їх не бачить
+              </p>
               <textarea
                 value={lawyerNotes}
                 onChange={(e) => setLawyerNotes(e.target.value)}
                 disabled={!isEditable}
                 rows={4}
                 className="w-full px-4 py-3 rounded-xl border border-border bg-surface text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed transition"
-                placeholder="Ваші нотатки (не видно клієнту)..."
+                placeholder="Ваші нотатки..."
               />
             </div>
 
             {/* Actions */}
             {isEditable && (
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3 sticky bottom-4">
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="px-6 py-3 text-sm font-semibold rounded-xl border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all disabled:opacity-50"
+                  className="px-6 py-3 text-sm font-semibold rounded-xl border-2 border-primary text-primary bg-white hover:bg-primary hover:text-white transition-all disabled:opacity-50 shadow-sm"
                 >
                   {saving ? "Зберігаю..." : "Зберегти зміни"}
                 </button>
@@ -366,7 +443,7 @@ export default function AdminRequestDetailPage() {
                   <button
                     onClick={handleApprove}
                     disabled={approving}
-                    className="px-6 py-3 text-sm font-bold rounded-xl bg-accent text-primary hover:bg-accent-hover hover:shadow-lg transition-all disabled:opacity-50"
+                    className="px-6 py-3 text-sm font-bold rounded-xl bg-accent text-primary hover:bg-accent-hover hover:shadow-lg transition-all disabled:opacity-50 shadow-sm"
                   >
                     {approving
                       ? "Затверджую..."
@@ -382,33 +459,123 @@ export default function AdminRequestDetailPage() {
   );
 }
 
-function FormDataDisplay({ data }: { data: Record<string, unknown> }) {
+/* ── Helper Components ── */
+
+function InfoItem({
+  label,
+  value,
+  href,
+}: {
+  label: string;
+  value: string;
+  href?: string;
+}) {
+  return (
+    <div className="bg-surface rounded-lg px-3 py-2.5">
+      <div className="text-[11px] text-muted uppercase tracking-wider mb-0.5">
+        {label}
+      </div>
+      {href ? (
+        <a
+          href={href}
+          className="text-sm font-medium text-primary hover:underline"
+        >
+          {value}
+        </a>
+      ) : (
+        <div className="text-sm font-medium text-primary">{value}</div>
+      )}
+    </div>
+  );
+}
+
+function FormDataStructured({ data }: { data: Record<string, unknown> }) {
   if (!data || typeof data !== "object") return null;
+
+  const sections: Record<string, Record<string, unknown>> = {};
+  const topLevel: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(data)) {
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      sections[key] = value as Record<string, unknown>;
+    } else {
+      topLevel[key] = value;
+    }
+  }
 
   return (
     <>
-      {Object.entries(data).map(([key, value]) => {
-        if (value && typeof value === "object" && !Array.isArray(value)) {
-          return (
-            <div key={key} className="mt-3 first:mt-0">
-              <div className="font-medium text-primary mb-1 capitalize">
-                {formatLabel(key)}
-              </div>
-              <div className="pl-3 border-l-2 border-border space-y-1">
-                <FormDataDisplay data={value as Record<string, unknown>} />
-              </div>
-            </div>
-          );
-        }
-
-        return (
-          <div key={key} className="flex gap-2">
-            <span className="text-muted shrink-0">{formatLabel(key)}:</span>
-            <span className="text-primary">{String(value ?? "—")}</span>
+      {/* Sections (plaintiff, defendant, etc.) */}
+      {Object.entries(sections).map(([sectionKey, sectionData]) => (
+        <div
+          key={sectionKey}
+          className="border border-border rounded-xl overflow-hidden"
+        >
+          <div className="bg-surface px-4 py-2 border-b border-border">
+            <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">
+              {SECTION_LABELS[sectionKey] ?? formatLabel(sectionKey)}
+            </h3>
           </div>
-        );
-      })}
+          <div className="p-4 space-y-2">
+            {Object.entries(sectionData).map(([key, value]) => (
+              <FieldRow key={key} fieldKey={key} value={value} />
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {/* Top-level fields */}
+      {Object.keys(topLevel).length > 0 && (
+        <div className="border border-border rounded-xl overflow-hidden">
+          <div className="bg-surface px-4 py-2 border-b border-border">
+            <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">
+              Обставини справи
+            </h3>
+          </div>
+          <div className="p-4 space-y-2">
+            {Object.entries(topLevel).map(([key, value]) => (
+              <FieldRow key={key} fieldKey={key} value={value} />
+            ))}
+          </div>
+        </div>
+      )}
     </>
+  );
+}
+
+function FieldRow({
+  fieldKey,
+  value,
+}: {
+  fieldKey: string;
+  value: unknown;
+}) {
+  if (value === null || value === undefined || value === "") return null;
+
+  const label = FIELD_LABELS[fieldKey] ?? formatLabel(fieldKey);
+  let displayValue: string;
+
+  if (typeof value === "boolean") {
+    displayValue = value ? "Так" : "Ні";
+  } else {
+    displayValue = String(value);
+  }
+
+  const isLong = displayValue.length > 80;
+
+  return (
+    <div className={isLong ? "" : "flex items-start gap-2"}>
+      <span className="text-xs text-muted shrink-0 min-w-[140px]">
+        {label}:
+      </span>
+      <span
+        className={`text-sm text-primary ${
+          isLong ? "block mt-1 bg-surface rounded-lg px-3 py-2" : ""
+        }`}
+      >
+        {displayValue}
+      </span>
+    </div>
   );
 }
 

@@ -80,3 +80,33 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await requireAdmin();
+
+    const { id } = await params;
+
+    // Delete related payment first (if exists)
+    await prisma.payment.deleteMany({
+      where: { documentRequestId: id },
+    });
+
+    await prisma.documentRequest.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    if (error instanceof AdminAuthError) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
+    return NextResponse.json(
+      { error: "Помилка видалення" },
+      { status: 500 }
+    );
+  }
+}
