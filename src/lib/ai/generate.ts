@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const MODELS = ["gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-1.5-flash"];
+const MODELS = ["gemini-2.5-flash", "gemini-2.0-flash"];
 
 export async function generateLegalText(prompt: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
