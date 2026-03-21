@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod/v4";
 import { prisma } from "@/lib/prisma";
-import { buildPrompt } from "@/lib/ai/prompt-builder";
+import { buildPrompt, parseAiResponse } from "@/lib/ai/prompt-builder";
 import { generateLegalText } from "@/lib/ai/generate";
 
 const generateBodySchema = z.object({
@@ -49,14 +49,18 @@ export async function POST(request: NextRequest) {
       formData,
     });
 
-    const text = await generateLegalText(prompt);
+    const fullAiResponse = await generateLegalText(prompt);
+    const { documentText, legalSources } = parseAiResponse(fullAiResponse);
 
     await prisma.documentRequest.update({
       where: { id: documentRequestId },
-      data: { generatedText: text },
+      data: {
+        generatedText: documentText,
+        legalSources: legalSources || null,
+      },
     });
 
-    return NextResponse.json({ success: true, text });
+    return NextResponse.json({ success: true, text: documentText });
   } catch (error) {
     console.error("AI generation error:", error);
     return NextResponse.json(

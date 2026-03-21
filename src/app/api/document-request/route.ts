@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod/v4";
 import { prisma } from "@/lib/prisma";
-import { buildPrompt } from "@/lib/ai/prompt-builder";
+import { buildPrompt, parseAiResponse } from "@/lib/ai/prompt-builder";
 import { generateLegalText } from "@/lib/ai/generate";
 import { notifyLawyerNewRequest } from "@/lib/email/notify-lawyer";
 import type { Prisma } from "@/generated/prisma/client";
@@ -93,18 +93,19 @@ export async function POST(request: NextRequest) {
         data: { status: "GENERATING" },
       });
 
-      const generatedText = await generateLegalText(prompt);
+      const fullAiResponse = await generateLegalText(prompt);
 
-      // 3. Update generatedText
+      // 3. Parse AI response: separate document text from legal sources
+      const { documentText, legalSources } = parseAiResponse(fullAiResponse);
+
+      // 4. Save text + sources, mark as PENDING_REVIEW
       await prisma.documentRequest.update({
         where: { id: documentRequest.id },
-        data: { generatedText },
-      });
-
-      // 4. Mark as PENDING_REVIEW (lawyer will review, edit, and approve)
-      await prisma.documentRequest.update({
-        where: { id: documentRequest.id },
-        data: { status: "PENDING_REVIEW" },
+        data: {
+          generatedText: documentText,
+          legalSources: legalSources || null,
+          status: "PENDING_REVIEW",
+        },
       });
 
       // 5. Notify lawyer about new request (non-critical)

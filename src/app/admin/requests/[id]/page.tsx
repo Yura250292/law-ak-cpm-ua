@@ -13,6 +13,7 @@ interface DocumentRequest {
   circumstancesData: Record<string, unknown>;
   requirementsData: Record<string, unknown>;
   generatedText: string | null;
+  legalSources: string | null;
   lawyerNotes: string | null;
   pdfUrl: string | null;
   createdAt: string;
@@ -461,6 +462,11 @@ export default function AdminRequestDetailPage() {
               />
             </div>
 
+            {/* Legal Sources — only for lawyer */}
+            {request.legalSources && (
+              <SourcesPanel sources={request.legalSources} />
+            )}
+
             {/* Lawyer notes */}
             <div className="bg-white rounded-2xl border border-border p-5">
               <h2 className="text-sm font-bold text-primary uppercase tracking-wide mb-3">
@@ -641,6 +647,82 @@ function FieldRow({
       </span>
     </div>
   );
+}
+
+function SourcesPanel({ sources }: { sources: string }) {
+  const [expanded, setExpanded] = useState(false);
+
+  // Parse sources into sections
+  const sections = parseSources(sources);
+
+  return (
+    <div className="bg-amber-50 rounded-2xl border border-amber-200 overflow-hidden">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between p-5 text-left hover:bg-amber-100/50 transition"
+      >
+        <div>
+          <h2 className="text-sm font-bold text-amber-900 uppercase tracking-wide">
+            Джерела та правовий аналіз
+          </h2>
+          <p className="text-xs text-amber-700 mt-0.5">
+            Тільки для адвоката — не потрапляє в PDF
+          </p>
+        </div>
+        <span className="text-amber-600 text-lg shrink-0 ml-3">
+          {expanded ? "▲" : "▼"}
+        </span>
+      </button>
+
+      {expanded && (
+        <div className="px-5 pb-5 space-y-4">
+          {sections.map((section, i) => (
+            <div key={i}>
+              {section.title && (
+                <h3 className="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2">
+                  {section.title}
+                </h3>
+              )}
+              <div className="text-sm text-amber-950 leading-relaxed whitespace-pre-wrap bg-white/60 rounded-xl px-4 py-3 border border-amber-200/50">
+                {section.content}
+              </div>
+            </div>
+          ))}
+
+          {sections.length === 0 && (
+            <div className="text-sm text-amber-950 leading-relaxed whitespace-pre-wrap bg-white/60 rounded-xl px-4 py-3">
+              {sources}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function parseSources(
+  text: string
+): { title: string; content: string }[] {
+  const sections: { title: string; content: string }[] = [];
+
+  // Try to split by section markers: А), Б), В), Г) or A), B), etc.
+  const sectionRegex =
+    /^[А-ГA-D]\)\s+(.+?)$/gm;
+  const matches = [...text.matchAll(sectionRegex)];
+
+  if (matches.length > 0) {
+    for (let i = 0; i < matches.length; i++) {
+      const start = matches[i].index! + matches[i][0].length;
+      const end =
+        i + 1 < matches.length ? matches[i + 1].index! : text.length;
+      sections.push({
+        title: matches[i][1].replace(/:$/, "").trim(),
+        content: text.substring(start, end).trim(),
+      });
+    }
+  }
+
+  return sections;
 }
 
 function formatLabel(key: string): string {

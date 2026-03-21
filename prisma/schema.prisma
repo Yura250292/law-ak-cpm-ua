@@ -64,6 +64,7 @@ model DocumentRequest {
   requirementsData  Json
 
   generatedText String?
+  legalSources  String?
   pdfUrl        String?
   lawyerNotes   String?
 
