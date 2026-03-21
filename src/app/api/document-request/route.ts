@@ -151,10 +151,11 @@ export async function POST(request: NextRequest) {
         data: { status: "FAILED" },
       }).catch(() => {});
 
+      const errMsg = pipelineError instanceof Error ? pipelineError.message : String(pipelineError);
       return NextResponse.json({
         documentRequestId: documentRequest.id,
         status: "error",
-        error: "Помилка генерації документа",
+        error: errMsg,
       });
     }
   } catch (error) {

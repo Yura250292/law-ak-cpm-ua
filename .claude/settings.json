@@ -29,7 +29,10 @@
       "Bash(DATABASE_URL=\"postgresql://postgres:qxxTIfxlUuwYcavOibbgAAEQUDvaqEbN@ballast.proxy.rlwy.net:58877/railway\" npx tsx -e \":*)",
       "Bash(DATABASE_URL=\"postgresql://postgres:qxxTIfxlUuwYcavOibbgAAEQUDvaqEbN@ballast.proxy.rlwy.net:58877/railway\" npx tsx /tmp/check-db.ts)",
       "Bash(DATABASE_URL=\"postgresql://postgres:qxxTIfxlUuwYcavOibbgAAEQUDvaqEbN@ballast.proxy.rlwy.net:58877/railway\" npx tsx check-db.ts)",
-      "Bash(curl -s \"https://law-ak.com.ua/api/document-request/cmmzwjqgy000104kv7etnpy1y\")"
+      "Bash(curl -s \"https://law-ak.com.ua/api/document-request/cmmzwjqgy000104kv7etnpy1y\")",
+      "Bash(curl -s -X POST \"https://law-ak.com.ua/api/document-request\" -H \"Content-Type: application/json\" -d '{:*)",
+      "Bash(curl -s \"https://law-ak.com.ua/api/document-request/cmmzx1va1000304l10ldlk5dj\")",
+      "Bash(curl -s \"https://law-ak.com.ua/api/document-request/cmmzx6kp0000004l5imusbh5g\")"
     ],
     "additionalDirectories": [
       "/Users/admin/Desktop/Адвокат Сайт/src/app/document"
