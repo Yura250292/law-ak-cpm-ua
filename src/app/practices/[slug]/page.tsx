@@ -46,7 +46,7 @@ export default async function PracticeAreaPage({ params }: PageProps) {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-4 mb-4">
               <span className="text-4xl">{area.icon}</span>
-              <h1 className="text-4xl font-bold sm:text-5xl">{area.title}</h1>
+              <h1 className="text-3xl font-bold sm:text-5xl">{area.title}</h1>
             </div>
             <p className="mt-4 max-w-2xl text-lg text-white/60">
               {area.shortDescription}

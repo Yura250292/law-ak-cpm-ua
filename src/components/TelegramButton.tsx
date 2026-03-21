@@ -7,8 +7,8 @@ export default function TelegramButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Написати в Telegram"
-      className="group fixed bottom-6 right-6 z-40 flex items-center justify-center
-        w-14 h-14 md:w-16 md:h-16
+      className="group fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center justify-center
+        w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16
         rounded-full bg-[var(--accent)] text-[var(--primary)]
         shadow-lg hover:scale-110 transition-transform duration-200
         animate-pulse-ring"

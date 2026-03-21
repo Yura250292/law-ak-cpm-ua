@@ -77,7 +77,7 @@ export default function HomePage() {
       <main className="flex-1">
         {/* ── Hero Section ── */}
         <section className="bg-white">
-          <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
             <div className="grid items-center gap-12 lg:grid-cols-2">
               {/* Left column */}
               <div className="space-y-8">
@@ -89,7 +89,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Heading */}
-                <h1 className="animate-fade-in-up text-5xl font-bold leading-[1.1] tracking-tight text-primary lg:text-6xl">
+                <h1 className="animate-fade-in-up text-3xl sm:text-5xl font-bold leading-[1.1] tracking-tight text-primary lg:text-6xl">
                   Професійні юридичні
                   <br />
                   документи за хвилини
@@ -103,13 +103,13 @@ export default function HomePage() {
 
                 {/* Buttons */}
                 <div className="animate-fade-in-up-delay-2 flex flex-col gap-4 sm:flex-row">
-                  <Link href="/services">
-                    <Button className="rounded-xl bg-accent px-8 py-3 text-base font-semibold text-primary shadow-lg shadow-accent/20 transition hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/30">
+                  <Link href="/services" className="w-full sm:w-auto">
+                    <Button className="w-full sm:w-auto rounded-xl bg-accent px-8 py-3 text-base font-semibold text-primary shadow-lg shadow-accent/20 transition hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/30">
                       Замовити документ
                     </Button>
                   </Link>
-                  <Link href="/about">
-                    <Button className="rounded-xl border-2 border-primary bg-transparent px-8 py-3 text-base font-semibold text-primary transition hover:bg-primary hover:text-white">
+                  <Link href="/about" className="w-full sm:w-auto">
+                    <Button className="w-full sm:w-auto rounded-xl border-2 border-primary bg-transparent px-8 py-3 text-base font-semibold text-primary transition hover:bg-primary hover:text-white">
                       Дізнатися більше
                     </Button>
                   </Link>

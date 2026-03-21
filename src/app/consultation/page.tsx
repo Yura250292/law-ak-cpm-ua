@@ -81,7 +81,7 @@ export default function ConsultationPage() {
         {/* Hero */}
         <section className="bg-primary py-16 text-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl font-bold sm:text-5xl">Онлайн-консультація</h1>
+            <h1 className="text-3xl font-bold sm:text-5xl">Онлайн-консультація</h1>
             <p className="mt-4 max-w-2xl text-lg text-white/60">
               Отримайте професійну юридичну консультацію, не виходячи з дому.
               Zoom, Google Meet або телефонний дзвінок — обирайте зручний формат.

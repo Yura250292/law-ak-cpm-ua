@@ -18,6 +18,11 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
   // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
@@ -30,7 +35,7 @@ export function Header() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border">
+    <header className="sticky top-0 z-[70] bg-white/95 backdrop-blur-sm border-b border-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -97,13 +102,15 @@ export function Header() {
 
       {/* Mobile slide-in nav */}
       <div
-        className={`fixed inset-0 top-16 z-40 md:hidden transition-visibility ${
-          mobileOpen ? "visible" : "invisible"
+        className={`fixed inset-0 top-16 z-[60] md:hidden transition-all duration-300 ${
+          mobileOpen
+            ? "visible opacity-100"
+            : "invisible opacity-0 pointer-events-none"
         }`}
       >
         {/* Backdrop */}
         <div
-          className={`absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300 ${
+          className={`absolute inset-0 bg-black/50 backdrop-blur-[2px] transition-opacity duration-300 ${
             mobileOpen ? "opacity-100" : "opacity-0"
           }`}
           onClick={() => setMobileOpen(false)}

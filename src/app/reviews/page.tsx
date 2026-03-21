@@ -160,7 +160,7 @@ export default function ReviewsPage() {
         {/* Hero Section */}
         <section className="bg-primary py-20 text-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl font-bold sm:text-5xl">
+            <h1 className="text-3xl font-bold sm:text-5xl">
               Відгуки клієнтів
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-white/60">

@@ -73,8 +73,8 @@ export default function ChatWidget() {
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label={isOpen ? "Закрити чат" : "Відкрити AI-асистент"}
-        className="fixed bottom-24 right-6 z-40 flex items-center justify-center
-          w-14 h-14 md:w-16 md:h-16
+        className="fixed bottom-[5.5rem] right-4 sm:bottom-24 sm:right-6 z-40 flex items-center justify-center
+          w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16
           rounded-full bg-primary text-white
           shadow-lg hover:scale-110 transition-transform duration-200"
       >
@@ -119,9 +119,9 @@ export default function ChatWidget() {
               ? "opacity-100 translate-y-0 pointer-events-auto"
               : "opacity-0 translate-y-4 pointer-events-none"
           }
-          bottom-40 right-6
-          w-[calc(100vw-3rem)] sm:w-[350px]
-          h-[400px]
+          bottom-24 right-3 sm:bottom-40 sm:right-6
+          w-[calc(100vw-1.5rem)] sm:w-[350px]
+          h-[min(400px,calc(100dvh-8rem))]
           flex flex-col
           rounded-2xl shadow-2xl overflow-hidden
           border border-border bg-white`}
