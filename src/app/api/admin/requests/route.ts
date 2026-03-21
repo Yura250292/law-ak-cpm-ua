@@ -40,8 +40,9 @@ export async function GET(request: NextRequest) {
     if (error instanceof AdminAuthError) {
       return NextResponse.json({ error: error.message }, { status: 401 });
     }
+    console.error("Admin requests error:", error);
     return NextResponse.json(
-      { error: "Помилка сервера" },
+      { error: "Помилка сервера", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

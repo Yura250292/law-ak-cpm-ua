@@ -60,6 +60,7 @@ export default function AdminDashboardPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -77,8 +78,16 @@ export default function AdminDashboardPage() {
         return;
       }
 
-      setStats(await statsRes.json());
-      setData(await requestsRes.json());
+      if (statsRes.ok) {
+        setStats(await statsRes.json());
+      }
+
+      if (requestsRes.ok) {
+        setData(await requestsRes.json());
+      } else {
+        const errData = await requestsRes.json().catch(() => ({}));
+        setError(errData.details ?? errData.error ?? `Помилка сервера (${requestsRes.status})`);
+      }
     } catch {
       router.push("/admin/login");
     } finally {
@@ -143,6 +152,13 @@ export default function AdminDashboardPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Error */}
+        {error && (
+          <div className="mb-6 px-5 py-3 rounded-xl text-sm font-medium bg-red-50 text-red-800 border border-red-200">
+            {error}
+          </div>
+        )}
+
         {/* Stats */}
         {stats && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
