@@ -26,10 +26,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY?.trim();
 
     if (!apiKey) {
-      console.warn("GEMINI_API_KEY is not set");
+      console.warn("GEMINI_API_KEY is not set or empty");
       return NextResponse.json({
         message:
           "Вибачте, AI-асистент тимчасово недоступний. Будь ласка, зверніться через Telegram або запишіться на консультацію.",
@@ -70,10 +70,11 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ message: text });
   } catch (error) {
-    console.error("Chat API error:", error);
+    const errMsg = error instanceof Error ? error.message : String(error);
+    console.error("Chat API error:", errMsg, error);
     return NextResponse.json({
       message:
-        "Вибачте, сталася помилка. Спробуйте ще раз або зверніться напряму через Telegram чи запишіться на консультацію.",
+        `Вибачте, сталася помилка при зверненні до AI. Будь ласка, спробуйте ще раз пізніше або зверніться напряму через Telegram чи запишіться на консультацію.\n\nТехнічна інформація: ${errMsg}`,
     });
   }
 }
