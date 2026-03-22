@@ -13,14 +13,23 @@ function getGenAI() {
   return new GoogleGenerativeAI(apiKey);
 }
 
+interface ContentPart {
+  text?: string;
+  inlineData?: { mimeType: string; data: string };
+}
+
 async function callAI(prompt: string): Promise<string> {
+  return callAIMultimodal([{ text: prompt }]);
+}
+
+async function callAIMultimodal(parts: ContentPart[]): Promise<string> {
   const genAI = getGenAI();
   let lastError: Error | null = null;
 
   for (const modelName of MODELS) {
     try {
       const model = genAI.getGenerativeModel({ model: modelName });
-      const result = await model.generateContent(prompt);
+      const result = await model.generateContent(parts);
       const text = result.response.text();
       if (!text?.trim()) throw new Error("Empty response");
       return text;
@@ -72,21 +81,49 @@ const CASE_ANALYSIS_SYSTEM = `Ти — висококваліфікований 
    - Якщо є сумніви — краще напиши "рекомендую перевірити" ніж видати помилкове посилання`;
 
 /**
- * Analyze a legal case document.
+ * Analyze a legal case with images (multimodal).
+ * Images are sent to Gemini for OCR + analysis.
  */
-export async function analyzeLegalCase(documentText: string): Promise<string> {
-  const prompt = `${CASE_ANALYSIS_SYSTEM}
+export async function analyzeLegalCaseWithImages(params: {
+  documentText: string;
+  images: { mimeType: string; base64: string; fileName: string }[];
+}): Promise<string> {
+  const { documentText, images } = params;
 
-═══════════════════════════════════════════════
-ЗАВДАННЯ: Проаналізуй наступний юридичний документ / справу
-═══════════════════════════════════════════════
+  const parts: ContentPart[] = [];
 
-ТЕКСТ ДОКУМЕНТА:
----
-${documentText.slice(0, 30000)}
----
+  // System prompt + text
+  let textPrompt = CASE_ANALYSIS_SYSTEM + "\n\n";
+  textPrompt += "═══════════════════════════════════════════════\n";
+  textPrompt += "ЗАВДАННЯ: Проаналізуй юридичний документ / справу\n";
+  textPrompt += "═══════════════════════════════════════════════\n\n";
 
-Надай структурований аналіз:
+  if (images.length > 0) {
+    textPrompt += `До справи додано ${images.length} фото/зображень документів. Уважно прочитай текст на кожному зображенні та використай його для аналізу.\n\n`;
+  }
+
+  if (documentText.trim()) {
+    textPrompt += "ТЕКСТ ДОКУМЕНТА:\n---\n" + documentText.slice(0, 25000) + "\n---\n\n";
+  }
+
+  textPrompt += ANALYSIS_INSTRUCTIONS;
+
+  parts.push({ text: textPrompt });
+
+  // Add images
+  for (const img of images) {
+    parts.push({
+      inlineData: {
+        mimeType: img.mimeType,
+        data: img.base64,
+      },
+    });
+  }
+
+  return callAIMultimodal(parts);
+}
+
+const ANALYSIS_INSTRUCTIONS = `Надай структурований аналіз:
 
 ## 1. РЕЗЮМЕ СПРАВИ
 Короткий виклад суті справи (3-5 речень).
@@ -137,6 +174,23 @@ ${documentText.slice(0, 30000)}
 - Законодавство: https://zakon.rada.gov.ua/
 - Реєстр судових рішень: https://reyestr.court.gov.ua/
 - Конкретні посилання на статті законів (zakon.rada.gov.ua/laws/show/...)`;
+
+/**
+ * Analyze a legal case document (text only).
+ */
+export async function analyzeLegalCase(documentText: string): Promise<string> {
+  const prompt = `${CASE_ANALYSIS_SYSTEM}
+
+═══════════════════════════════════════════════
+ЗАВДАННЯ: Проаналізуй наступний юридичний документ / справу
+═══════════════════════════════════════════════
+
+ТЕКСТ ДОКУМЕНТА:
+---
+${documentText.slice(0, 30000)}
+---
+
+${ANALYSIS_INSTRUCTIONS}`;
 
   return callAI(prompt);
 }
