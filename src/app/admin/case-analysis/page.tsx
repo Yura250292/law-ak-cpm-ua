@@ -13,10 +13,15 @@ export default function CaseAnalysisPage() {
   const router = useRouter();
 
   // Upload state
+  const [lawyerTask, setLawyerTask] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [pastedText, setPastedText] = useState("");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+
+  // Document generation state
+  const [generatingDoc, setGeneratingDoc] = useState(false);
+  const [generatedDoc, setGeneratedDoc] = useState("");
 
   // Analysis state
   const [analysis, setAnalysis] = useState("");
@@ -59,6 +64,9 @@ export default function CaseAnalysisPage() {
 
     try {
       const fd = new FormData();
+      if (lawyerTask.trim()) {
+        fd.append("lawyerTask", lawyerTask.trim());
+      }
       for (const f of files) {
         fd.append("files", f);
       }
@@ -107,7 +115,9 @@ export default function CaseAnalysisPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          caseContext,
+          caseContext: lawyerTask
+            ? `ЗАВДАННЯ АДВОКАТА: ${lawyerTask}\n\n${caseContext}`
+            : caseContext,
           analysisResult: analysis,
           chatHistory: [...chatMessages, userMsg],
           question: q,
@@ -137,8 +147,46 @@ export default function CaseAnalysisPage() {
     }
   }, [chatInput, chatLoading, caseContext, analysis, chatMessages]);
 
+  // ── Generate document ──
+  async function handleGenerateDocument(docType: string) {
+    setGeneratingDoc(true);
+    setGeneratedDoc("");
+
+    try {
+      const res = await fetch("/api/admin/case-analysis/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          caseContext,
+          analysisResult: analysis,
+          chatHistory: [],
+          question: `Сформуй повний текст процесуального документа: "${docType}".
+
+Вимоги:
+1. Документ має бути ПОВНИМ і ГОТОВИМ до подання — зі всіма реквізитами
+2. Використай ВСІ дані сторін та обставини з матеріалів справи
+3. Структура: шапка (суд, сторони) → заголовок → описова частина → мотивувальна частина → прохальна частина → додатки → дата, підпис
+4. Посилайся тільки на реальні статті законів [ТОЧНО]
+5. Формат: готовий юридичний документ українською мовою
+6. НЕ додавай коментарів — тільки текст документа`,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Помилка");
+      setGeneratedDoc(data.answer);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Помилка формування документа"
+      );
+    } finally {
+      setGeneratingDoc(false);
+    }
+  }
+
   // ── Reset ──
   function handleReset() {
+    setLawyerTask("");
     setFiles([]);
     setPastedText("");
     setAnalysis("");
@@ -146,6 +194,7 @@ export default function CaseAnalysisPage() {
     setChatMessages([]);
     setFileName("");
     setError("");
+    setGeneratedDoc("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
@@ -208,14 +257,32 @@ export default function CaseAnalysisPage() {
         {/* ══════ UPLOAD PHASE ══════ */}
         {!hasAnalysis && !uploading && (
           <div className="max-w-2xl mx-auto space-y-6 mt-8">
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <h1 className="text-2xl font-bold text-primary mb-2">
                 Аналіз справи
               </h1>
               <p className="text-muted text-sm">
-                Завантажте документ або вставте текст — AI-помічник проаналізує
-                справу, знайде ключові моменти та запропонує стратегію
+                Опишіть задачу, завантажте документи — AI-помічник проаналізує
+                та запропонує стратегію вирішення
               </p>
+            </div>
+
+            {/* Lawyer task / instruction */}
+            <div className="bg-white rounded-2xl border border-border p-5">
+              <h3 className="text-sm font-bold text-primary mb-2">
+                Що потрібно зробити? (завдання для помічника)
+              </h3>
+              <p className="text-xs text-muted mb-3">
+                Опишіть що саме потрібно: аналіз рішення, пошук шляхів
+                вирішення, підготовка документа, хронологія кроків тощо
+              </p>
+              <textarea
+                value={lawyerTask}
+                onChange={(e) => setLawyerTask(e.target.value)}
+                rows={4}
+                className="w-full px-4 py-3 rounded-xl border border-border bg-surface text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition"
+                placeholder="Наприклад: Надати хронологію кроків для отримання житла від держави для особи, позбавленої батьківського піклування (20 років). Знайти відповідне законодавство та судову практику. Підготувати заяву..."
+              />
             </div>
 
             {/* File upload */}
@@ -339,9 +406,9 @@ export default function CaseAnalysisPage() {
         {/* ══════ ANALYSIS RESULTS + CHAT ══════ */}
         {hasAnalysis && (
           <div className="grid lg:grid-cols-2 gap-6">
-            {/* LEFT: Analysis results */}
-            <div className="space-y-5">
-              <div className="bg-white rounded-2xl border border-border p-6 max-h-[calc(100vh-140px)] overflow-y-auto">
+            {/* LEFT: Analysis results + Document generation */}
+            <div className="space-y-5 max-h-[calc(100vh-140px)] overflow-y-auto">
+              <div className="bg-white rounded-2xl border border-border p-6">
                 <h2 className="text-sm font-bold text-primary uppercase tracking-wide mb-4">
                   Результати аналізу
                 </h2>
@@ -349,6 +416,90 @@ export default function CaseAnalysisPage() {
                   <MarkdownRenderer text={analysis} />
                 </div>
               </div>
+
+              {/* Document generation */}
+              <div className="bg-white rounded-2xl border border-border p-5">
+                <h2 className="text-sm font-bold text-primary uppercase tracking-wide mb-3">
+                  Сформувати документ
+                </h2>
+                <p className="text-xs text-muted mb-3">
+                  На основі аналізу сформуйте процесуальний документ: позовну
+                  заяву, скаргу, клопотання, заяву про видачу судового наказу
+                  тощо
+                </p>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {[
+                    "Позовна заява",
+                    "Заява про видачу судового наказу",
+                    "Апеляційна скарга",
+                    "Касаційна скарга",
+                    "Заява про збільшення позовних вимог",
+                    "Заява про зміну предмету позову",
+                    "Заява про примусове виконання",
+                    "Клопотання",
+                    "Відзив на позов",
+                    "Заперечення",
+                  ].map((docType) => (
+                    <button
+                      key={docType}
+                      onClick={() =>
+                        handleGenerateDocument(docType)
+                      }
+                      disabled={generatingDoc}
+                      className="px-3 py-1.5 text-xs font-medium rounded-lg bg-surface border border-border text-primary hover:bg-accent hover:text-primary hover:border-accent transition disabled:opacity-40"
+                    >
+                      {docType}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Або введіть свій тип документа..."
+                    className="flex-1 h-10 px-4 rounded-xl border border-border bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-accent transition"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const val = (e.target as HTMLInputElement).value.trim();
+                        if (val) {
+                          handleGenerateDocument(val);
+                          (e.target as HTMLInputElement).value = "";
+                        }
+                      }
+                    }}
+                    disabled={generatingDoc}
+                  />
+                </div>
+                {generatingDoc && (
+                  <div className="flex items-center gap-2 mt-3 text-sm text-muted">
+                    <div className="animate-spin h-4 w-4 border-2 border-accent border-t-transparent rounded-full" />
+                    Формування документа...
+                  </div>
+                )}
+              </div>
+
+              {/* Generated document */}
+              {generatedDoc && (
+                <div className="bg-white rounded-2xl border border-border p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-sm font-bold text-primary uppercase tracking-wide">
+                      Сформований документ
+                    </h2>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          generatedDoc.replace(/\*\*/g, "")
+                        );
+                      }}
+                      className="px-3 py-1 text-xs font-medium rounded-lg bg-surface border border-border hover:bg-accent hover:border-accent transition"
+                    >
+                      Копіювати
+                    </button>
+                  </div>
+                  <div className="prose prose-sm max-w-none">
+                    <MarkdownRenderer text={generatedDoc} />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* RIGHT: Chat */}

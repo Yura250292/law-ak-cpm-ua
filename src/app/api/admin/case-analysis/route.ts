@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
     await requireAdmin();
 
     const formData = await request.formData();
+    const lawyerTask = formData.get("lawyerTask") as string | null;
     const pastedText = formData.get("text") as string | null;
 
     // Collect all files
@@ -103,9 +104,13 @@ export async function POST(request: NextRequest) {
       analysis = await analyzeLegalCaseWithImages({
         documentText: documentText.trim(),
         images,
+        lawyerTask: lawyerTask?.trim() ?? "",
       });
     } else {
-      analysis = await analyzeLegalCase(documentText.trim());
+      analysis = await analyzeLegalCase(
+        documentText.trim(),
+        lawyerTask?.trim() ?? ""
+      );
     }
 
     const displayName =
