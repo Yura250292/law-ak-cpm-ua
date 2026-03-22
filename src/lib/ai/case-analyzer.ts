@@ -3,7 +3,7 @@
  * Extracts key points, finds relevant law, suggests strategy.
  * Uses ONLY real Ukrainian legislation — never fabricates.
  */
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, type Part } from "@google/generative-ai";
 
 const MODELS = ["gemini-2.5-flash", "gemini-2.0-flash"];
 
@@ -13,16 +13,11 @@ function getGenAI() {
   return new GoogleGenerativeAI(apiKey);
 }
 
-interface ContentPart {
-  text?: string;
-  inlineData?: { mimeType: string; data: string };
-}
-
 async function callAI(prompt: string): Promise<string> {
   return callAIMultimodal([{ text: prompt }]);
 }
 
-async function callAIMultimodal(parts: ContentPart[]): Promise<string> {
+async function callAIMultimodal(parts: Part[]): Promise<string> {
   const genAI = getGenAI();
   let lastError: Error | null = null;
 
@@ -90,7 +85,7 @@ export async function analyzeLegalCaseWithImages(params: {
 }): Promise<string> {
   const { documentText, images } = params;
 
-  const parts: ContentPart[] = [];
+  const parts: Part[] = [];
 
   // System prompt + text
   let textPrompt = CASE_ANALYSIS_SYSTEM + "\n\n";
