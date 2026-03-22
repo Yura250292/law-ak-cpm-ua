@@ -13,7 +13,7 @@ export default function CaseAnalysisPage() {
   const router = useRouter();
 
   // Upload state
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [pastedText, setPastedText] = useState("");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -35,10 +35,20 @@ export default function CaseAnalysisPage() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
 
+  // ── Add files ──
+  function addFiles(newFiles: FileList | File[]) {
+    const arr = Array.from(newFiles);
+    setFiles((prev) => [...prev, ...arr]);
+  }
+
+  function removeFile(index: number) {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  }
+
   // ── Upload & Analyze ──
   async function handleAnalyze() {
-    if (!file && !pastedText.trim()) {
-      setError("Завантажте файл або вставте текст справи");
+    if (files.length === 0 && !pastedText.trim()) {
+      setError("Завантажте файли, фото або вставте текст справи");
       return;
     }
 
@@ -49,9 +59,10 @@ export default function CaseAnalysisPage() {
 
     try {
       const fd = new FormData();
-      if (file) {
-        fd.append("file", file);
-      } else {
+      for (const f of files) {
+        fd.append("files", f);
+      }
+      if (pastedText.trim()) {
         fd.append("text", pastedText);
       }
 
@@ -127,7 +138,7 @@ export default function CaseAnalysisPage() {
 
   // ── Reset ──
   function handleReset() {
-    setFile(null);
+    setFiles([]);
     setPastedText("");
     setAnalysis("");
     setCaseContext("");
@@ -140,11 +151,16 @@ export default function CaseAnalysisPage() {
   // ── File drag & drop ──
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
-    const f = e.dataTransfer.files[0];
-    if (f) setFile(f);
+    if (e.dataTransfer.files.length > 0) {
+      addFiles(e.dataTransfer.files);
+    }
   }
 
   const hasAnalysis = !!analysis;
+  const imageCount = files.filter((f) =>
+    /\.(jpg|jpeg|png|webp|heic|heif)$/i.test(f.name)
+  ).length;
+  const docCount = files.length - imageCount;
 
   return (
     <div className="min-h-screen bg-surface">
@@ -211,27 +227,69 @@ export default function CaseAnalysisPage() {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".pdf,.docx,.doc,.txt"
+                accept=".pdf,.docx,.doc,.txt,.jpg,.jpeg,.png,.webp,.heic,.heif"
+                multiple
                 className="hidden"
-                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                onChange={(e) => {
+                  if (e.target.files && e.target.files.length > 0) {
+                    addFiles(e.target.files);
+                  }
+                }}
               />
-              <div className="text-4xl mb-3">
-                {file ? "&#128196;" : "&#128193;"}
-              </div>
-              {file ? (
-                <div>
-                  <p className="font-medium text-primary">{file.name}</p>
-                  <p className="text-xs text-muted mt-1">
-                    {(file.size / 1024).toFixed(0)} KB
+              {files.length > 0 ? (
+                <div className="text-left">
+                  <p className="font-medium text-primary text-center mb-3">
+                    {files.length} файл(ів) обрано
+                    {imageCount > 0 && ` (${imageCount} фото)`}
+                  </p>
+                  <div className="space-y-2 max-h-[200px] overflow-y-auto">
+                    {files.map((f, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between bg-surface rounded-lg px-3 py-2"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-sm shrink-0">
+                            {/\.(jpg|jpeg|png|webp|heic|heif)$/i.test(f.name)
+                              ? "\uD83D\uDDBC\uFE0F"
+                              : "\uD83D\uDCC4"}
+                          </span>
+                          <span className="text-sm text-primary truncate">
+                            {f.name}
+                          </span>
+                          <span className="text-xs text-muted shrink-0">
+                            {(f.size / 1024).toFixed(0)} KB
+                          </span>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeFile(i);
+                          }}
+                          className="text-red-400 hover:text-red-600 text-sm shrink-0 ml-2"
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted text-center mt-3">
+                    Натисніть щоб додати ще файли
                   </p>
                 </div>
               ) : (
                 <div>
                   <p className="font-medium text-primary">
-                    Перетягніть файл сюди або натисніть для вибору
+                    Перетягніть файли сюди або натисніть для вибору
                   </p>
-                  <p className="text-xs text-muted mt-1">
-                    Підтримуються: PDF, DOCX, DOC, TXT
+                  <p className="text-xs text-muted mt-2">
+                    Документи: PDF, DOCX, DOC, TXT
+                  </p>
+                  <p className="text-xs text-muted">
+                    Фото документів: JPG, PNG, WEBP, HEIC
+                  </p>
+                  <p className="text-xs text-accent font-medium mt-2">
+                    Можна завантажити кілька файлів одночасно
                   </p>
                 </div>
               )}
@@ -256,7 +314,7 @@ export default function CaseAnalysisPage() {
             {/* Analyze button */}
             <button
               onClick={handleAnalyze}
-              disabled={!file && !pastedText.trim()}
+              disabled={files.length === 0 && !pastedText.trim()}
               className="w-full h-14 bg-accent text-primary font-bold text-base rounded-xl hover:bg-accent-hover hover:shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
             >
               Аналізувати справу
