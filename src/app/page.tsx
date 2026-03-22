@@ -14,9 +14,27 @@ import { generalFAQ } from "@/lib/faq-data";
 
 export const revalidate = 60;
 
+const serviceIcons = {
+  divorce: (
+    <svg className="h-6 w-6 text-primary/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+    </svg>
+  ),
+  alimony: (
+    <svg className="h-6 w-6 text-primary/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+    </svg>
+  ),
+  damages: (
+    <svg className="h-6 w-6 text-primary/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
+    </svg>
+  ),
+};
+
 const services = [
   {
-    icon: "📝",
+    icon: serviceIcons.divorce,
     title: "Розірвання шлюбу",
     description:
       "Підготовка позовної заяви про розірвання шлюбу з урахуванням усіх обставин справи.",
@@ -24,7 +42,7 @@ const services = [
     slug: "pozov-pro-rozirvannnya-shlyubu",
   },
   {
-    icon: "👶",
+    icon: serviceIcons.alimony,
     title: "Стягнення аліментів",
     description:
       "Документи для стягнення аліментів на утримання дитини або іншого члена сім'ї.",
@@ -32,7 +50,7 @@ const services = [
     slug: "pozov-pro-stygnennya-alimentiv",
   },
   {
-    icon: "⚖️",
+    icon: serviceIcons.damages,
     title: "Відшкодування шкоди",
     description:
       "Позовна заява про відшкодування матеріальної або моральної шкоди.",
@@ -63,10 +81,38 @@ const steps = [
 ];
 
 const trustBadges = [
-  { icon: "🛡️", label: "Захист даних" },
-  { icon: "⚡", label: "Швидка підготовка" },
-  { icon: "📄", label: "Відповідність законодавству" },
-  { icon: "✅", label: "Гарантія якості" },
+  {
+    label: "Захист даних",
+    icon: (
+      <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Швидка підготовка",
+    icon: (
+      <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Відповідність законодавству",
+    icon: (
+      <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Гарантія якості",
+    icon: (
+      <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.745 3.745 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+      </svg>
+    ),
+  },
 ];
 
 export default function HomePage() {
@@ -116,95 +162,90 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Right column — Themis & document templates */}
+              {/* Right column — Premium document showcase */}
               <div className="animate-fade-in-up-delay-2 relative flex items-center justify-center">
-                <div className="relative h-[480px] w-full overflow-hidden rounded-3xl bg-surface">
-                  {/* Background decorations */}
-                  <div className="absolute -right-8 -top-8 h-48 w-48 rounded-full bg-accent/8 blur-2xl animate-gentle-pulse" />
-                  <div className="absolute -bottom-8 -left-8 h-40 w-40 rounded-full bg-accent/5 blur-xl animate-gentle-pulse" />
-
-                  {/* Themis SVG */}
-                  <div className="absolute left-1/2 top-4 -translate-x-1/2 animate-scale-in">
-                    <svg width="120" height="160" viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-lg">
-                      {/* Head */}
-                      <circle cx="60" cy="22" r="14" fill="#0B0B0B"/>
-                      {/* Blindfold */}
-                      <rect x="44" y="18" width="32" height="6" rx="3" fill="#FFD600"/>
-                      {/* Body */}
-                      <path d="M52 36 L60 90 L68 36" fill="#0B0B0B"/>
-                      <path d="M48 90 L60 90 L72 90 L76 145 L44 145 Z" fill="#0B0B0B"/>
-                      {/* Arms holding scales */}
-                      <line x1="60" y1="44" x2="20" y2="54" stroke="#0B0B0B" strokeWidth="3" strokeLinecap="round"/>
-                      <line x1="60" y1="44" x2="100" y2="54" stroke="#0B0B0B" strokeWidth="3" strokeLinecap="round"/>
-                      {/* Left scale */}
-                      <line x1="20" y1="54" x2="20" y2="72" stroke="#FFD600" strokeWidth="1.5"/>
-                      <path d="M10 72 Q20 82 30 72" fill="none" stroke="#FFD600" strokeWidth="2"/>
-                      <ellipse cx="20" cy="73" rx="10" ry="3" fill="#FFD600" opacity="0.3"/>
-                      {/* Right scale */}
-                      <line x1="100" y1="54" x2="100" y2="68" stroke="#FFD600" strokeWidth="1.5"/>
-                      <path d="M90 68 Q100 78 110 68" fill="none" stroke="#FFD600" strokeWidth="2"/>
-                      <ellipse cx="100" cy="69" rx="10" ry="3" fill="#FFD600" opacity="0.3"/>
-                      {/* Sword */}
-                      <line x1="60" y1="38" x2="60" y2="2" stroke="#FFD600" strokeWidth="2"/>
-                      <line x1="54" y1="10" x2="66" y2="10" stroke="#FFD600" strokeWidth="2" strokeLinecap="round"/>
+                <div className="relative w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B0B0B] to-[#1A1A1A] p-6 sm:p-8">
+                  {/* Abstract legal background patterns */}
+                  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                    {/* Scales of justice watermark */}
+                    <svg className="absolute -right-6 -top-6 opacity-[0.04]" width="200" height="200" viewBox="0 0 200 200" fill="none" stroke="white" strokeWidth="1.5">
+                      <line x1="100" y1="20" x2="100" y2="180" />
+                      <line x1="60" y1="170" x2="140" y2="170" />
+                      <line x1="100" y1="40" x2="40" y2="60" />
+                      <line x1="100" y1="40" x2="160" y2="60" />
+                      <path d="M25 60 Q40 90 55 60" />
+                      <path d="M145 60 Q160 90 175 60" />
                     </svg>
+                    {/* Column pillars */}
+                    <svg className="absolute -left-4 bottom-0 opacity-[0.03]" width="120" height="280" viewBox="0 0 120 280" fill="none" stroke="white" strokeWidth="1">
+                      <rect x="10" y="20" width="8" height="240" />
+                      <rect x="35" y="20" width="8" height="240" />
+                      <rect x="60" y="20" width="8" height="240" />
+                      <rect x="0" y="10" width="80" height="10" rx="2" />
+                      <rect x="0" y="260" width="80" height="10" rx="2" />
+                    </svg>
+                    {/* Geometric lines */}
+                    <svg className="absolute right-10 bottom-10 opacity-[0.05]" width="100" height="100" viewBox="0 0 100 100" fill="none" stroke="white" strokeWidth="0.5">
+                      <line x1="0" y1="0" x2="100" y2="100" />
+                      <line x1="20" y1="0" x2="100" y2="80" />
+                      <line x1="40" y1="0" x2="100" y2="60" />
+                      <line x1="0" y1="20" x2="80" y2="100" />
+                      <line x1="0" y1="40" x2="60" y2="100" />
+                    </svg>
+                    {/* Subtle gradient glows */}
+                    <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-accent/[0.06] blur-3xl" />
+                    <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-accent/[0.04] blur-3xl" />
                   </div>
 
-                  {/* Floating document template cards */}
-                  <div className="absolute left-3 top-[170px] animate-scale-in-delay-1">
-                    <div className="animate-float group w-[140px] rounded-xl border border-border bg-white p-3 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
-                      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10">
-                        <span className="text-base">📝</span>
+                  {/* Document cards grid */}
+                  <div className="relative grid grid-cols-2 gap-4">
+                    {/* Card: Позовна заява */}
+                    <div className="group cursor-pointer rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]">
+                      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
+                        <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
                       </div>
-                      <p className="text-xs font-semibold text-primary leading-tight">Позовна заява</p>
-                      <p className="mt-1 text-[10px] text-muted">Шаблон</p>
+                      <p className="text-sm font-semibold text-white/90">Позовна заява</p>
+                      <p className="mt-1 text-xs text-white/40">Шаблон</p>
                     </div>
-                  </div>
 
-                  <div className="absolute right-3 top-[155px] animate-scale-in-delay-2">
-                    <div className="animate-float-delay-1 group w-[140px] rounded-xl border border-border bg-white p-3 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
-                      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
-                        <span className="text-base">📋</span>
+                    {/* Card: Скарга */}
+                    <div className="group cursor-pointer rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]">
+                      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
+                        <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H6m12 10.5H6a2.25 2.25 0 01-2.25-2.25V6.108c0-1.135.845-2.098 1.976-2.192a48.424 48.424 0 011.123-.08M15.75 18.75a3 3 0 01.954-2.194" />
+                        </svg>
                       </div>
-                      <p className="text-xs font-semibold text-primary leading-tight">Скарга</p>
-                      <p className="mt-1 text-[10px] text-muted">Зразок</p>
+                      <p className="text-sm font-semibold text-white/90">Скарга</p>
+                      <p className="mt-1 text-xs text-white/40">Зразок</p>
                     </div>
-                  </div>
 
-                  <div className="absolute left-[15%] bottom-[85px] animate-scale-in-delay-2">
-                    <div className="animate-float-delay-2 group w-[140px] rounded-xl border border-border bg-white p-3 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
-                      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-green-50">
-                        <span className="text-base">⚖️</span>
+                    {/* Card: Договір */}
+                    <div className="group cursor-pointer rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]">
+                      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
+                        <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+                        </svg>
                       </div>
-                      <p className="text-xs font-semibold text-primary leading-tight">Договір</p>
-                      <p className="mt-1 text-[10px] text-muted">Шаблон</p>
+                      <p className="text-sm font-semibold text-white/90">Договір</p>
+                      <p className="mt-1 text-xs text-white/40">Шаблон</p>
                     </div>
-                  </div>
 
-                  <div className="absolute right-[10%] bottom-[70px] animate-scale-in-delay-3">
-                    <div className="animate-float group w-[140px] rounded-xl border border-border bg-white p-3 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
-                      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50">
-                        <span className="text-base">🏛️</span>
+                    {/* Card: Заява до суду */}
+                    <div className="group cursor-pointer rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]">
+                      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
+                        <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+                        </svg>
                       </div>
-                      <p className="text-xs font-semibold text-primary leading-tight">Заява до суду</p>
-                      <p className="mt-1 text-[10px] text-muted">Зразок</p>
+                      <p className="text-sm font-semibold text-white/90">Заява до суду</p>
+                      <p className="mt-1 text-xs text-white/40">Зразок</p>
                     </div>
                   </div>
 
                   {/* Bottom accent bar */}
-                  <div className="absolute bottom-0 left-0 right-0 h-1.5 animate-shimmer rounded-b-3xl" />
-
-                  {/* Decorative scales of justice watermark */}
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-[0.06]">
-                    <svg width="80" height="50" viewBox="0 0 80 50" fill="currentColor">
-                      <rect x="38" y="0" width="4" height="50" rx="2"/>
-                      <rect x="20" y="48" width="40" height="4" rx="2"/>
-                      <line x1="40" y1="10" x2="10" y2="18" stroke="currentColor" strokeWidth="3"/>
-                      <line x1="40" y1="10" x2="70" y2="18" stroke="currentColor" strokeWidth="3"/>
-                      <circle cx="10" cy="22" r="8"/>
-                      <circle cx="70" cy="22" r="8"/>
-                    </svg>
-                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 h-1 animate-shimmer rounded-b-3xl" />
                 </div>
               </div>
             </div>
@@ -218,9 +259,9 @@ export default function HomePage() {
               {trustBadges.map((badge) => (
                 <div
                   key={badge.label}
-                  className="flex items-center gap-2 text-sm text-muted"
+                  className="flex items-center gap-2.5 text-sm text-muted"
                 >
-                  <span className="text-lg">{badge.icon}</span>
+                  {badge.icon}
                   <span>{badge.label}</span>
                 </div>
               ))}
@@ -252,8 +293,8 @@ export default function HomePage() {
                   <Card className="h-full rounded-2xl border border-border bg-white p-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
                     <CardHeader className="p-8">
                       {/* Icon */}
-                      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-surface">
-                        <span className="text-2xl">{service.icon}</span>
+                      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-surface transition-colors duration-300 group-hover:bg-accent/10">
+                        {service.icon}
                       </div>
 
                       <CardTitle className="mb-2 text-xl font-bold text-primary">
