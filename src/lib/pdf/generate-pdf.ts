@@ -220,8 +220,10 @@ class RenderContext {
   // ── Main renderer ──
 
   renderDocument(rawText: string) {
-    // Clean page-number artifacts
-    const text = rawText.replace(/^\d+\s*\/\s*\d+$/gm, "");
+    // Clean page-number artifacts and markdown heading markers
+    const text = rawText
+      .replace(/^\d+\s*\/\s*\d+$/gm, "")
+      .replace(/^#{1,6}\s+/gm, "");       // strip markdown ### headers
     const lines = text.split("\n");
 
     let phase: "header" | "body" = "header";
@@ -232,6 +234,11 @@ class RenderContext {
       const raw = lines[i];
       const trimmed = raw.trim();
       const clean = strip(trimmed);
+
+      // ── Skip lines that should not appear in lawyer documents ──
+      if (clean.match(/^Ціна позову\s*:/i)) continue;
+      if (clean.match(/^Судовий збір\s*$/i)) continue;
+      if (clean.match(/^Ціна позову.*Судовий збір/i)) continue;
 
       // ── Empty line → spacing ──
       if (!trimmed) {
@@ -356,6 +363,14 @@ class RenderContext {
             continue;
           }
 
+          // Date of birth, address registration, other header details
+          if (clean.match(/^(Дата народження|Адреса реєстрації|Адреса проживання|Місце проживання|кв\.)\s*[,:]/i) ||
+              clean.match(/^кв\.\s*\d/i)) {
+            this.print(clean, { size: SZ_SMALL, align: "right", maxW: headerW });
+            this.space(0.3);
+            continue;
+          }
+
           // Phone
           if (clean.match(/^тел\.|^\+38|^телефон/i)) {
             this.print(clean, { size: SZ_SMALL, align: "right", maxW: headerW });
@@ -412,11 +427,19 @@ class RenderContext {
 
       // ════════════════ BODY PHASE ════════════════
 
-      // Section headers: ПРОШУ:, Додатки:
-      if (clean.match(/^(ПРОШУ|ПРОСИМО|Додатки|ДОДАТКИ|Правові підстави|ПРАВОВІ ПІДСТАВИ)\s*:?\s*$/i)) {
+      // Section headers: ПРОШУ:, Додатки:, Правові підстави
+      if (clean.match(/^(ПРОШУ|ПРОСИМО|Додатки|ДОДАТКИ)\s*:?\s*$/i)) {
         this.space(6);
         this.print(clean, { size: SZ_SECTION, bold: true });
         this.space(3);
+        continue;
+      }
+
+      // Sub-section headers: Правові підстави позову, Обставини справи
+      if (clean.match(/^(Правові підстави|Обставини справи|Фактичні обставини|Обґрунтування позову)/i) && clean.length < 60) {
+        this.space(4);
+        this.print(clean, { size: SZ_BODY, bold: true });
+        this.space(2);
         continue;
       }
 
