@@ -200,48 +200,84 @@ export default function HomePage() {
                   {/* Document cards grid */}
                   <div className="relative grid grid-cols-2 gap-4">
                     {/* Card: Позовна заява */}
-                    <div className="group cursor-pointer rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]">
+                    <a
+                      href="/templates/pozovna-zayava-zrazok.pdf"
+                      download
+                      className="group rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]"
+                    >
                       <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
                         <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                         </svg>
                       </div>
                       <p className="text-sm font-semibold text-white/90">Позовна заява</p>
-                      <p className="mt-1 text-xs text-white/40">Шаблон</p>
-                    </div>
+                      <div className="mt-2 flex items-center gap-1.5 text-xs text-white/40 transition-colors duration-300 group-hover:text-accent/70">
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        Завантажити зразок
+                      </div>
+                    </a>
 
                     {/* Card: Скарга */}
-                    <div className="group cursor-pointer rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]">
+                    <a
+                      href="/templates/skarga-zrazok.pdf"
+                      download
+                      className="group rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]"
+                    >
                       <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
                         <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H6m12 10.5H6a2.25 2.25 0 01-2.25-2.25V6.108c0-1.135.845-2.098 1.976-2.192a48.424 48.424 0 011.123-.08M15.75 18.75a3 3 0 01.954-2.194" />
                         </svg>
                       </div>
                       <p className="text-sm font-semibold text-white/90">Скарга</p>
-                      <p className="mt-1 text-xs text-white/40">Зразок</p>
-                    </div>
+                      <div className="mt-2 flex items-center gap-1.5 text-xs text-white/40 transition-colors duration-300 group-hover:text-accent/70">
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        Завантажити зразок
+                      </div>
+                    </a>
 
                     {/* Card: Договір */}
-                    <div className="group cursor-pointer rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]">
+                    <a
+                      href="/templates/dogovir-zrazok.pdf"
+                      download
+                      className="group rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]"
+                    >
                       <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
                         <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
                         </svg>
                       </div>
                       <p className="text-sm font-semibold text-white/90">Договір</p>
-                      <p className="mt-1 text-xs text-white/40">Шаблон</p>
-                    </div>
+                      <div className="mt-2 flex items-center gap-1.5 text-xs text-white/40 transition-colors duration-300 group-hover:text-accent/70">
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        Завантажити зразок
+                      </div>
+                    </a>
 
                     {/* Card: Заява до суду */}
-                    <div className="group cursor-pointer rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]">
+                    <a
+                      href="/templates/zayava-do-sudu-zrazok.pdf"
+                      download
+                      className="group rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]"
+                    >
                       <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
                         <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
                         </svg>
                       </div>
                       <p className="text-sm font-semibold text-white/90">Заява до суду</p>
-                      <p className="mt-1 text-xs text-white/40">Зразок</p>
-                    </div>
+                      <div className="mt-2 flex items-center gap-1.5 text-xs text-white/40 transition-colors duration-300 group-hover:text-accent/70">
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        Завантажити зразок
+                      </div>
+                    </a>
                   </div>
 
                   {/* Bottom accent bar */}
