@@ -192,46 +192,74 @@ ${ANALYSIS_INSTRUCTIONS}`;
 
 /**
  * Chat with AI about a case — follow-up questions.
+ * Receives BOTH the original document AND the analysis results for full context.
  */
 export async function chatAboutCase(params: {
   caseContext: string;
+  analysisResult: string;
   chatHistory: { role: "user" | "assistant"; text: string }[];
   question: string;
 }): Promise<string> {
-  const { caseContext, chatHistory, question } = params;
+  const { caseContext, analysisResult, chatHistory, question } = params;
 
   const historyText = chatHistory
-    .slice(-10) // last 10 messages for context
+    .slice(-10)
     .map((m) => `${m.role === "user" ? "АДВОКАТ" : "ПОМІЧНИК"}: ${m.text}`)
     .join("\n\n");
 
   const prompt = `${CASE_ANALYSIS_SYSTEM}
 
-═══ КОНТЕКСТ СПРАВИ ═══
-${caseContext.slice(0, 15000)}
+═══ ТВОЯ РОЛЬ В ЦЬОМУ ЧАТІ ═══
 
-═══ ПОПЕРЕДНІЙ ДІАЛОГ ═══
+Ти — особистий юридичний помічник адвоката. Ти ПОВНІСТЮ володієш контекстом справи, яку адвокат завантажив для аналізу. Ти вже проаналізував цю справу і знаєш усі деталі. Адвокат зараз радиться з тобою.
+
+ВАЖЛИВО:
+- Ти ЗНАЄШ цю справу — відповідай конкретно, з прив'язкою до фактів САМЕ ЦІЄЇ справи
+- Не давай загальних відповідей — адвокат очікує конкретику по ЙОГО справі
+- Посилайся на факти зі справи, називай сторони по імені
+- Якщо адвокат питає про судову практику — давай конкретні ключові слова для пошуку в ЄДРСР саме по цій категорії справ
+- Якщо питає про статтю кодексу — давай пряме посилання
+
+═══ ТЕКСТ ДОКУМЕНТА (СПРАВА) ═══
+${caseContext.slice(0, 20000)}
+
+═══ ТВІЙ ПОПЕРЕДНІЙ АНАЛІЗ ЦІЄЇ СПРАВИ ═══
+${analysisResult.slice(0, 15000)}
+
+═══ ПОПЕРЕДНІЙ ДІАЛОГ З АДВОКАТОМ ═══
 ${historyText || "(початок діалогу)"}
 
 ═══ ЗАПИТАННЯ АДВОКАТА ═══
 ${question}
 
-═══ ІНСТРУКЦІЇ ═══
-Відповідай як висококваліфікований помічник адвоката:
-- Давай конкретні, практичні відповіді
-- Посилайся на реальні статті законів з позначками [ТОЧНО] / [ПЕРЕВІРИТИ]
-- Якщо просять знайти судову практику — дай ключові слова для пошуку в ЄДРСР та пряме посилання: https://reyestr.court.gov.ua/
-- Якщо просять знайти статтю кодексу — дай посилання на zakon.rada.gov.ua
-- Для Кодексу адміністративного судочинства: https://zakon.rada.gov.ua/laws/show/2747-15
-- Для Цивільного кодексу: https://zakon.rada.gov.ua/laws/show/435-15
-- Для Сімейного кодексу: https://zakon.rada.gov.ua/laws/show/2947-14
-- Для ЦПК: https://zakon.rada.gov.ua/laws/show/1618-15
-- Для Кримінального кодексу: https://zakon.rada.gov.ua/laws/show/2341-14
-- Для КПК: https://zakon.rada.gov.ua/laws/show/4651-17
-- НІКОЛИ не вигадуй номери справ чи статей
-- Якщо не знаєш точну відповідь — скажи чесно і порекомендуй де шукати
-
-Відповідай українською мовою. Будь конкретним та корисним.`;
+═══ ПРАВИЛА ВІДПОВІДІ ═══
+1. Відповідай КОНКРЕТНО по цій справі, а не загально
+2. Називай сторони по імені/назві з документа
+3. Посилайся ТІЛЬКИ на реальні статті з позначками [ТОЧНО] / [ПЕРЕВІРИТИ]
+4. НІКОЛИ не вигадуй:
+   - Номери судових справ
+   - Номери статей законів
+   - Дати постанов
+   - Посилання на неіснуючі рішення
+5. Для судової практики:
+   - Давай ключові слова для пошуку в ЄДРСР: https://reyestr.court.gov.ua/
+   - Вказуй категорію справи для фільтрації
+   - Рекомендуй конкретні суди (ВС, апеляція, перша інстанція)
+6. Для статей кодексів — давай прямі посилання:
+   - Конституція: https://zakon.rada.gov.ua/laws/show/254к/96-вр
+   - Цивільний кодекс: https://zakon.rada.gov.ua/laws/show/435-15
+   - Сімейний кодекс: https://zakon.rada.gov.ua/laws/show/2947-14
+   - ЦПК: https://zakon.rada.gov.ua/laws/show/1618-15
+   - Кримінальний кодекс: https://zakon.rada.gov.ua/laws/show/2341-14
+   - КПК: https://zakon.rada.gov.ua/laws/show/4651-17
+   - КАС: https://zakon.rada.gov.ua/laws/show/2747-15
+   - Господарський кодекс: https://zakon.rada.gov.ua/laws/show/436-15
+   - ГПК: https://zakon.rada.gov.ua/laws/show/1798-12
+   - КУпАП: https://zakon.rada.gov.ua/laws/show/8073-10
+   - Закон "Про судовий збір": https://zakon.rada.gov.ua/laws/show/3674-17
+   - Закон "Про виконавче провадження": https://zakon.rada.gov.ua/laws/show/1404-19
+7. Якщо не впевнений — скажи чесно і вкажи де адвокату шукати
+8. Відповідай українською, будь конкретним і корисним`;
 
   return callAI(prompt);
 }

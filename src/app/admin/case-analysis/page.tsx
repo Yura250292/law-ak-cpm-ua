@@ -108,6 +108,7 @@ export default function CaseAnalysisPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           caseContext,
+          analysisResult: analysis,
           chatHistory: [...chatMessages, userMsg],
           question: q,
         }),
@@ -134,7 +135,7 @@ export default function CaseAnalysisPage() {
     } finally {
       setChatLoading(false);
     }
-  }, [chatInput, chatLoading, caseContext, chatMessages]);
+  }, [chatInput, chatLoading, caseContext, analysis, chatMessages]);
 
   // ── Reset ──
   function handleReset() {

@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
     await requireAdmin();
 
     const body = await request.json();
-    const { caseContext, chatHistory, question } = body;
+    const { caseContext, analysisResult, chatHistory, question } = body;
 
     if (!question?.trim()) {
       return NextResponse.json(
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!caseContext?.trim()) {
+    if (!caseContext?.trim() && !analysisResult?.trim()) {
       return NextResponse.json(
         { error: "Відсутній контекст справи" },
         { status: 400 }
@@ -24,7 +24,8 @@ export async function POST(request: NextRequest) {
     }
 
     const answer = await chatAboutCase({
-      caseContext,
+      caseContext: caseContext ?? "",
+      analysisResult: analysisResult ?? "",
       chatHistory: chatHistory ?? [],
       question: question.trim(),
     });
