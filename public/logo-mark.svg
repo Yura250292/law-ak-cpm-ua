@@ -5,12 +5,15 @@
       <stop offset="0.5" stop-color="#C9A96E"/>
       <stop offset="1" stop-color="#B8964F"/>
     </linearGradient>
+    <linearGradient id="silverBar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5F5F0"/>
+      <stop offset="1" stop-color="#C8C8C0"/>
+    </linearGradient>
   </defs>
-  <rect x="2" y="2" width="60" height="60" rx="6" fill="none" stroke="url(#goldMark)" stroke-width="1.5"/>
-  <rect x="6" y="6" width="52" height="52" rx="3" fill="none" stroke="url(#goldMark)" stroke-width="0.5" opacity="0.5"/>
-  <g fill="url(#goldMark)">
-    <rect x="18" y="14" width="4.5" height="36"/>
-    <path d="M22.5 32 L42 14 L47.5 14 L28 32 Z"/>
-    <path d="M22.5 32 L42 50 L47.5 50 L28 32 Z"/>
+  <rect x="2" y="2" width="60" height="60" rx="6" fill="none" stroke="url(#goldMark)" stroke-width="1.2" opacity="0.55"/>
+  <g>
+    <rect x="14" y="8" width="4" height="48" fill="url(#goldMark)"/>
+    <polygon points="48,8 52,8 22,56 18,56" fill="url(#goldMark)"/>
+    <rect x="20" y="46" width="22" height="2.2" fill="url(#silverBar)"/>
   </g>
 </svg>
