@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return {
-    title: `${post.title} — LAWAK`,
+    title: post.title,
     description: post.excerpt,
     openGraph: {
       title: post.title,

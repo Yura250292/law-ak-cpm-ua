@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const serviceLinks = [
@@ -16,21 +17,21 @@ const companyLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-[#111] text-white">
+    <footer className="bg-primary-dark text-white border-t border-accent/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="inline-flex items-baseline gap-0.5 mb-4">
-              <span className="text-2xl font-extrabold tracking-tight text-white">
-                LAW
-              </span>
-              <span className="relative text-2xl font-extrabold tracking-tight text-white">
-                AK
-                <span className="absolute -bottom-0.5 left-0 h-[3px] w-full bg-accent rounded-full" />
-              </span>
+            <Link href="/" className="inline-block mb-5">
+              <Image
+                src="/logo-plate.svg"
+                alt="Кабаль Анастасія Ігорівна — адвокат"
+                width={140}
+                height={168}
+                className="drop-shadow-[0_8px_24px_rgba(201,169,110,0.15)]"
+              />
             </Link>
-            <p className="text-sm text-white/50 leading-relaxed max-w-xs">
+            <p className="text-sm text-white/55 leading-relaxed max-w-xs">
               Професійна юридична допомога. Захист ваших прав та інтересів на
               найвищому рівні.
             </p>
@@ -106,7 +107,7 @@ export function Footer() {
         {/* Divider + Copyright */}
         <div className="mt-14 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-white/40">
-            &copy; 2026 LAWAK. Всі права захищені.
+            &copy; 2026 Адвокат Кабаль Анастасія Ігорівна. Всі права захищені.
           </p>
           <p className="text-xs text-white/25">
             Розробка та дизайн сайту

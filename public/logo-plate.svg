@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" fill="none">
+  <defs>
+    <linearGradient id="goldPlate" x1="0" y1="0" x2="200" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E8D5A8"/>
+      <stop offset="0.5" stop-color="#C9A96E"/>
+      <stop offset="1" stop-color="#B8964F"/>
+    </linearGradient>
+    <linearGradient id="slate" x1="0" y1="0" x2="0" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2A2A2D"/>
+      <stop offset="1" stop-color="#1C1C1E"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="200" height="240" rx="8" fill="url(#slate)"/>
+  <rect x="6" y="6" width="188" height="228" rx="5" fill="none" stroke="url(#goldPlate)" stroke-width="1" opacity="0.6"/>
+  <circle cx="14" cy="14" r="3" fill="#6B6660"/>
+  <circle cx="186" cy="14" r="3" fill="#6B6660"/>
+  <circle cx="14" cy="226" r="3" fill="#6B6660"/>
+  <circle cx="186" cy="226" r="3" fill="#6B6660"/>
+  <g fill="url(#goldPlate)">
+    <rect x="80" y="38" width="5" height="56"/>
+    <path d="M85 66 L114 38 L122 38 L93 66 Z"/>
+    <path d="M85 66 L114 94 L122 94 L93 66 Z"/>
+  </g>
+  <text x="100" y="130" font-family="Georgia, 'Cormorant Garamond', serif" font-size="15" font-weight="600" letter-spacing="1.5" fill="url(#goldPlate)" text-anchor="middle">КАБАЛЬ</text>
+  <text x="100" y="152" font-family="Georgia, 'Cormorant Garamond', serif" font-size="13" font-weight="500" letter-spacing="1" fill="url(#goldPlate)" text-anchor="middle">АНАСТАСІЯ</text>
+  <text x="100" y="172" font-family="Georgia, 'Cormorant Garamond', serif" font-size="13" font-weight="500" letter-spacing="1" fill="url(#goldPlate)" text-anchor="middle">ІГОРІВНА</text>
+  <line x1="60" y1="190" x2="140" y2="190" stroke="url(#goldPlate)" stroke-width="0.8" opacity="0.6"/>
+  <text x="100" y="210" font-family="Georgia, serif" font-size="9" letter-spacing="2" fill="url(#goldPlate)" text-anchor="middle" opacity="0.85">АДВОКАТ · ЛЬВІВ</text>
+</svg>

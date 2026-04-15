@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -39,13 +40,22 @@ export function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="group flex items-baseline gap-0.5">
-            <span className="text-2xl font-extrabold tracking-tight text-primary">
-              LAW
-            </span>
-            <span className="relative text-2xl font-extrabold tracking-tight text-primary">
-              AK
-              <span className="absolute -bottom-0.5 left-0 h-[3px] w-full bg-accent rounded-full" />
+          <Link href="/" className="group flex items-center gap-3">
+            <Image
+              src="/logo-mark.svg"
+              alt="Кабаль Анастасія — адвокат"
+              width={42}
+              height={42}
+              priority
+              className="transition-transform duration-300 group-hover:scale-105"
+            />
+            <span className="hidden sm:flex flex-col leading-tight">
+              <span className="font-display text-[15px] font-semibold tracking-wide text-primary">
+                Кабаль Анастасія
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.18em] text-muted">
+                Адвокат · Львів
+              </span>
             </span>
           </Link>
 

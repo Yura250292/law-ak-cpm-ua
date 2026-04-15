@@ -1,19 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #111111;
-  --primary: #0B0B0B;
-  --primary-light: #1a1a1a;
-  --primary-dark: #000000;
-  --accent: #FFD600;
-  --accent-hover: #f5cc00;
-  --accent-light: #fff3b0;
-  --surface: #F7F7F7;
-  --surface-dark: #EEEEEE;
-  --border: #E5E5E5;
-  --muted: #666666;
-  --muted-light: #999999;
+  --background: #FAFAF7;
+  --foreground: #1C1C1E;
+  --primary: #1C1C1E;
+  --primary-light: #2A2A2D;
+  --primary-dark: #0E0E10;
+  --accent: #C9A96E;
+  --accent-hover: #B8964F;
+  --accent-light: #E8D5A8;
+  --accent-gradient: linear-gradient(135deg, #E8D5A8 0%, #C9A96E 50%, #B8964F 100%);
+  --surface: #F2F0EA;
+  --surface-dark: #E8E5DD;
+  --border: #E4DFD3;
+  --muted: #6B6660;
+  --muted-light: #9A958C;
 }
 
 @theme inline {
@@ -32,6 +33,19 @@
   --color-muted-light: var(--muted-light);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-cormorant);
+}
+
+h1, h2 {
+  font-family: var(--font-display), Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+.text-gold-gradient {
+  background-image: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 body {

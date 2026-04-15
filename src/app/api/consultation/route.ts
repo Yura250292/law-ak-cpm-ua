@@ -49,7 +49,7 @@ export async function POST(request: Request) {
           <html lang="uk">
           <head><meta charset="UTF-8"></head>
           <body style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
-            <div style="background: #0B0B0B; color: white; padding: 24px; border-radius: 8px 8px 0 0; text-align: center;">
+            <div style="background: #1C1C1E; color: white; padding: 24px; border-radius: 8px 8px 0 0; text-align: center;">
               <h1 style="margin: 0; font-size: 22px;">Нова заявка на консультацію</h1>
             </div>
             <div style="background: #f7fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px;">

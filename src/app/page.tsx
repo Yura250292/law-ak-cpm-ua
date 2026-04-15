@@ -135,10 +135,10 @@ export default function HomePage() {
                 </div>
 
                 {/* Heading */}
-                <h1 className="animate-fade-in-up text-3xl sm:text-5xl font-bold leading-[1.1] tracking-tight text-primary lg:text-6xl">
+                <h1 className="animate-fade-in-up text-4xl sm:text-5xl font-semibold leading-[1.05] tracking-tight text-primary lg:text-6xl">
                   Професійні юридичні
                   <br />
-                  документи за хвилини
+                  <span className="text-gold-gradient italic">документи</span> за хвилини
                 </h1>
 
                 {/* Subtitle */}
@@ -164,7 +164,20 @@ export default function HomePage() {
 
               {/* Right column — Premium document showcase */}
               <div className="animate-fade-in-up-delay-2 relative flex items-center justify-center">
-                <div className="relative w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B0B0B] to-[#1A1A1A] p-6 sm:p-8">
+                <div className="relative w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#1C1C1E] via-[#2A2A2D] to-[#0E0E10] p-6 sm:p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.5)] ring-1 ring-accent/20">
+                  {/* Slate micro-texture overlay */}
+                  <div
+                    className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay"
+                    style={{
+                      backgroundImage:
+                        "repeating-linear-gradient(135deg, #ffffff 0 1px, transparent 1px 4px), repeating-linear-gradient(45deg, #ffffff 0 1px, transparent 1px 6px)",
+                    }}
+                  />
+                  {/* Corner studs (як на плитці) */}
+                  <span className="pointer-events-none absolute left-3 top-3 h-1.5 w-1.5 rounded-full bg-accent/40 ring-1 ring-accent/20" />
+                  <span className="pointer-events-none absolute right-3 top-3 h-1.5 w-1.5 rounded-full bg-accent/40 ring-1 ring-accent/20" />
+                  <span className="pointer-events-none absolute left-3 bottom-3 h-1.5 w-1.5 rounded-full bg-accent/40 ring-1 ring-accent/20" />
+                  <span className="pointer-events-none absolute right-3 bottom-3 h-1.5 w-1.5 rounded-full bg-accent/40 ring-1 ring-accent/20" />
                   {/* Abstract legal background patterns */}
                   <div className="pointer-events-none absolute inset-0 overflow-hidden">
                     {/* Scales of justice watermark */}
@@ -203,7 +216,7 @@ export default function HomePage() {
                     <a
                       href="/templates/pozovna-zayava-zrazok.pdf"
                       download
-                      className="group rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]"
+                      className="group rounded-2xl border border-accent-light/15 bg-white/[0.04] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-white/[0.08] hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]"
                     >
                       <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
                         <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
@@ -223,7 +236,7 @@ export default function HomePage() {
                     <a
                       href="/templates/skarga-zrazok.pdf"
                       download
-                      className="group rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]"
+                      className="group rounded-2xl border border-accent-light/15 bg-white/[0.04] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-white/[0.08] hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]"
                     >
                       <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
                         <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
@@ -243,7 +256,7 @@ export default function HomePage() {
                     <a
                       href="/templates/dogovir-zrazok.pdf"
                       download
-                      className="group rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]"
+                      className="group rounded-2xl border border-accent-light/15 bg-white/[0.04] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-white/[0.08] hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]"
                     >
                       <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
                         <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
@@ -263,7 +276,7 @@ export default function HomePage() {
                     <a
                       href="/templates/zayava-do-sudu-zrazok.pdf"
                       download
-                      className="group rounded-2xl border border-white/[0.08] bg-white/[0.05] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/[0.05]"
+                      className="group rounded-2xl border border-accent-light/15 bg-white/[0.04] p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-white/[0.08] hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]"
                     >
                       <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
                         <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">

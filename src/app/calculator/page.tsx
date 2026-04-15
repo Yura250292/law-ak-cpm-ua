@@ -4,7 +4,7 @@ import { Footer } from "@/components/layout/Footer";
 import CourtFeeCalculator from "@/components/CourtFeeCalculator";
 
 export const metadata: Metadata = {
-  title: "Калькулятор судового збору 2026 | LAWAK",
+  title: "Калькулятор судового збору 2026",
   description:
     "Онлайн калькулятор судового збору в Україні на 2026 рік. Розрахуйте розмір судового збору для майнових, немайнових вимог, розірвання шлюбу, аліментів, апеляційних та касаційних скарг.",
   keywords:

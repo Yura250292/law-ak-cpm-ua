@@ -59,7 +59,7 @@ export async function POST(request: Request) {
         <html lang="uk">
         <head><meta charset="UTF-8"></head>
         <body style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
-          <div style="background: #0B0B0B; color: white; padding: 24px; border-radius: 8px 8px 0 0; text-align: center;">
+          <div style="background: #1C1C1E; color: white; padding: 24px; border-radius: 8px 8px 0 0; text-align: center;">
             <h1 style="margin: 0; font-size: 22px;">Нове звернення з сайту</h1>
           </div>
           <div style="background: #f7fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px;">
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
               <tr>
                 <td style="padding: 8px 0; color: #666; vertical-align: top;">Телефон:</td>
                 <td style="padding: 8px 0;">
-                  <a href="tel:${escapeHtml(phone.trim())}" style="color: #0B0B0B; text-decoration: none;">${escapeHtml(phone.trim())}</a>
+                  <a href="tel:${escapeHtml(phone.trim())}" style="color: #1C1C1E; text-decoration: none;">${escapeHtml(phone.trim())}</a>
                 </td>
               </tr>
               ${
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
                   ? `<tr>
                 <td style="padding: 8px 0; color: #666; vertical-align: top;">Email:</td>
                 <td style="padding: 8px 0;">
-                  <a href="mailto:${escapeHtml(email.trim())}" style="color: #0B0B0B; text-decoration: none;">${escapeHtml(email.trim())}</a>
+                  <a href="mailto:${escapeHtml(email.trim())}" style="color: #1C1C1E; text-decoration: none;">${escapeHtml(email.trim())}</a>
                 </td>
               </tr>`
                   : ""
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
               <tr>
                 <td style="padding: 8px 0; color: #666; vertical-align: top;">Тема:</td>
                 <td style="padding: 8px 0;">
-                  <span style="display: inline-block; background: #FFD600; color: #0B0B0B; padding: 2px 10px; border-radius: 12px; font-size: 13px; font-weight: 600;">${escapeHtml(subjectLabel)}</span>
+                  <span style="display: inline-block; background: #C9A96E; color: #1C1C1E; padding: 2px 10px; border-radius: 12px; font-size: 13px; font-weight: 600;">${escapeHtml(subjectLabel)}</span>
                 </td>
               </tr>
               <tr>

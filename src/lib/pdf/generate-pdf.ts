@@ -70,14 +70,19 @@ export async function generateDocumentPdf(
   const ctx = new RenderContext(doc);
   ctx.renderDocument(text);
 
-  // Page numbers
+  // Page numbers + discreet attribution footer
   const total = doc.getNumberOfPages();
   for (let p = 1; p <= total; p++) {
     doc.setPage(p);
     doc.setFont(FONT, "normal");
     doc.setFontSize(SZ_PAGE);
-    doc.setTextColor(130);
-    doc.text(`${p} / ${total}`, PW / 2, PH - 12, { align: "center" });
+    doc.setTextColor(150);
+    doc.text(
+      "Адвокат Кабаль Анастасія Ігорівна  ·  +38 (095) 672-80-05",
+      ML,
+      PH - 12
+    );
+    doc.text(`${p} / ${total}`, PW - MR, PH - 12, { align: "right" });
     doc.setTextColor(0);
   }
 
