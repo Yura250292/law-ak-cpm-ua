@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -208,8 +209,10 @@ function LoginModal({ onClose }: { onClose: () => void }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
@@ -245,7 +248,9 @@ function LoginModal({ onClose }: { onClose: () => void }) {
     }
   }
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
@@ -322,6 +327,7 @@ function LoginModal({ onClose }: { onClose: () => void }) {
           </button>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
