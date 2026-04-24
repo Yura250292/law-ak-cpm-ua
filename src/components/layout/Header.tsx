@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const navLinks = [
   { href: "/", label: "Головна" },
@@ -17,6 +17,7 @@ const navLinks = [
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
   const pathname = usePathname();
 
   // Close mobile menu on route change
@@ -74,6 +75,20 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+
+            {/* Кабінет */}
+            <button
+              type="button"
+              onClick={() => setLoginOpen(true)}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-muted hover:text-primary transition-colors duration-200"
+              aria-label="Кабінет"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" />
+              </svg>
+              Кабінет
+            </button>
 
             {/* CTA */}
             <Link
@@ -155,7 +170,7 @@ export function Header() {
               </Link>
             ))}
 
-            <div className="mt-6 pt-6 border-t border-border">
+            <div className="mt-6 pt-6 border-t border-border space-y-3">
               <Link
                 href="/services"
                 onClick={() => setMobileOpen(false)}
@@ -163,10 +178,150 @@ export function Header() {
               >
                 Замовити
               </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileOpen(false);
+                  setLoginOpen(true);
+                }}
+                className="flex items-center justify-center gap-2 w-full px-5 py-3 text-sm font-medium rounded-md border border-border text-primary hover:bg-surface transition-all duration-200"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" />
+                </svg>
+                Кабінет
+              </button>
             </div>
           </div>
         </nav>
       </div>
+
+      {loginOpen && <LoginModal onClose={() => setLoginOpen(false)} />}
     </header>
+  );
+}
+
+function LoginModal({ onClose }: { onClose: () => void }) {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Помилка авторизації");
+        return;
+      }
+      onClose();
+      router.push("/admin");
+    } catch {
+      setError("Помилка з'єднання");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
+        onClick={onClose}
+      />
+      <div className="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-border p-7">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Закрити"
+          className="absolute top-3 right-3 w-8 h-8 inline-flex items-center justify-center rounded-full text-muted hover:bg-surface hover:text-primary transition"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+
+        <div className="text-center mb-5">
+          <div className="inline-flex items-baseline gap-0.5 mb-1">
+            <span className="text-2xl font-extrabold tracking-tight text-primary">LAW</span>
+            <span className="relative text-2xl font-extrabold tracking-tight text-primary">
+              AK
+              <span className="absolute -bottom-0.5 left-0 h-[3px] w-full bg-accent rounded-full" />
+            </span>
+          </div>
+          <p className="text-muted text-sm">Вхід у кабінет</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="cab-email" className="block text-sm font-medium text-primary mb-1.5">
+              Email
+            </label>
+            <input
+              id="cab-email"
+              type="email"
+              required
+              autoFocus
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full h-11 px-4 rounded-lg border border-border bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition"
+              placeholder="admin@example.com"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="cab-password" className="block text-sm font-medium text-primary mb-1.5">
+              Пароль
+            </label>
+            <input
+              id="cab-password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full h-11 px-4 rounded-lg border border-border bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition"
+              placeholder="••••••••"
+            />
+          </div>
+
+          {error && (
+            <div className="text-red-600 text-sm bg-red-50 rounded-lg px-4 py-2.5">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full h-11 bg-accent text-primary font-bold rounded-xl hover:bg-accent-hover transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+          >
+            {loading ? "Вхід..." : "Увійти"}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
