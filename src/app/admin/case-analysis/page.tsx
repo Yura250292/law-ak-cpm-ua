@@ -295,7 +295,7 @@ export default function CaseAnalysisPage() {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".pdf,.docx,.doc,.txt,.jpg,.jpeg,.png,.webp,.heic,.heif"
+                accept=".pdf,.docx,.txt,.jpg,.jpeg,.png,.webp,.heic,.heif"
                 multiple
                 className="hidden"
                 onChange={(e) => {

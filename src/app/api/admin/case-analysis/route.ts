@@ -6,7 +6,7 @@ import {
 } from "@/lib/ai/case-analyzer";
 
 const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"];
-const DOC_EXTENSIONS = [".pdf", ".docx", ".doc", ".txt"];
+const DOC_EXTENSIONS = [".pdf", ".docx", ".txt"];
 
 function isImage(name: string): boolean {
   return IMAGE_EXTENSIONS.some((ext) => name.toLowerCase().endsWith(ext));
@@ -49,21 +49,47 @@ export async function POST(request: NextRequest) {
       fileNames.push(file.name);
 
       if (isImage(fileName)) {
-        // Image file — send to Gemini as inline data
         images.push({
           mimeType: getMimeType(fileName),
           base64: buffer.toString("base64"),
           fileName: file.name,
         });
       } else if (fileName.endsWith(".pdf")) {
-        const pdfModule = await import("pdf-parse");
-        const pdfParse = (pdfModule as any).default ?? pdfModule;
-        const parsed = await pdfParse(buffer);
-        documentText += parsed.text + "\n\n";
-      } else if (fileName.endsWith(".docx") || fileName.endsWith(".doc")) {
-        const mammoth = await import("mammoth");
-        const result = await mammoth.extractRawText({ buffer });
-        documentText += result.value + "\n\n";
+        try {
+          const pdfModule = await import("pdf-parse");
+          const pdfParse = (pdfModule as any).default ?? pdfModule;
+          const parsed = await pdfParse(buffer);
+          documentText += parsed.text + "\n\n";
+        } catch (err) {
+          return NextResponse.json(
+            {
+              error: `Не вдалося прочитати PDF "${file.name}". Можливо файл пошкоджений, захищений паролем або містить тільки зображення. Спробуйте зберегти копію або завантажити як фото/JPG.`,
+              details: err instanceof Error ? err.message : String(err),
+            },
+            { status: 400 }
+          );
+        }
+      } else if (fileName.endsWith(".docx")) {
+        try {
+          const mammoth = await import("mammoth");
+          const result = await mammoth.extractRawText({ buffer });
+          documentText += result.value + "\n\n";
+        } catch (err) {
+          return NextResponse.json(
+            {
+              error: `Не вдалося прочитати DOCX "${file.name}". Файл пошкоджений або не є валідним .docx. Відкрийте його у Word/Pages і збережіть як .docx, PDF або .txt.`,
+              details: err instanceof Error ? err.message : String(err),
+            },
+            { status: 400 }
+          );
+        }
+      } else if (fileName.endsWith(".doc")) {
+        return NextResponse.json(
+          {
+            error: `Старий формат .doc не підтримується ("${file.name}"). Відкрийте файл у Word і збережіть як .docx або PDF.`,
+          },
+          { status: 400 }
+        );
       } else if (fileName.endsWith(".txt")) {
         documentText += buffer.toString("utf-8") + "\n\n";
       } else {
