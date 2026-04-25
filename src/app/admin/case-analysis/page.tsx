@@ -184,6 +184,37 @@ export default function CaseAnalysisPage() {
     }
   }
 
+  // ── Export ──
+  async function handleExport(
+    content: string,
+    format: "pdf" | "doc" | "txt",
+    title: string
+  ) {
+    try {
+      const res = await fetch("/api/admin/case-analysis/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, format, title }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? "Помилка експорту");
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const ext = format === "doc" ? "doc" : format;
+      a.download = `${title.replace(/[\\/:*?"<>|]/g, "").replace(/\s+/g, "_")}.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Помилка експорту");
+    }
+  }
+
   // ── Reset ──
   function handleReset() {
     setLawyerTask("");
@@ -409,9 +440,20 @@ export default function CaseAnalysisPage() {
             {/* LEFT: Analysis results + Document generation */}
             <div className="space-y-5 max-h-[calc(100vh-140px)] overflow-y-auto">
               <div className="bg-white rounded-2xl border border-border p-6">
-                <h2 className="text-sm font-bold text-primary uppercase tracking-wide mb-4">
-                  Результати аналізу
-                </h2>
+                <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
+                  <h2 className="text-sm font-bold text-primary uppercase tracking-wide">
+                    Результати аналізу
+                  </h2>
+                  <ExportButtons
+                    onExport={(fmt) =>
+                      handleExport(
+                        analysis,
+                        fmt,
+                        `Аналіз справи${fileName ? " - " + fileName.replace(/\.[^.]+$/, "") : ""}`
+                      )
+                    }
+                  />
+                </div>
                 <div className="prose prose-sm max-w-none">
                   <MarkdownRenderer text={analysis} />
                 </div>
@@ -480,20 +522,27 @@ export default function CaseAnalysisPage() {
               {/* Generated document */}
               {generatedDoc && (
                 <div className="bg-white rounded-2xl border border-border p-6">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
                     <h2 className="text-sm font-bold text-primary uppercase tracking-wide">
                       Сформований документ
                     </h2>
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(
-                          generatedDoc.replace(/\*\*/g, "")
-                        );
-                      }}
-                      className="px-3 py-1 text-xs font-medium rounded-lg bg-surface border border-border hover:bg-accent hover:border-accent transition"
-                    >
-                      Копіювати
-                    </button>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <ExportButtons
+                        onExport={(fmt) =>
+                          handleExport(generatedDoc, fmt, "Документ")
+                        }
+                      />
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            generatedDoc.replace(/\*\*/g, "")
+                          );
+                        }}
+                        className="px-3 py-1 text-xs font-medium rounded-lg bg-surface border border-border hover:bg-accent hover:border-accent transition"
+                      >
+                        Копіювати
+                      </button>
+                    </div>
                   </div>
                   <div className="prose prose-sm max-w-none">
                     <MarkdownRenderer text={generatedDoc} />
@@ -618,6 +667,56 @@ export default function CaseAnalysisPage() {
           </div>
         )}
       </main>
+    </div>
+  );
+}
+
+/** Download buttons: PDF, Word, TXT */
+function ExportButtons({
+  onExport,
+}: {
+  onExport: (fmt: "pdf" | "doc" | "txt") => void | Promise<void>;
+}) {
+  const [busy, setBusy] = useState<"pdf" | "doc" | "txt" | null>(null);
+
+  async function handle(fmt: "pdf" | "doc" | "txt") {
+    setBusy(fmt);
+    try {
+      await onExport(fmt);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  const btn =
+    "px-2.5 py-1 text-xs font-medium rounded-lg border border-border bg-surface hover:bg-accent hover:border-accent transition disabled:opacity-50";
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <button
+        onClick={() => handle("pdf")}
+        disabled={busy !== null}
+        className={btn}
+        title="Завантажити як PDF"
+      >
+        {busy === "pdf" ? "..." : "PDF"}
+      </button>
+      <button
+        onClick={() => handle("doc")}
+        disabled={busy !== null}
+        className={btn}
+        title="Завантажити як Word"
+      >
+        {busy === "doc" ? "..." : "Word"}
+      </button>
+      <button
+        onClick={() => handle("txt")}
+        disabled={busy !== null}
+        className={btn}
+        title="Завантажити як TXT"
+      >
+        {busy === "txt" ? "..." : "TXT"}
+      </button>
     </div>
   );
 }
