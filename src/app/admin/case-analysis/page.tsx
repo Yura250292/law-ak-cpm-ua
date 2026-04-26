@@ -67,6 +67,9 @@ export default function CaseAnalysisPage() {
   const [pastedText, setPastedText] = useState("");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [aiMode, setAiMode] = useState<"synergy" | "gemini" | "claude">(
+    "synergy"
+  );
 
   // Document generation state
   const [generatingDoc, setGeneratingDoc] = useState(false);
@@ -178,6 +181,7 @@ export default function CaseAnalysisPage() {
           lawyerTask: lawyerTask.trim() || undefined,
           text: pastedText.trim() || undefined,
           files: uploaded,
+          mode: aiMode,
         }),
       });
 
@@ -513,6 +517,61 @@ export default function CaseAnalysisPage() {
               className="w-full px-4 py-3 rounded-xl border border-border bg-white text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition"
               placeholder="Вставте текст справи, позовної заяви, рішення суду..."
             />
+
+            {/* AI mode selector */}
+            <div className="bg-white rounded-2xl border border-border p-5">
+              <h3 className="text-sm font-bold text-primary mb-1">
+                Режим AI
+              </h3>
+              <p className="text-xs text-muted mb-3">
+                Синергія — Gemini готує чернетку, Claude перевіряє та
+                фіналізує. Найвища якість, але повільніше.
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  {
+                    id: "synergy" as const,
+                    title: "Синергія",
+                    sub: "Gemini + Claude",
+                    rec: true,
+                  },
+                  {
+                    id: "gemini" as const,
+                    title: "Тільки Gemini",
+                    sub: "2.5 Pro · швидко",
+                    rec: false,
+                  },
+                  {
+                    id: "claude" as const,
+                    title: "Тільки Claude",
+                    sub: "Opus 4.7",
+                    rec: false,
+                  },
+                ].map((m) => (
+                  <button
+                    key={m.id}
+                    onClick={() => setAiMode(m.id)}
+                    className={`relative px-3 py-3 rounded-xl border text-left transition ${
+                      aiMode === m.id
+                        ? "border-accent bg-accent/10 ring-2 ring-accent/40"
+                        : "border-border bg-surface hover:border-accent/60"
+                    }`}
+                  >
+                    {m.rec && (
+                      <span className="absolute -top-2 right-2 text-[10px] font-bold bg-accent text-primary px-1.5 py-0.5 rounded">
+                        РЕКОМЕНД.
+                      </span>
+                    )}
+                    <div className="text-sm font-semibold text-primary">
+                      {m.title}
+                    </div>
+                    <div className="text-[11px] text-muted mt-0.5">
+                      {m.sub}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {/* Analyze button */}
             <button

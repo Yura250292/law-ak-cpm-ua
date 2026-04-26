@@ -32,6 +32,8 @@ export interface AnalysisResult {
   models: string[];
 }
 
+export type AnalysisMode = "synergy" | "gemini" | "claude";
+
 // ─── Gemini ────────────────────────────────────────────────────────────────
 
 function getGenAI(): GoogleGenerativeAI | null {
@@ -283,8 +285,9 @@ export async function analyzeLegalCaseWithImages(params: {
   documentText: string;
   images: { mimeType: string; base64: string; fileName: string }[];
   lawyerTask?: string;
+  mode?: AnalysisMode;
 }): Promise<AnalysisResult> {
-  const { documentText, images, lawyerTask } = params;
+  const { documentText, images, lawyerTask, mode = "synergy" } = params;
 
   const parts: Part[] = [];
   let textPrompt = CASE_ANALYSIS_SYSTEM + "\n\n";
@@ -314,6 +317,7 @@ export async function analyzeLegalCaseWithImages(params: {
     documentText: documentText + (images.length ? `\n\n[+ ${images.length} зображень документів]` : ""),
     lawyerTask,
     hasImages: images.length > 0,
+    mode,
   });
 }
 
@@ -322,7 +326,8 @@ export async function analyzeLegalCaseWithImages(params: {
  */
 export async function analyzeLegalCase(
   documentText: string,
-  lawyerTask: string = ""
+  lawyerTask: string = "",
+  mode: AnalysisMode = "synergy"
 ): Promise<AnalysisResult> {
   const taskBlock = lawyerTask
     ? `\n═══ ЗАВДАННЯ ВІД АДВОКАТА ═══\n${lawyerTask}\nЗосередься саме на тому, що просить адвокат.\n\n`
@@ -344,28 +349,31 @@ ${ANALYSIS_INSTRUCTIONS}`;
     documentText,
     lawyerTask,
     hasImages: false,
+    mode,
   });
 }
 
 /**
- * Synergy orchestrator: Gemini draft → Claude review → final.
- * Falls back gracefully if one provider is missing.
+ * Orchestrator: режим synergy / gemini / claude.
+ * Якщо ключа потрібного провайдера немає — graceful fallback на той, що є.
  */
 async function runSynergy(params: {
   runDraft: () => Promise<{ text: string; model: string } | null>;
   documentText: string;
   lawyerTask?: string;
   hasImages: boolean;
+  mode: AnalysisMode;
 }): Promise<AnalysisResult> {
   const hasGemini = !!process.env.GEMINI_API_KEY;
   const hasClaude = !!process.env.ANTHROPIC_API_KEY;
+  const { mode } = params;
 
   if (!hasGemini && !hasClaude) {
     throw new Error("Не налаштовано жодного AI-провайдера (GEMINI_API_KEY або ANTHROPIC_API_KEY)");
   }
 
-  // Claude-only path (no Gemini key).
-  if (!hasGemini && hasClaude) {
+  // Користувач явно вибрав Claude-only, або Gemini-ключа немає.
+  if ((mode === "claude" && hasClaude) || (!hasGemini && hasClaude)) {
     const claudePrompt = `${params.lawyerTask ? `═══ ЗАВДАННЯ ВІД АДВОКАТА ═══\n${params.lawyerTask}\n\n` : ""}ТЕКСТ ДОКУМЕНТА:\n---\n${params.documentText.slice(0, 30000)}\n---\n\n${ANALYSIS_INSTRUCTIONS}`;
     const claudeRes = await callClaude({
       system: CASE_ANALYSIS_SYSTEM,
@@ -380,8 +388,8 @@ async function runSynergy(params: {
   const draft = await params.runDraft();
   if (!draft) throw new Error("Gemini недоступний");
 
-  // Gemini-only path (no Claude key).
-  if (!hasClaude) {
+  // Користувач явно вибрав Gemini-only, або Claude-ключа немає.
+  if (mode === "gemini" || !hasClaude) {
     return { text: draft.text, models: [labelFor(draft.model)] };
   }
 

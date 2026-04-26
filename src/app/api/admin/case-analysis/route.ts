@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
 
     let lawyerTask: string | null = null;
     let pastedText: string | null = null;
+    let mode: "synergy" | "gemini" | "claude" = "synergy";
     const items: UploadedItem[] = [];
 
     const contentType = request.headers.get("content-type") ?? "";
@@ -51,9 +52,11 @@ export async function POST(request: NextRequest) {
         lawyerTask?: string;
         text?: string;
         files?: { key: string; name: string }[];
+        mode?: "synergy" | "gemini" | "claude";
       };
       lawyerTask = body.lawyerTask ?? null;
       pastedText = body.text ?? null;
+      if (body.mode === "gemini" || body.mode === "claude") mode = body.mode;
 
       const r2Files = body.files ?? [];
       for (const f of r2Files) {
@@ -165,17 +168,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call AI (Gemini draft + Claude review synergy)
+    // Call AI (Gemini draft + Claude review synergy, або один із моделей)
     const result =
       images.length > 0
         ? await analyzeLegalCaseWithImages({
             documentText: documentText.trim(),
             images,
             lawyerTask: lawyerTask?.trim() ?? "",
+            mode,
           })
         : await analyzeLegalCase(
             documentText.trim(),
-            lawyerTask?.trim() ?? ""
+            lawyerTask?.trim() ?? "",
+            mode
           );
 
     const displayName =
