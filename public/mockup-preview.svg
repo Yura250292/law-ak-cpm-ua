@@ -1,0 +1,455 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 3960" font-family="-apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E8D5A8"/>
+      <stop offset="0.5" stop-color="#C9A96E"/>
+      <stop offset="1" stop-color="#B8964F"/>
+    </linearGradient>
+    <symbol id="ic-phone" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+    </symbol>
+    <symbol id="ic-arrow-right" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+    <symbol id="ic-play" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/></symbol>
+    <symbol id="ic-check" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+    <symbol id="ic-scale" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
+    <symbol id="ic-shield" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="ic-clock" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+    <symbol id="ic-globe" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+    <symbol id="ic-award" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></symbol>
+    <symbol id="ic-heart" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+    <symbol id="ic-scroll" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M22 17H7a2 2 0 0 0-2 2 2 2 0 0 0 2 2h12a3 3 0 0 0 3-3z"/><path d="M9 7h6"/><path d="M9 11h6"/></symbol>
+    <symbol id="ic-briefcase" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+    <symbol id="ic-file-text" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></symbol>
+    <symbol id="ic-alert" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+    <symbol id="ic-signature" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M20 19.5C18 19.5 16.5 18.5 16 17.5C16.5 16.5 18 15.5 20 15.5"/><path d="M3 17h13"/><path d="M3 13C3 13 5 9 8 9s5 4 5 4 2-4 5-4 4 4 4 4"/></symbol>
+    <symbol id="ic-gavel" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="m14 13-7.5 7.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L11 10"/><path d="m16 16 6-6"/><path d="m8 8 6-6"/><path d="m9 7 8 8"/><path d="m21 11-8-8"/></symbol>
+    <symbol id="ic-download" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+    <symbol id="ic-quote" viewBox="0 0 24 24" stroke-width="0" fill="currentColor"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1zm12 0c3 0 7-1 7-8V5c0-1.25-.757-2-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/></symbol>
+    <symbol id="ic-user" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="ic-badge-check" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="ic-plus" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    <symbol id="ic-minus" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    <symbol id="ic-calendar" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+    <symbol id="ic-instagram" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></symbol>
+    <symbol id="ic-send" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></symbol>
+    <symbol id="ic-mail" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></symbol>
+    <symbol id="ic-pin" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+  </defs>
+
+  <!-- PAGE BG -->
+  <rect width="1280" height="3960" fill="#FAFAF7"/>
+
+  <!-- ═════════ HEADER ═════════ -->
+  <rect x="0" y="0" width="1280" height="80" fill="#FFFFFF"/>
+  <line x1="0" y1="79" x2="1280" y2="79" stroke="#E4DFD3"/>
+  <!-- Logo K+A -->
+  <rect x="80" y="22" width="4" height="40" fill="url(#gold)"/>
+  <line x1="84" y1="22" x2="116" y2="62" stroke="url(#gold)" stroke-width="4"/>
+  <rect x="86" y="54" width="14" height="2" fill="#C8C8C0"/>
+  <text x="130" y="38" font-size="16" font-weight="600" fill="#1C1C1E" font-family="Georgia, serif">Кабаль Анастасія</text>
+  <text x="130" y="58" font-size="9" letter-spacing="1.5" fill="#6B6660">АДВОКАТ · ЛЬВІВ</text>
+  <!-- Nav -->
+  <text x="380" y="44" font-size="13" font-weight="600" fill="#1C1C1E">Головна</text>
+  <text x="455" y="44" font-size="13" fill="#6B6660">Послуги</text>
+  <text x="525" y="44" font-size="13" fill="#6B6660">Спеціалізації</text>
+  <text x="625" y="44" font-size="13" fill="#6B6660">Калькулятор</text>
+  <text x="715" y="44" font-size="13" fill="#6B6660">Блог</text>
+  <text x="755" y="44" font-size="13" fill="#6B6660">Про адвоката</text>
+  <!-- Phone -->
+  <use href="#ic-phone" x="1010" y="32" width="16" height="16" color="#C9A96E" stroke="#C9A96E"/>
+  <text x="1032" y="44" font-size="13" font-weight="600" fill="#1C1C1E">+38 (095) 672-80-05</text>
+  <!-- CTA -->
+  <rect x="1170" y="22" width="90" height="40" rx="8" fill="url(#gold)"/>
+  <use href="#ic-calendar" x="1182" y="34" width="14" height="14" stroke="#1C1C1E"/>
+  <text x="1202" y="46" font-size="12" font-weight="700" fill="#1C1C1E">Запис</text>
+
+  <!-- ═════════ HERO ═════════ -->
+  <rect x="0" y="80" width="1280" height="680" fill="#FFFFFF"/>
+
+  <!-- Eyebrow badge -->
+  <rect x="80" y="160" width="290" height="32" rx="16" fill="#F2F0EA" stroke="#E4DFD3"/>
+  <circle cx="100" cy="176" r="4" fill="#C9A96E"/>
+  <text x="112" y="180" font-size="10" font-weight="700" letter-spacing="1.5" fill="#6B6660">АДВОКАТ · ЛЬВІВ · ОНЛАЙН ПО УКРАЇНІ</text>
+
+  <!-- H1 -->
+  <text x="80" y="265" font-size="56" font-weight="600" fill="#1C1C1E" font-family="Georgia, serif">Юридичний захист,</text>
+  <text x="80" y="330" font-size="56" font-weight="600" fill="#1C1C1E" font-family="Georgia, serif">якому <tspan font-style="italic" fill="url(#gold)">довіряють</tspan></text>
+
+  <!-- Subtitle -->
+  <text x="80" y="395" font-size="16" fill="#6B6660">10+ років практики у Львові. Сімейне, цивільне, господарське та адміністративне</text>
+  <text x="80" y="420" font-size="16" fill="#6B6660">право. Підготовка позовних заяв і консультації онлайн по всій Україні.</text>
+
+  <!-- Buttons -->
+  <rect x="80" y="470" width="240" height="56" rx="12" fill="#1C1C1E"/>
+  <text x="100" y="504" font-size="14" font-weight="700" fill="#FAFAF7">Безкоштовна консультація</text>
+  <use href="#ic-arrow-right" x="290" y="490" width="18" height="18" stroke="#FAFAF7"/>
+
+  <rect x="336" y="470" width="200" height="56" rx="12" fill="#FFFFFF" stroke="#1C1C1E" stroke-width="2"/>
+  <use href="#ic-play" x="358" y="490" width="18" height="18" stroke="#1C1C1E" color="#1C1C1E"/>
+  <text x="386" y="504" font-size="14" font-weight="600" fill="#1C1C1E">Як це працює</text>
+
+  <!-- Trust signals row -->
+  <g transform="translate(80, 580)">
+    <use href="#ic-check" width="24" height="24" stroke="#C9A96E"/>
+    <text x="36" y="14" font-size="14" font-weight="700" fill="#1C1C1E">10+ років</text>
+    <text x="36" y="32" font-size="11" fill="#6B6660">практики</text>
+  </g>
+  <g transform="translate(240, 580)">
+    <use href="#ic-scale" width="24" height="24" stroke="#C9A96E"/>
+    <text x="36" y="14" font-size="14" font-weight="700" fill="#1C1C1E">500+ справ</text>
+    <text x="36" y="32" font-size="11" fill="#6B6660">доведено до перемоги</text>
+  </g>
+  <g transform="translate(420, 580)">
+    <use href="#ic-shield" width="24" height="24" stroke="#C9A96E"/>
+    <text x="36" y="14" font-size="14" font-weight="700" fill="#1C1C1E">Конфіденційність</text>
+    <text x="36" y="32" font-size="11" fill="#6B6660">адвокатська таємниця</text>
+  </g>
+
+  <!-- Hero dark card -->
+  <rect x="720" y="140" width="480" height="480" rx="24" fill="#1C1C1E" stroke="url(#gold)"/>
+  <circle cx="742" cy="162" r="4" fill="url(#gold)"/>
+  <circle cx="1178" cy="162" r="4" fill="url(#gold)"/>
+  <circle cx="742" cy="598" r="4" fill="url(#gold)"/>
+  <circle cx="1178" cy="598" r="4" fill="url(#gold)"/>
+
+  <!-- Mini K+A in card -->
+  <rect x="760" y="178" width="56" height="56" rx="12" fill="#2A2A2D" stroke="url(#gold)"/>
+  <rect x="778" y="188" width="3" height="36" fill="url(#gold)"/>
+  <line x1="781" y1="188" x2="805" y2="224" stroke="url(#gold)" stroke-width="3"/>
+  <rect x="783" y="218" width="12" height="1.5" fill="#C8C8C0"/>
+
+  <text x="832" y="200" font-size="10" font-weight="700" letter-spacing="1.5" fill="url(#gold)">ЗРАЗКИ ДОКУМЕНТІВ</text>
+  <text x="832" y="226" font-size="18" font-weight="600" fill="#FAFAF7" font-family="Georgia, serif">Завантажте безкоштовно</text>
+
+  <!-- Doc tiles 2x2 -->
+  <g>
+    <rect x="760" y="264" width="195" height="150" rx="14" fill="#2A2A2D" stroke="url(#gold)" stroke-opacity="0.5"/>
+    <rect x="776" y="280" width="36" height="36" rx="10" fill="#1C1C1E" stroke="url(#gold)"/>
+    <use href="#ic-file-text" x="786" y="290" width="16" height="16" stroke="#C9A96E"/>
+    <text x="776" y="358" font-size="14" font-weight="700" fill="#FAFAF7">Позовна заява</text>
+    <use href="#ic-download" x="776" y="380" width="14" height="14" stroke="#C9A96E"/>
+    <text x="794" y="392" font-size="11" fill="url(#gold)">PDF · 240 KB</text>
+  </g>
+  <g>
+    <rect x="965" y="264" width="195" height="150" rx="14" fill="#2A2A2D" stroke="url(#gold)" stroke-opacity="0.5"/>
+    <rect x="981" y="280" width="36" height="36" rx="10" fill="#1C1C1E" stroke="url(#gold)"/>
+    <use href="#ic-alert" x="991" y="290" width="16" height="16" stroke="#C9A96E"/>
+    <text x="981" y="358" font-size="14" font-weight="700" fill="#FAFAF7">Скарга</text>
+    <use href="#ic-download" x="981" y="380" width="14" height="14" stroke="#C9A96E"/>
+    <text x="999" y="392" font-size="11" fill="url(#gold)">PDF · 180 KB</text>
+  </g>
+  <g>
+    <rect x="760" y="426" width="195" height="150" rx="14" fill="#2A2A2D" stroke="url(#gold)" stroke-opacity="0.5"/>
+    <rect x="776" y="442" width="36" height="36" rx="10" fill="#1C1C1E" stroke="url(#gold)"/>
+    <use href="#ic-signature" x="786" y="452" width="16" height="16" stroke="#C9A96E"/>
+    <text x="776" y="520" font-size="14" font-weight="700" fill="#FAFAF7">Договір</text>
+    <use href="#ic-download" x="776" y="542" width="14" height="14" stroke="#C9A96E"/>
+    <text x="794" y="554" font-size="11" fill="url(#gold)">PDF · 320 KB</text>
+  </g>
+  <g>
+    <rect x="965" y="426" width="195" height="150" rx="14" fill="#2A2A2D" stroke="url(#gold)" stroke-opacity="0.5"/>
+    <rect x="981" y="442" width="36" height="36" rx="10" fill="#1C1C1E" stroke="url(#gold)"/>
+    <use href="#ic-gavel" x="991" y="452" width="16" height="16" stroke="#C9A96E"/>
+    <text x="981" y="520" font-size="14" font-weight="700" fill="#FAFAF7">Заява до суду</text>
+    <use href="#ic-download" x="981" y="542" width="14" height="14" stroke="#C9A96E"/>
+    <text x="999" y="554" font-size="11" fill="url(#gold)">PDF · 280 KB</text>
+  </g>
+
+  <!-- ═════════ TRUST BAR (DARK) ═════════ -->
+  <rect x="0" y="760" width="1280" height="100" fill="#1C1C1E"/>
+  <line x1="0" y1="760" x2="1280" y2="760" stroke="url(#gold)"/>
+  <line x1="0" y1="859" x2="1280" y2="859" stroke="url(#gold)"/>
+
+  <g transform="translate(120, 800)">
+    <use href="#ic-scale" width="22" height="22" stroke="#C9A96E"/>
+    <text x="32" y="16" font-size="13" fill="#FAFAF7">Свідоцтво № 12345</text>
+  </g>
+  <g transform="translate(380, 800)">
+    <use href="#ic-award" width="22" height="22" stroke="#C9A96E"/>
+    <text x="32" y="16" font-size="13" fill="#FAFAF7">Член НААУ</text>
+  </g>
+  <g transform="translate(620, 800)">
+    <use href="#ic-clock" width="22" height="22" stroke="#C9A96E"/>
+    <text x="32" y="16" font-size="13" fill="#FAFAF7">Відповідь за 30 хв</text>
+  </g>
+  <g transform="translate(900, 800)">
+    <use href="#ic-globe" width="22" height="22" stroke="#C9A96E"/>
+    <text x="32" y="16" font-size="13" fill="#FAFAF7">Онлайн по Україні</text>
+  </g>
+
+  <!-- ═════════ SERVICES ═════════ -->
+  <rect x="0" y="860" width="1280" height="580" fill="#FAFAF7"/>
+  <text x="640" y="932" font-size="12" font-weight="700" letter-spacing="2" fill="#C9A96E" text-anchor="middle">СПЕЦІАЛІЗАЦІЇ</text>
+  <text x="640" y="980" font-size="40" font-weight="600" fill="#1C1C1E" text-anchor="middle" font-family="Georgia, serif">Сфери практики</text>
+  <text x="640" y="1022" font-size="16" fill="#6B6660" text-anchor="middle">Допомагаю в основних галузях українського права — від першої консультації до результату</text>
+
+  <!-- Service card 1 -->
+  <g>
+    <rect x="80" y="1080" width="280" height="320" rx="16" fill="#FFFFFF" stroke="#E4DFD3"/>
+    <rect x="100" y="1100" width="56" height="56" rx="14" fill="#F2F0EA" stroke="url(#gold)"/>
+    <use href="#ic-heart" x="116" y="1116" width="24" height="24" stroke="#C9A96E"/>
+    <text x="100" y="1200" font-size="22" font-weight="600" fill="#1C1C1E" font-family="Georgia, serif">Сімейне право</text>
+    <text x="100" y="1232" font-size="13" fill="#6B6660">Розлучення, аліменти, поділ майна,</text>
+    <text x="100" y="1252" font-size="13" fill="#6B6660">опіка над дітьми, позбавлення</text>
+    <text x="100" y="1272" font-size="13" fill="#6B6660">батьківських прав.</text>
+    <text x="100" y="1364" font-size="13" font-weight="700" fill="#C9A96E">Дізнатися більше</text>
+    <use href="#ic-arrow-right" x="222" y="1352" width="14" height="14" stroke="#C9A96E"/>
+  </g>
+  <!-- Service card 2 -->
+  <g>
+    <rect x="380" y="1080" width="280" height="320" rx="16" fill="#FFFFFF" stroke="#E4DFD3"/>
+    <rect x="400" y="1100" width="56" height="56" rx="14" fill="#F2F0EA" stroke="url(#gold)"/>
+    <use href="#ic-scroll" x="416" y="1116" width="24" height="24" stroke="#C9A96E"/>
+    <text x="400" y="1200" font-size="22" font-weight="600" fill="#1C1C1E" font-family="Georgia, serif">Цивільне право</text>
+    <text x="400" y="1232" font-size="13" fill="#6B6660">Договори, відшкодування шкоди,</text>
+    <text x="400" y="1252" font-size="13" fill="#6B6660">спадкові спори, захист прав</text>
+    <text x="400" y="1272" font-size="13" fill="#6B6660">споживачів.</text>
+    <text x="400" y="1364" font-size="13" font-weight="700" fill="#C9A96E">Дізнатися більше</text>
+    <use href="#ic-arrow-right" x="522" y="1352" width="14" height="14" stroke="#C9A96E"/>
+  </g>
+  <!-- Service card 3 -->
+  <g>
+    <rect x="680" y="1080" width="280" height="320" rx="16" fill="#FFFFFF" stroke="#E4DFD3"/>
+    <rect x="700" y="1100" width="56" height="56" rx="14" fill="#F2F0EA" stroke="url(#gold)"/>
+    <use href="#ic-briefcase" x="716" y="1116" width="24" height="24" stroke="#C9A96E"/>
+    <text x="700" y="1200" font-size="22" font-weight="600" fill="#1C1C1E" font-family="Georgia, serif">Господарське право</text>
+    <text x="700" y="1232" font-size="13" fill="#6B6660">Договори, корпоративні спори,</text>
+    <text x="700" y="1252" font-size="13" fill="#6B6660">банкрутство, реєстрація бізнесу.</text>
+    <text x="700" y="1364" font-size="13" font-weight="700" fill="#C9A96E">Дізнатися більше</text>
+    <use href="#ic-arrow-right" x="822" y="1352" width="14" height="14" stroke="#C9A96E"/>
+  </g>
+  <!-- Service card 4 (dark, "more") -->
+  <g>
+    <rect x="980" y="1080" width="220" height="320" rx="16" fill="#1C1C1E"/>
+    <rect x="1000" y="1100" width="56" height="56" rx="14" fill="#2A2A2D" stroke="url(#gold)"/>
+    <use href="#ic-shield" x="1016" y="1116" width="24" height="24" stroke="#C9A96E"/>
+    <text x="1000" y="1200" font-size="10" font-weight="700" letter-spacing="1.5" fill="#C9A96E">ЩЕ +12 НАПРЯМКІВ</text>
+    <text x="1000" y="1232" font-size="20" font-weight="600" fill="#FAFAF7" font-family="Georgia, serif">Кримінальне,</text>
+    <text x="1000" y="1258" font-size="20" font-weight="600" fill="#FAFAF7" font-family="Georgia, serif">спадкове, адмін.</text>
+    <rect x="1000" y="1330" width="180" height="44" rx="10" fill="url(#gold)"/>
+    <text x="1018" y="1357" font-size="13" font-weight="700" fill="#1C1C1E">Усі спеціалізації</text>
+    <use href="#ic-arrow-right" x="1148" y="1349" width="14" height="14" stroke="#1C1C1E"/>
+  </g>
+
+  <!-- ═════════ PROCESS ═════════ -->
+  <rect x="0" y="1440" width="1280" height="460" fill="#F2F0EA"/>
+  <text x="640" y="1512" font-size="12" font-weight="700" letter-spacing="2" fill="#C9A96E" text-anchor="middle">ЯК ПРАЦЮЄМО</text>
+  <text x="640" y="1560" font-size="38" font-weight="600" fill="#1C1C1E" text-anchor="middle" font-family="Georgia, serif">4 кроки до результату</text>
+
+  <line x1="220" y1="1750" x2="1060" y2="1750" stroke="url(#gold)" stroke-dasharray="4 4"/>
+
+  <g>
+    <circle cx="190" cy="1750" r="30" fill="#FAFAF7" stroke="url(#gold)" stroke-width="2"/>
+    <text x="190" y="1758" font-size="20" font-weight="700" fill="url(#gold)" text-anchor="middle" font-family="Georgia, serif">01</text>
+    <text x="190" y="1820" font-size="18" font-weight="600" fill="#1C1C1E" text-anchor="middle" font-family="Georgia, serif">Залишите заявку</text>
+    <text x="190" y="1850" font-size="13" fill="#6B6660" text-anchor="middle">Опишіть ситуацію коротко</text>
+    <text x="190" y="1868" font-size="13" fill="#6B6660" text-anchor="middle">у формі або месенджері</text>
+  </g>
+  <g>
+    <circle cx="470" cy="1750" r="30" fill="#FAFAF7" stroke="url(#gold)" stroke-width="2"/>
+    <text x="470" y="1758" font-size="20" font-weight="700" fill="url(#gold)" text-anchor="middle" font-family="Georgia, serif">02</text>
+    <text x="470" y="1820" font-size="18" font-weight="600" fill="#1C1C1E" text-anchor="middle" font-family="Georgia, serif">Безкоштовна</text>
+    <text x="470" y="1838" font-size="18" font-weight="600" fill="#1C1C1E" text-anchor="middle" font-family="Georgia, serif">консультація</text>
+    <text x="470" y="1862" font-size="13" fill="#6B6660" text-anchor="middle">Зустріч 30 хв — оцінюю</text>
+    <text x="470" y="1880" font-size="13" fill="#6B6660" text-anchor="middle">шанси і пропоную план</text>
+  </g>
+  <g>
+    <circle cx="750" cy="1750" r="30" fill="#FAFAF7" stroke="url(#gold)" stroke-width="2"/>
+    <text x="750" y="1758" font-size="20" font-weight="700" fill="url(#gold)" text-anchor="middle" font-family="Georgia, serif">03</text>
+    <text x="750" y="1820" font-size="18" font-weight="600" fill="#1C1C1E" text-anchor="middle" font-family="Georgia, serif">Підготовка</text>
+    <text x="750" y="1838" font-size="18" font-weight="600" fill="#1C1C1E" text-anchor="middle" font-family="Georgia, serif">документів</text>
+    <text x="750" y="1862" font-size="13" fill="#6B6660" text-anchor="middle">Готую позов, скаргу,</text>
+    <text x="750" y="1880" font-size="13" fill="#6B6660" text-anchor="middle">договір — крок за кроком</text>
+  </g>
+  <g>
+    <circle cx="1030" cy="1750" r="30" fill="url(#gold)" stroke="url(#gold)" stroke-width="2"/>
+    <text x="1030" y="1758" font-size="20" font-weight="700" fill="#1C1C1E" text-anchor="middle" font-family="Georgia, serif">04</text>
+    <text x="1030" y="1820" font-size="18" font-weight="600" fill="#1C1C1E" text-anchor="middle" font-family="Georgia, serif">Результат у руки</text>
+    <text x="1030" y="1862" font-size="13" fill="#6B6660" text-anchor="middle">Виграна справа,</text>
+    <text x="1030" y="1880" font-size="13" fill="#6B6660" text-anchor="middle">оформлені документи</text>
+  </g>
+
+  <!-- ═════════ ABOUT ═════════ -->
+  <rect x="0" y="1900" width="1280" height="480" fill="#FFFFFF"/>
+
+  <rect x="80" y="1960" width="440" height="380" rx="16" fill="#E8E5DD" stroke="url(#gold)" stroke-width="2"/>
+  <use href="#ic-user" x="280" y="2120" width="40" height="40" stroke="#9A958C"/>
+  <text x="300" y="2200" font-size="14" fill="#9A958C" text-anchor="middle">[ ФОТО АДВОКАТА ]</text>
+
+  <rect x="100" y="2295" width="220" height="32" rx="16" fill="#1C1C1E"/>
+  <use href="#ic-badge-check" x="116" y="2303" width="14" height="14" stroke="#C9A96E"/>
+  <text x="138" y="2316" font-size="10" font-weight="700" letter-spacing="1.5" fill="#FAFAF7">АТЕСТОВАНИЙ АДВОКАТ</text>
+
+  <text x="580" y="1990" font-size="12" font-weight="700" letter-spacing="2" fill="#C9A96E">ПРО АДВОКАТА</text>
+  <text x="580" y="2040" font-size="38" font-weight="600" fill="#1C1C1E" font-family="Georgia, serif">Кабаль Анастасія Ігорівна</text>
+  <rect x="580" y="2065" width="60" height="3" fill="url(#gold)"/>
+
+  <text x="580" y="2110" font-size="15" fill="#6B6660">Адвокат зі Львова з понад 10 роками практики.</text>
+  <text x="580" y="2134" font-size="15" fill="#6B6660">Спеціалізуюсь на сімейному, цивільному та господарському</text>
+  <text x="580" y="2158" font-size="15" fill="#6B6660">праві. Веду справи у судах усіх інстанцій.</text>
+
+  <text x="580" y="2200" font-size="15" fill="#6B6660">Працюю як офлайн у Львові, так і онлайн з клієнтами</text>
+  <text x="580" y="2224" font-size="15" fill="#6B6660">з усієї України. Перша консультація завжди безкоштовна.</text>
+
+  <!-- Credentials grid -->
+  <g>
+    <rect x="580" y="2255" width="130" height="56" rx="10" fill="#F2F0EA"/>
+    <text x="596" y="2284" font-size="24" font-weight="700" fill="url(#gold)" font-family="Georgia, serif">10+</text>
+    <text x="596" y="2302" font-size="11" fill="#6B6660">років досвіду</text>
+  </g>
+  <g>
+    <rect x="720" y="2255" width="130" height="56" rx="10" fill="#F2F0EA"/>
+    <text x="736" y="2284" font-size="24" font-weight="700" fill="url(#gold)" font-family="Georgia, serif">500+</text>
+    <text x="736" y="2302" font-size="11" fill="#6B6660">виграних справ</text>
+  </g>
+  <g>
+    <rect x="860" y="2255" width="130" height="56" rx="10" fill="#F2F0EA"/>
+    <text x="876" y="2284" font-size="24" font-weight="700" fill="url(#gold)" font-family="Georgia, serif">98%</text>
+    <text x="876" y="2302" font-size="11" fill="#6B6660">успішних кейсів</text>
+  </g>
+  <g>
+    <rect x="1000" y="2255" width="130" height="56" rx="10" fill="#F2F0EA"/>
+    <text x="1016" y="2284" font-size="24" font-weight="700" fill="url(#gold)" font-family="Georgia, serif">30хв</text>
+    <text x="1016" y="2302" font-size="11" fill="#6B6660">до відповіді</text>
+  </g>
+
+  <!-- ═════════ TESTIMONIALS ═════════ -->
+  <rect x="0" y="2380" width="1280" height="460" fill="#F2F0EA"/>
+  <text x="640" y="2452" font-size="12" font-weight="700" letter-spacing="2" fill="#C9A96E" text-anchor="middle">ВІДГУКИ</text>
+  <text x="640" y="2500" font-size="38" font-weight="600" fill="#1C1C1E" text-anchor="middle" font-family="Georgia, serif">Що кажуть клієнти</text>
+
+  <!-- Testimonial 1 -->
+  <g>
+    <rect x="80" y="2560" width="360" height="240" rx="16" fill="#FFFFFF" stroke="#E4DFD3"/>
+    <use href="#ic-quote" x="100" y="2580" width="32" height="32" color="#C9A96E"/>
+    <text x="100" y="2640" font-size="14" letter-spacing="2" fill="url(#gold)">★ ★ ★ ★ ★</text>
+    <text x="100" y="2674" font-size="14" fill="#1C1C1E">Анастасія Ігорівна допомогла з</text>
+    <text x="100" y="2696" font-size="14" fill="#1C1C1E">розлученням і поділом майна.</text>
+    <text x="100" y="2718" font-size="14" fill="#1C1C1E">Усе чітко, без зайвих витрат.</text>
+    <circle cx="118" cy="2758" r="18" fill="#F2F0EA"/>
+    <text x="118" y="2764" font-size="16" font-weight="700" fill="url(#gold)" text-anchor="middle" font-family="Georgia, serif">О</text>
+    <text x="148" y="2756" font-size="13" font-weight="700" fill="#1C1C1E">Олена П.</text>
+    <text x="148" y="2774" font-size="11" fill="#6B6660">Сімейне право · 2025</text>
+  </g>
+  <!-- Testimonial 2 -->
+  <g>
+    <rect x="460" y="2560" width="360" height="240" rx="16" fill="#FFFFFF" stroke="#E4DFD3"/>
+    <use href="#ic-quote" x="480" y="2580" width="32" height="32" color="#C9A96E"/>
+    <text x="480" y="2640" font-size="14" letter-spacing="2" fill="url(#gold)">★ ★ ★ ★ ★</text>
+    <text x="480" y="2674" font-size="14" fill="#1C1C1E">Виграли справу проти забудовника.</text>
+    <text x="480" y="2696" font-size="14" fill="#1C1C1E">Документи готові, вирішили</text>
+    <text x="480" y="2718" font-size="14" fill="#1C1C1E">за тиждень.</text>
+    <circle cx="498" cy="2758" r="18" fill="#F2F0EA"/>
+    <text x="498" y="2764" font-size="16" font-weight="700" fill="url(#gold)" text-anchor="middle" font-family="Georgia, serif">Д</text>
+    <text x="528" y="2756" font-size="13" font-weight="700" fill="#1C1C1E">Дмитро К.</text>
+    <text x="528" y="2774" font-size="11" fill="#6B6660">Цивільне право · 2025</text>
+  </g>
+  <!-- Testimonial 3 -->
+  <g>
+    <rect x="840" y="2560" width="360" height="240" rx="16" fill="#FFFFFF" stroke="#E4DFD3"/>
+    <use href="#ic-quote" x="860" y="2580" width="32" height="32" color="#C9A96E"/>
+    <text x="860" y="2640" font-size="14" letter-spacing="2" fill="url(#gold)">★ ★ ★ ★ ★</text>
+    <text x="860" y="2674" font-size="14" fill="#1C1C1E">Працюю з Києва, але всі документи</text>
+    <text x="860" y="2696" font-size="14" fill="#1C1C1E">отримала онлайн. Швидко,</text>
+    <text x="860" y="2718" font-size="14" fill="#1C1C1E">дистанційно, з результатом.</text>
+    <circle cx="878" cy="2758" r="18" fill="#F2F0EA"/>
+    <text x="878" y="2764" font-size="16" font-weight="700" fill="url(#gold)" text-anchor="middle" font-family="Georgia, serif">Ю</text>
+    <text x="908" y="2756" font-size="13" font-weight="700" fill="#1C1C1E">Юлія Б.</text>
+    <text x="908" y="2774" font-size="11" fill="#6B6660">Спадщина · 2024</text>
+  </g>
+
+  <!-- ═════════ FAQ ═════════ -->
+  <rect x="0" y="2840" width="1280" height="540" fill="#FFFFFF"/>
+  <text x="640" y="2912" font-size="12" font-weight="700" letter-spacing="2" fill="#C9A96E" text-anchor="middle">FAQ</text>
+  <text x="640" y="2960" font-size="38" font-weight="600" fill="#1C1C1E" text-anchor="middle" font-family="Georgia, serif">Часті питання</text>
+
+  <g>
+    <rect x="240" y="3030" width="800" height="60" rx="12" fill="#FAFAF7" stroke="#E4DFD3"/>
+    <text x="264" y="3066" font-size="16" font-weight="600" fill="#1C1C1E">Скільки коштує перша консультація?</text>
+    <use href="#ic-plus" x="1004" y="3052" width="16" height="16" stroke="#C9A96E"/>
+  </g>
+  <g>
+    <rect x="240" y="3102" width="800" height="100" rx="12" fill="#FFFFFF" stroke="url(#gold)" stroke-width="2"/>
+    <text x="264" y="3134" font-size="16" font-weight="700" fill="#1C1C1E">Чи можу я працювати з адвокатом онлайн?</text>
+    <use href="#ic-minus" x="1004" y="3120" width="16" height="16" stroke="#C9A96E"/>
+    <text x="264" y="3164" font-size="14" fill="#6B6660">Так. Понад 60% клієнтів — з інших міст України. Документи готую</text>
+    <text x="264" y="3184" font-size="14" fill="#6B6660">дистанційно, оплата через LiqPay.</text>
+  </g>
+  <g>
+    <rect x="240" y="3214" width="800" height="60" rx="12" fill="#FAFAF7" stroke="#E4DFD3"/>
+    <text x="264" y="3250" font-size="16" font-weight="600" fill="#1C1C1E">Які гарантії якості ви даєте?</text>
+    <use href="#ic-plus" x="1004" y="3236" width="16" height="16" stroke="#C9A96E"/>
+  </g>
+  <g>
+    <rect x="240" y="3286" width="800" height="60" rx="12" fill="#FAFAF7" stroke="#E4DFD3"/>
+    <text x="264" y="3322" font-size="16" font-weight="600" fill="#1C1C1E">Як швидко готується позовна заява?</text>
+    <use href="#ic-plus" x="1004" y="3308" width="16" height="16" stroke="#C9A96E"/>
+  </g>
+
+  <!-- ═════════ FINAL CTA ═════════ -->
+  <rect x="0" y="3380" width="1280" height="240" fill="#1C1C1E"/>
+  <line x1="0" y1="3380" x2="1280" y2="3380" stroke="url(#gold)" stroke-width="2"/>
+
+  <text x="640" y="3432" font-size="12" font-weight="700" letter-spacing="2" fill="#C9A96E" text-anchor="middle">ГОТОВІ РОЗПОЧАТИ?</text>
+  <text x="640" y="3478" font-size="38" font-weight="600" fill="#FAFAF7" text-anchor="middle" font-family="Georgia, serif">Першу консультацію проводжу безкоштовно</text>
+
+  <rect x="380" y="3530" width="240" height="60" rx="12" fill="url(#gold)"/>
+  <use href="#ic-calendar" x="408" y="3550" width="20" height="20" stroke="#1C1C1E"/>
+  <text x="436" y="3567" font-size="14" font-weight="700" fill="#1C1C1E">Записатись зараз</text>
+
+  <rect x="644" y="3530" width="220" height="60" rx="12" fill="#1C1C1E" stroke="#FAFAF7" stroke-width="2"/>
+  <use href="#ic-phone" x="666" y="3550" width="20" height="20" stroke="#FAFAF7"/>
+  <text x="694" y="3567" font-size="14" font-weight="700" fill="#FAFAF7">+38 (095) 672-80-05</text>
+
+  <!-- ═════════ FOOTER ═════════ -->
+  <rect x="0" y="3620" width="1280" height="340" fill="#0E0E10"/>
+  <line x1="0" y1="3620" x2="1280" y2="3620" stroke="url(#gold)"/>
+
+  <!-- Footer plate (mini) -->
+  <rect x="80" y="3680" width="140" height="168" rx="8" fill="#1C1C1E" stroke="url(#gold)"/>
+  <circle cx="90" cy="3690" r="2" fill="#6B6660"/>
+  <circle cx="210" cy="3690" r="2" fill="#6B6660"/>
+  <circle cx="90" cy="3838" r="2" fill="#6B6660"/>
+  <circle cx="210" cy="3838" r="2" fill="#6B6660"/>
+  <rect x="136" y="3700" width="4" height="60" fill="url(#gold)"/>
+  <line x1="140" y1="3700" x2="172" y2="3760" stroke="url(#gold)" stroke-width="4"/>
+  <rect x="142" y="3748" width="16" height="2" fill="#C8C8C0"/>
+  <text x="150" y="3786" font-size="12" font-weight="700" fill="url(#gold)" text-anchor="middle" font-family="Georgia, serif">КАБАЛЬ</text>
+  <text x="150" y="3802" font-size="11" fill="url(#gold)" text-anchor="middle" font-family="Georgia, serif">АНАСТАСІЯ</text>
+  <text x="150" y="3818" font-size="11" fill="url(#gold)" text-anchor="middle" font-family="Georgia, serif">ІГОРІВНА</text>
+  <text x="150" y="3838" font-size="8" letter-spacing="1.5" fill="url(#gold)" text-anchor="middle">АДВОКАТ · ЛЬВІВ</text>
+
+  <text x="80" y="3880" font-size="12" fill="#9A958C">Професійна юридична допомога.</text>
+  <text x="80" y="3898" font-size="12" fill="#9A958C">Захист прав на найвищому рівні.</text>
+
+  <use href="#ic-instagram" x="80" y="3920" width="20" height="20" stroke="#9A958C"/>
+  <use href="#ic-send" x="112" y="3920" width="20" height="20" stroke="#9A958C"/>
+  <use href="#ic-mail" x="144" y="3920" width="20" height="20" stroke="#9A958C"/>
+
+  <!-- Footer columns -->
+  <text x="380" y="3690" font-size="11" font-weight="700" letter-spacing="1.5" fill="#FAFAF7">ПОСЛУГИ</text>
+  <text x="380" y="3722" font-size="13" fill="#9A958C">Всі послуги</text>
+  <text x="380" y="3744" font-size="13" fill="#9A958C">Спеціалізації</text>
+  <text x="380" y="3766" font-size="13" fill="#9A958C">Онлайн-консультація</text>
+  <text x="380" y="3788" font-size="13" fill="#9A958C">Калькулятор збору</text>
+
+  <text x="620" y="3690" font-size="11" font-weight="700" letter-spacing="1.5" fill="#FAFAF7">КОМПАНІЯ</text>
+  <text x="620" y="3722" font-size="13" fill="#9A958C">Про адвоката</text>
+  <text x="620" y="3744" font-size="13" fill="#9A958C">Блог</text>
+  <text x="620" y="3766" font-size="13" fill="#9A958C">Відгуки</text>
+  <text x="620" y="3788" font-size="13" fill="#9A958C">Контакти</text>
+
+  <text x="880" y="3690" font-size="11" font-weight="700" letter-spacing="1.5" fill="#FAFAF7">КОНТАКТИ</text>
+  <use href="#ic-phone" x="880" y="3712" width="14" height="14" stroke="#C9A96E"/>
+  <text x="900" y="3722" font-size="13" fill="#9A958C">+38 (095) 672-80-05</text>
+  <use href="#ic-instagram" x="880" y="3736" width="14" height="14" stroke="#C9A96E"/>
+  <text x="900" y="3746" font-size="13" fill="#9A958C">@k_anastasiya_i</text>
+  <use href="#ic-pin" x="880" y="3760" width="14" height="14" stroke="#C9A96E"/>
+  <text x="900" y="3770" font-size="13" fill="#9A958C">м. Львів, Україна</text>
+  <use href="#ic-send" x="880" y="3784" width="14" height="14" stroke="#C9A96E"/>
+  <text x="900" y="3794" font-size="13" fill="#9A958C">t.me/Kabal_Anastasiya</text>
+
+  <line x1="80" y1="3900" x2="1200" y2="3900" stroke="#2A2A2D"/>
+  <text x="80" y="3930" font-size="12" fill="#6B6660">© 2026 Адвокат Кабаль Анастасія Ігорівна. Всі права захищені.</text>
+  <text x="1200" y="3930" font-size="12" fill="#6B6660" text-anchor="end">Розробка сайту</text>
+</svg>

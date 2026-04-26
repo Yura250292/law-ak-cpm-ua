@@ -1,33 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" fill="none">
   <defs>
-    <linearGradient id="goldPlate" x1="0" y1="0" x2="200" y2="240" gradientUnits="userSpaceOnUse">
+    <linearGradient id="goldPlate" x1="0" y1="0" x2="240" y2="280" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#E8D5A8"/>
       <stop offset="0.5" stop-color="#C9A96E"/>
       <stop offset="1" stop-color="#B8964F"/>
     </linearGradient>
-    <linearGradient id="slate" x1="0" y1="0" x2="0" y2="240" gradientUnits="userSpaceOnUse">
+    <linearGradient id="slate" x1="0" y1="0" x2="0" y2="280" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#2A2A2D"/>
-      <stop offset="1" stop-color="#1C1C1E"/>
+      <stop offset="1" stop-color="#1A1A1C"/>
+    </linearGradient>
+    <radialGradient id="marble" cx="0.5" cy="0.5" r="0.7">
+      <stop offset="0" stop-color="#3A3A3D" stop-opacity="0.5"/>
+      <stop offset="0.5" stop-color="#2A2A2D" stop-opacity="0"/>
+      <stop offset="1" stop-color="#1A1A1C" stop-opacity="0.4"/>
+    </radialGradient>
+    <linearGradient id="silverScrew" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F5F5F0"/>
+      <stop offset="1" stop-color="#A8A8A0"/>
     </linearGradient>
     <linearGradient id="silverBarPlate" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#F5F5F0"/>
       <stop offset="1" stop-color="#C8C8C0"/>
     </linearGradient>
   </defs>
-  <rect x="0" y="0" width="200" height="240" rx="8" fill="url(#slate)"/>
-  <rect x="6" y="6" width="188" height="228" rx="5" fill="none" stroke="url(#goldPlate)" stroke-width="1" opacity="0.55"/>
-  <circle cx="14" cy="14" r="3" fill="#6B6660"/>
-  <circle cx="186" cy="14" r="3" fill="#6B6660"/>
-  <circle cx="14" cy="226" r="3" fill="#6B6660"/>
-  <circle cx="186" cy="226" r="3" fill="#6B6660"/>
-  <g>
-    <rect x="78" y="28" width="5" height="80" fill="url(#goldPlate)"/>
-    <polygon points="124,28 130,28 89,108 83,108" fill="url(#goldPlate)"/>
-    <rect x="86" y="92" width="36" height="3" fill="url(#silverBarPlate)"/>
+
+  <rect x="0" y="0" width="240" height="280" rx="6" fill="url(#slate)"/>
+  <rect x="0" y="0" width="240" height="280" rx="6" fill="url(#marble)"/>
+
+  <g><circle cx="22" cy="22" r="5" fill="url(#silverScrew)"/><line x1="18" y1="22" x2="26" y2="22" stroke="#6A6A65" stroke-width="0.8"/></g>
+  <g><circle cx="218" cy="22" r="5" fill="url(#silverScrew)"/><line x1="214" y1="22" x2="222" y2="22" stroke="#6A6A65" stroke-width="0.8"/></g>
+  <g><circle cx="22" cy="258" r="5" fill="url(#silverScrew)"/><line x1="18" y1="258" x2="26" y2="258" stroke="#6A6A65" stroke-width="0.8"/></g>
+  <g><circle cx="218" cy="258" r="5" fill="url(#silverScrew)"/><line x1="214" y1="258" x2="222" y2="258" stroke="#6A6A65" stroke-width="0.8"/></g>
+
+  <g transform="translate(94 48)">
+    <rect x="0" y="0" width="5" height="68" fill="url(#goldPlate)"/>
+    <polygon points="5,30 5,34 50,0 45,0" fill="url(#goldPlate)"/>
+    <polygon points="5,30 5,34 50,68 45,68" fill="url(#goldPlate)"/>
+    <polygon points="25,46 9,67 7,69 22,48" fill="url(#goldPlate)"/>
+    <rect x="14" y="57" width="22" height="2" fill="url(#silverBarPlate)"/>
   </g>
-  <text x="100" y="138" font-family="Georgia, 'Cormorant Garamond', serif" font-size="15" font-weight="600" letter-spacing="1.5" fill="url(#goldPlate)" text-anchor="middle">КАБАЛЬ</text>
-  <text x="100" y="158" font-family="Georgia, 'Cormorant Garamond', serif" font-size="13" font-weight="500" letter-spacing="1" fill="url(#goldPlate)" text-anchor="middle">АНАСТАСІЯ</text>
-  <text x="100" y="176" font-family="Georgia, 'Cormorant Garamond', serif" font-size="13" font-weight="500" letter-spacing="1" fill="url(#goldPlate)" text-anchor="middle">ІГОРІВНА</text>
-  <line x1="60" y1="194" x2="140" y2="194" stroke="url(#goldPlate)" stroke-width="0.8" opacity="0.6"/>
-  <text x="100" y="212" font-family="Georgia, serif" font-size="9" letter-spacing="2" fill="url(#goldPlate)" text-anchor="middle" opacity="0.85">АДВОКАТ · ЛЬВІВ</text>
+
+  <text x="120" y="155" font-family="Georgia, 'Cormorant Garamond', serif" font-size="18" font-weight="600" letter-spacing="2.5" fill="url(#goldPlate)" text-anchor="middle">КАБАЛЬ АНАСТАСІЯ</text>
+  <text x="120" y="178" font-family="Georgia, 'Cormorant Garamond', serif" font-size="14" font-weight="500" letter-spacing="3" fill="url(#goldPlate)" text-anchor="middle">ІГОРІВНА</text>
+
+  <line x1="80" y1="195" x2="160" y2="195" stroke="url(#goldPlate)" stroke-width="0.8" opacity="0.6"/>
+
+  <text x="120" y="218" font-family="Georgia, serif" font-size="9" letter-spacing="2.5" fill="url(#goldPlate)" text-anchor="middle" opacity="0.85">АДВОКАТ · ЛЬВІВ</text>
+  <text x="120" y="240" font-family="Georgia, serif" font-size="11" letter-spacing="1" fill="url(#goldPlate)" text-anchor="middle">+38 (095) 672 80 05</text>
 </svg>

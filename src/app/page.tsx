@@ -1,115 +1,138 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/Card";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { FAQSection } from "@/components/FAQSection";
 import { generalFAQ } from "@/lib/faq-data";
 
 export const revalidate = 60;
 
-const serviceIcons = {
-  divorce: (
-    <svg className="h-6 w-6 text-primary/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-    </svg>
-  ),
-  alimony: (
-    <svg className="h-6 w-6 text-primary/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-    </svg>
-  ),
-  damages: (
-    <svg className="h-6 w-6 text-primary/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
-    </svg>
-  ),
-};
-
-const services = [
+const practiceAreas = [
   {
-    icon: serviceIcons.divorce,
-    title: "Розірвання шлюбу",
+    slug: "simejne-pravo",
+    title: "Сімейне право",
     description:
-      "Підготовка позовної заяви про розірвання шлюбу з урахуванням усіх обставин справи.",
-    price: "Від 499 грн",
-    slug: "pozov-pro-rozirvannnya-shlyubu",
+      "Розлучення, аліменти, поділ майна, опіка над дітьми, позбавлення батьківських прав.",
+    icon: (
+      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+      </svg>
+    ),
   },
   {
-    icon: serviceIcons.alimony,
-    title: "Стягнення аліментів",
+    slug: "cyvilne-pravo",
+    title: "Цивільне право",
     description:
-      "Документи для стягнення аліментів на утримання дитини або іншого члена сім'ї.",
-    price: "Від 499 грн",
-    slug: "pozov-pro-stygnennya-alimentiv",
+      "Договори, відшкодування шкоди, спадкові спори, захист прав споживачів.",
+    icon: (
+      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 17V5a2 2 0 0 0-2-2H4M22 17H7a2 2 0 0 0-2 2 2 2 0 0 0 2 2h12a3 3 0 0 0 3-3z M9 7h6 M9 11h6" />
+      </svg>
+    ),
   },
   {
-    icon: serviceIcons.damages,
-    title: "Відшкодування шкоди",
+    slug: "gospodarske-pravo",
+    title: "Господарське право",
     description:
-      "Позовна заява про відшкодування матеріальної або моральної шкоди.",
-    price: "Від 499 грн",
-    slug: "pozov-pro-vidshkoduvannya-shkody",
+      "Договори, корпоративні спори, банкрутство, реєстрація бізнесу.",
+    icon: (
+      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
+        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+      </svg>
+    ),
   },
 ];
 
-const steps = [
+const processSteps = [
   {
-    number: "1",
-    title: "Оберіть документ",
-    description:
-      "Виберіть тип юридичного документа з нашого каталогу послуг.",
+    number: "01",
+    title: "Залишите заявку",
+    description: "Опишіть ситуацію коротко у формі або месенджері.",
   },
   {
-    number: "2",
-    title: "Заповніть форму",
-    description:
-      "Вкажіть необхідні дані: інформацію про сторони, обставини справи та вимоги.",
+    number: "02",
+    title: "Безкоштовна консультація",
+    description: "Зустріч 30 хв — оцінюю шанси і пропоную план.",
   },
   {
-    number: "3",
-    title: "Отримайте документ",
-    description:
-      "Адвокат підготує документ та надішле його на вашу електронну пошту.",
+    number: "03",
+    title: "Підготовка документів",
+    description: "Готую позов, скаргу або договір — крок за кроком.",
+  },
+  {
+    number: "04",
+    title: "Результат у руки",
+    description: "Виграна справа, оформлені документи, спокій.",
   },
 ];
 
-const trustBadges = [
+const heroTrustSignals = [
   {
-    label: "Захист даних",
+    title: "10+ років",
+    subtitle: "практики",
     icon: (
-      <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M22 11.08V12a10 10 0 1 1-5.93-9.14 M22 4 12 14.01l-3-3" />
       </svg>
     ),
   },
   {
-    label: "Швидка підготовка",
+    title: "500+ справ",
+    subtitle: "доведено до перемоги",
     icon: (
-      <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z M7 21h10 M12 3v18 M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />
       </svg>
     ),
   },
   {
-    label: "Відповідність законодавству",
+    title: "Конфіденційність",
+    subtitle: "адвокатська таємниця",
     icon: (
-      <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z M9 12l2 2 4-4" />
+      </svg>
+    ),
+  },
+];
+
+const darkTrustItems = [
+  {
+    label: "Свідоцтво № 12345",
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z M7 21h10 M12 3v18 M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />
       </svg>
     ),
   },
   {
-    label: "Гарантія якості",
+    label: "Член НААУ",
     icon: (
-      <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.745 3.745 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
+        <circle cx="12" cy="8" r="7" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.21 13.89 7 23l5-3 5 3-1.21-9.12" />
+      </svg>
+    ),
+  },
+  {
+    label: "Відповідь за 30 хв",
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
+        <circle cx="12" cy="12" r="10" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
+      </svg>
+    ),
+  },
+  {
+    label: "Онлайн по Україні",
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="2" y1="12" x2="22" y2="12" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
       </svg>
     ),
   },
@@ -127,38 +150,64 @@ export default function HomePage() {
             <div className="grid items-center gap-12 lg:grid-cols-2">
               {/* Left column */}
               <div className="space-y-8">
-                {/* Badge */}
+                {/* Eyebrow badge with golden dot */}
                 <div className="animate-fade-in-up">
-                  <span className="inline-block rounded-full border border-border bg-surface px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-muted">
-                    Юридичні послуги онлайн
+                  <span className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted">
+                    <span className="h-2 w-2 rounded-full bg-accent animate-gentle-pulse" />
+                    Адвокат · Львів · Онлайн по Україні
                   </span>
                 </div>
 
                 {/* Heading */}
-                <h1 className="animate-fade-in-up text-4xl sm:text-5xl font-semibold leading-[1.05] tracking-tight text-primary lg:text-6xl">
-                  Професійні юридичні
+                <h1 className="animate-fade-in-up font-display text-4xl sm:text-5xl font-semibold leading-[1.05] tracking-tight text-primary lg:text-6xl">
+                  Юридичний захист,
                   <br />
-                  <span className="text-gold-gradient italic">документи</span> за хвилини
+                  якому <span className="text-gold-gradient italic">довіряють</span>
                 </h1>
 
                 {/* Subtitle */}
                 <p className="animate-fade-in-up-delay-1 max-w-lg text-lg leading-relaxed text-muted">
-                  Підготовка позовних заяв, юридичних документів та консультацій
-                  онлайн. Швидко, зручно та доступно — без черг та зайвих витрат.
+                  10+ років практики у Львові. Сімейне, цивільне, господарське та
+                  адміністративне право. Підготовка позовних заяв і консультації
+                  онлайн по всій Україні.
                 </p>
 
                 {/* Buttons */}
                 <div className="animate-fade-in-up-delay-2 flex flex-col gap-4 sm:flex-row">
-                  <Link href="/services" className="w-full sm:w-auto">
-                    <Button className="w-full sm:w-auto rounded-xl bg-accent px-8 py-3 text-base font-semibold text-primary shadow-lg shadow-accent/20 transition hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/30">
-                      Замовити документ
+                  <Link href="/consultation" className="w-full sm:w-auto">
+                    <Button className="group w-full sm:w-auto rounded-xl bg-primary px-8 py-3 text-base font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary-light hover:shadow-xl">
+                      <span>Безкоштовна консультація</span>
+                      <svg className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
                     </Button>
                   </Link>
-                  <Link href="/about" className="w-full sm:w-auto">
+                  <Link href="#process" className="w-full sm:w-auto">
                     <Button className="w-full sm:w-auto rounded-xl border-2 border-primary bg-transparent px-8 py-3 text-base font-semibold text-primary transition hover:bg-primary hover:text-white">
-                      Дізнатися більше
+                      <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" />
+                      </svg>
+                      <span>Як це працює</span>
                     </Button>
                   </Link>
+                </div>
+
+                {/* Hero trust signals */}
+                <div className="animate-fade-in-up-delay-3 grid grid-cols-1 gap-4 pt-4 sm:grid-cols-3">
+                  {heroTrustSignals.map((signal) => (
+                    <div key={signal.title} className="flex items-center gap-3">
+                      <span className="text-accent shrink-0">{signal.icon}</span>
+                      <div className="flex flex-col leading-tight">
+                        <span className="text-sm font-bold text-primary">
+                          {signal.title}
+                        </span>
+                        <span className="text-xs text-muted">
+                          {signal.subtitle}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -210,6 +259,21 @@ export default function HomePage() {
                     <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-accent/[0.04] blur-3xl" />
                   </div>
 
+                  {/* Card eyebrow + mini K+A logo */}
+                  <div className="relative mb-5 flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.05] ring-1 ring-accent/30">
+                      <Image src="/logo-mark.svg" alt="" width={32} height={32} className="opacity-90" />
+                    </div>
+                    <div className="flex flex-col leading-tight">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
+                        Зразки документів
+                      </span>
+                      <span className="font-display text-base font-semibold text-white/95">
+                        Завантажте безкоштовно
+                      </span>
+                    </div>
+                  </div>
+
                   {/* Document cards grid */}
                   <div className="relative grid grid-cols-2 gap-4">
                     {/* Card: Позовна заява */}
@@ -228,7 +292,7 @@ export default function HomePage() {
                         <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
-                        Завантажити зразок
+                        PDF · 240 KB
                       </div>
                     </a>
 
@@ -248,7 +312,7 @@ export default function HomePage() {
                         <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
-                        Завантажити зразок
+                        PDF · 180 KB
                       </div>
                     </a>
 
@@ -268,7 +332,7 @@ export default function HomePage() {
                         <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
-                        Завантажити зразок
+                        PDF · 320 KB
                       </div>
                     </a>
 
@@ -288,7 +352,7 @@ export default function HomePage() {
                         <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
-                        Завантажити зразок
+                        PDF · 280 KB
                       </div>
                     </a>
                   </div>
@@ -301,116 +365,145 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── Trust Bar ── */}
-        <section className="border-y border-border bg-surface py-6">
+        {/* ── Trust Bar (Dark) ── */}
+        <section className="relative bg-primary py-7 text-white">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-wrap items-center justify-center gap-8">
-              {trustBadges.map((badge) => (
+            <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4 md:justify-between">
+              {darkTrustItems.map((item) => (
                 <div
-                  key={badge.label}
-                  className="flex items-center gap-2.5 text-sm text-muted"
+                  key={item.label}
+                  className="flex items-center gap-3 text-sm text-white/85"
                 >
-                  {badge.icon}
-                  <span>{badge.label}</span>
+                  <span className="text-accent shrink-0">{item.icon}</span>
+                  <span>{item.label}</span>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ── Services Section ── */}
+        {/* ── Practice Areas ── */}
         <section className="bg-white py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            {/* Section header */}
             <div className="mb-16 text-center">
-              <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-accent">
-                ПОСЛУГИ
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                Спеціалізації
               </p>
-              <h2 className="text-3xl font-bold text-primary sm:text-4xl">
-                Оберіть потрібний документ
+              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl lg:text-5xl">
+                Сфери практики
               </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-base text-muted">
+                Допомагаю в основних галузях українського права — від першої
+                консультації до результату в суді
+              </p>
             </div>
 
-            {/* Cards grid */}
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {services.map((service) => (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {practiceAreas.map((area) => (
                 <Link
-                  key={service.slug}
-                  href={`/document/${service.slug}`}
-                  className="group"
+                  key={area.slug}
+                  href={`/practices/${area.slug}`}
+                  className="group flex flex-col rounded-2xl border border-border bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]"
                 >
-                  <Card className="h-full rounded-2xl border border-border bg-white p-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-                    <CardHeader className="p-8">
-                      {/* Icon */}
-                      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-surface transition-colors duration-300 group-hover:bg-accent/10">
-                        {service.icon}
-                      </div>
-
-                      <CardTitle className="mb-2 text-xl font-bold text-primary">
-                        {service.title}
-                      </CardTitle>
-                      <CardDescription className="mb-4 text-sm leading-relaxed text-muted">
-                        {service.description}
-                      </CardDescription>
-
-                      {/* Price + link */}
-                      <div className="flex items-center justify-between pt-2">
-                        <span className="text-sm font-semibold text-accent">
-                          {service.price}
-                        </span>
-                        <span className="text-sm font-medium text-primary transition group-hover:translate-x-1">
-                          Детальніше&nbsp;&rarr;
-                        </span>
-                      </div>
-                    </CardHeader>
-                  </Card>
+                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-surface text-accent ring-1 ring-accent/30 transition group-hover:bg-accent/10">
+                    {area.icon}
+                  </div>
+                  <h3 className="mb-2 font-display text-xl font-semibold text-primary">
+                    {area.title}
+                  </h3>
+                  <p className="mb-6 flex-1 text-sm leading-relaxed text-muted">
+                    {area.description}
+                  </p>
+                  <span className="inline-flex items-center gap-1.5 text-sm font-bold text-accent transition group-hover:gap-2.5">
+                    Дізнатися більше
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </span>
                 </Link>
               ))}
+
+              {/* "More" dark card */}
+              <Link
+                href="/practices"
+                className="group flex flex-col rounded-2xl bg-primary p-7 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] sm:col-span-2 lg:col-span-1"
+              >
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-light text-accent ring-1 ring-accent/40">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z M9 12l2 2 4-4" />
+                  </svg>
+                </div>
+                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
+                  Ще +12 напрямків
+                </p>
+                <h3 className="mb-6 font-display text-xl font-semibold leading-tight">
+                  Кримінальне, спадкове, адміністративне
+                </h3>
+                <span className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-bold text-primary transition group-hover:bg-accent-hover">
+                  Усі спеціалізації
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* ── How It Works Section ── */}
-        <section className="bg-surface py-24">
+        {/* ── How It Works (4 steps) ── */}
+        <section id="process" className="bg-surface py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            {/* Section header */}
             <div className="mb-16 text-center">
-              <h2 className="text-3xl font-bold text-primary sm:text-4xl">
-                Як це працює
-              </h2>
-              <p className="mt-4 text-lg text-muted">
-                Три прості кроки до готового юридичного документа
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                Як працюємо
               </p>
+              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl lg:text-5xl">
+                4 кроки до результату
+              </h2>
             </div>
 
-            {/* Steps */}
-            <div className="relative grid gap-12 lg:grid-cols-3 lg:gap-8">
-              {/* Connecting line (desktop) */}
-              <div className="absolute left-[16.67%] right-[16.67%] top-6 hidden h-px border-t-2 border-dashed border-border lg:block" />
+            <div className="relative grid gap-12 lg:grid-cols-4 lg:gap-6">
+              {/* Dashed gold line (desktop) */}
+              <div className="pointer-events-none absolute left-[12.5%] right-[12.5%] top-[30px] hidden lg:block">
+                <svg className="h-px w-full" preserveAspectRatio="none">
+                  <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="var(--accent)" strokeOpacity="0.5" strokeDasharray="4 4" />
+                </svg>
+              </div>
 
-              {steps.map((step, idx) => (
-                <div
-                  key={step.number}
-                  className="relative flex flex-col items-center text-center"
-                >
-                  {/* Connecting line (mobile) */}
-                  {idx < steps.length - 1 && (
-                    <div className="absolute left-1/2 top-12 h-full w-px -translate-x-1/2 border-l-2 border-dashed border-border lg:hidden" />
-                  )}
+              {processSteps.map((step, idx) => {
+                const isLast = idx === processSteps.length - 1;
+                return (
+                  <div
+                    key={step.number}
+                    className="relative flex flex-col items-center text-center"
+                  >
+                    {/* Mobile vertical connector */}
+                    {idx < processSteps.length - 1 && (
+                      <div className="absolute left-1/2 top-16 h-[calc(100%-4rem)] w-px -translate-x-1/2 border-l border-dashed border-accent/40 lg:hidden" />
+                    )}
 
-                  {/* Number circle */}
-                  <div className="relative z-10 mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-lg font-bold text-accent">
-                    {step.number}
+                    {/* Number circle */}
+                    <div
+                      className={`relative z-10 mb-6 flex h-16 w-16 items-center justify-center rounded-full font-display text-xl font-bold ring-2 ring-accent ${
+                        isLast
+                          ? "bg-accent text-primary shadow-[0_0_30px_-5px_rgba(201,169,110,0.6)]"
+                          : "bg-surface text-accent"
+                      }`}
+                    >
+                      {step.number}
+                    </div>
+
+                    <h3 className="mb-2 font-display text-lg font-semibold text-primary">
+                      {step.title}
+                    </h3>
+                    <p className="max-w-xs text-sm leading-relaxed text-muted">
+                      {step.description}
+                    </p>
                   </div>
-
-                  <h3 className="mb-2 text-lg font-semibold text-primary">
-                    {step.title}
-                  </h3>
-                  <p className="max-w-xs text-sm leading-relaxed text-muted">
-                    {step.description}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
