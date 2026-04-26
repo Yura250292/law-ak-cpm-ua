@@ -1,8 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" fill="none">
   <defs>
     <linearGradient id="goldPlate" x1="0" y1="0" x2="240" y2="280" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#E8D5A8"/>
+      <stop offset="0" stop-color="#F0DDB0"/>
       <stop offset="0.5" stop-color="#C9A96E"/>
+      <stop offset="1" stop-color="#A8854A"/>
+    </linearGradient>
+    <linearGradient id="goldPlateA" x1="0" y1="0" x2="0" y2="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F0DDB0"/>
       <stop offset="1" stop-color="#B8964F"/>
     </linearGradient>
     <linearGradient id="slate" x1="0" y1="0" x2="0" y2="280" gradientUnits="userSpaceOnUse">
@@ -18,10 +22,6 @@
       <stop offset="0" stop-color="#F5F5F0"/>
       <stop offset="1" stop-color="#A8A8A0"/>
     </linearGradient>
-    <linearGradient id="silverBarPlate" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#F5F5F0"/>
-      <stop offset="1" stop-color="#C8C8C0"/>
-    </linearGradient>
   </defs>
 
   <rect x="0" y="0" width="240" height="280" rx="6" fill="url(#slate)"/>
@@ -32,19 +32,30 @@
   <g><circle cx="22" cy="258" r="5" fill="url(#silverScrew)"/><line x1="18" y1="258" x2="26" y2="258" stroke="#6A6A65" stroke-width="0.8"/></g>
   <g><circle cx="218" cy="258" r="5" fill="url(#silverScrew)"/><line x1="214" y1="258" x2="222" y2="258" stroke="#6A6A65" stroke-width="0.8"/></g>
 
-  <g transform="translate(94 48)">
-    <rect x="0" y="0" width="5" height="68" fill="url(#goldPlate)"/>
-    <polygon points="5,30 5,34 50,0 45,0" fill="url(#goldPlate)"/>
-    <polygon points="5,30 5,34 50,68 45,68" fill="url(#goldPlate)"/>
-    <polygon points="25,46 9,67 7,69 22,48" fill="url(#goldPlate)"/>
-    <rect x="14" y="57" width="22" height="2" fill="url(#silverBarPlate)"/>
+  <!-- КА monogram, centered, ~120px wide -->
+  <g transform="translate(60 42)">
+    <!-- К -->
+    <g fill="url(#goldPlate)">
+      <rect x="6" y="6" width="8" height="68" rx="0.8"/>
+      <polygon points="14,42 14,52 38,6 30,6"/>
+      <polygon points="14,42 14,52 38,80 30,80"/>
+      <polygon points="20,46 32,30 27,30 16,46"/>
+    </g>
+    <!-- separator dot -->
+    <circle cx="56" cy="42" r="2.4" fill="url(#goldPlate)"/>
+    <!-- А -->
+    <g fill="url(#goldPlateA)">
+      <polygon points="74,6 82,6 70,80 62,80"/>
+      <polygon points="74,6 82,6 94,80 86,80"/>
+      <rect x="66" y="50" width="24" height="5.5" rx="0.6"/>
+    </g>
   </g>
 
-  <text x="120" y="155" font-family="Georgia, 'Cormorant Garamond', serif" font-size="18" font-weight="600" letter-spacing="2.5" fill="url(#goldPlate)" text-anchor="middle">КАБАЛЬ АНАСТАСІЯ</text>
-  <text x="120" y="178" font-family="Georgia, 'Cormorant Garamond', serif" font-size="14" font-weight="500" letter-spacing="3" fill="url(#goldPlate)" text-anchor="middle">ІГОРІВНА</text>
+  <text x="120" y="170" font-family="Georgia, 'Cormorant Garamond', serif" font-size="18" font-weight="600" letter-spacing="2.5" fill="url(#goldPlate)" text-anchor="middle">КАБАЛЬ АНАСТАСІЯ</text>
+  <text x="120" y="193" font-family="Georgia, 'Cormorant Garamond', serif" font-size="14" font-weight="500" letter-spacing="3" fill="url(#goldPlate)" text-anchor="middle">ІГОРІВНА</text>
 
-  <line x1="80" y1="195" x2="160" y2="195" stroke="url(#goldPlate)" stroke-width="0.8" opacity="0.6"/>
+  <line x1="80" y1="210" x2="160" y2="210" stroke="url(#goldPlate)" stroke-width="0.8" opacity="0.6"/>
 
-  <text x="120" y="218" font-family="Georgia, serif" font-size="9" letter-spacing="2.5" fill="url(#goldPlate)" text-anchor="middle" opacity="0.85">АДВОКАТ · ЛЬВІВ</text>
-  <text x="120" y="240" font-family="Georgia, serif" font-size="11" letter-spacing="1" fill="url(#goldPlate)" text-anchor="middle">+38 (095) 672 80 05</text>
+  <text x="120" y="232" font-family="Georgia, serif" font-size="9" letter-spacing="2.5" fill="url(#goldPlate)" text-anchor="middle" opacity="0.85">АДВОКАТ · ЛЬВІВ</text>
+  <text x="120" y="252" font-family="Georgia, serif" font-size="11" letter-spacing="1" fill="url(#goldPlate)" text-anchor="middle">+38 (095) 672 80 05</text>
 </svg>

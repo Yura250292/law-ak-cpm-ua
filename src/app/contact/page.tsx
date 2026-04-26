@@ -1,6 +1,8 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ContactForm } from "@/components/ContactForm";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 
 export const metadata = {
   title: "Зв'язатися з адвокатом — Кабаль Анастасія Ігорівна",
@@ -15,15 +17,23 @@ export default function ContactPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-primary py-20 text-white">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold sm:text-5xl">
-              Зв&apos;язатися з адвокатом
-            </h1>
-            <p className="mt-4 max-w-2xl text-lg text-white/60">
-              Маєте юридичне питання? Заповніть форму нижче або зверніться
-              зручним для вас способом. Відповідь протягом 24 годин.
-            </p>
+        <section className="relative overflow-hidden bg-primary py-20 text-white">
+          <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
+          <div className="absolute -bottom-40 -left-32 h-96 w-96 rounded-full bg-accent/[0.06] blur-3xl" />
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Stagger className="space-y-4" delayChildren={0.1} staggerChildren={0.12}>
+              <StaggerItem>
+                <h1 className="text-3xl font-bold sm:text-5xl">
+                  Зв&apos;язатися з адвокатом
+                </h1>
+              </StaggerItem>
+              <StaggerItem>
+                <p className="max-w-2xl text-lg text-white/60">
+                  Маєте юридичне питання? Заповніть форму нижче або зверніться
+                  зручним для вас способом. Відповідь протягом 24 годин.
+                </p>
+              </StaggerItem>
+            </Stagger>
           </div>
         </section>
 
@@ -32,19 +42,25 @@ export default function ContactPage() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid gap-12 lg:grid-cols-3">
               {/* Contact Form */}
-              <div className="lg:col-span-2">
+              <Reveal className="lg:col-span-2">
                 <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
                   <h2 className="mb-6 text-2xl font-bold text-primary">
                     Напишіть мені
                   </h2>
                   <ContactForm />
                 </div>
-              </div>
+              </Reveal>
 
               {/* Contact Info Sidebar */}
-              <div className="space-y-6">
+              <Stagger
+                className="space-y-6"
+                whileInView
+                delayChildren={0.2}
+                staggerChildren={0.1}
+              >
                 {/* Instagram */}
-                <div className="rounded-xl border border-border bg-white p-6 text-center">
+                <StaggerItem>
+                <div className="rounded-xl border border-border bg-white p-6 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md">
                   <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
                     <svg
                       className="h-5 w-5 text-accent"
@@ -70,9 +86,11 @@ export default function ContactPage() {
                     @k_anastasiya_i
                   </a>
                 </div>
+                </StaggerItem>
 
                 {/* Phone */}
-                <div className="rounded-xl border border-border bg-white p-6 text-center">
+                <StaggerItem>
+                <div className="rounded-xl border border-border bg-white p-6 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md">
                   <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
                     <svg
                       className="h-5 w-5 text-accent"
@@ -96,9 +114,11 @@ export default function ContactPage() {
                     +38 (095) 672-80-05
                   </a>
                 </div>
+                </StaggerItem>
 
                 {/* Location */}
-                <div className="rounded-xl border border-border bg-white p-6 text-center">
+                <StaggerItem>
+                <div className="rounded-xl border border-border bg-white p-6 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md">
                   <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
                     <svg
                       className="h-5 w-5 text-accent"
@@ -122,7 +142,8 @@ export default function ContactPage() {
                   <p className="font-semibold text-primary">Місто</p>
                   <p className="mt-1 text-sm text-muted">м. Львів, Україна</p>
                 </div>
-              </div>
+                </StaggerItem>
+              </Stagger>
             </div>
           </div>
         </section>
@@ -130,15 +151,15 @@ export default function ContactPage() {
         {/* Google Maps Section */}
         <section className="bg-surface py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-8 text-center">
+            <Reveal className="mb-8 text-center">
               <h2 className="text-3xl font-bold text-primary sm:text-4xl">
                 Місцезнаходження
               </h2>
               <p className="mt-3 text-muted">
                 м. Львів, Україна
               </p>
-            </div>
-            <div className="overflow-hidden rounded-2xl border border-border shadow-sm">
+            </Reveal>
+            <Reveal delay={0.1} className="overflow-hidden rounded-2xl border border-border shadow-sm">
               <iframe
                 title="Львів, Україна — місцезнаходження адвоката"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d82326.13253840556!2d23.95283135!3d49.839683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x473add7c09109a57%3A0x4223c517012378e2!2z0JvRjNCy0ZbQsiwg0JvRjNCy0ZbQstGB0YzQutCwINC-0LHQu9Cw0YHRgtGMLCA3OTAwMA!5e0!3m2!1suk!2sua!4v1700000000000!5m2!1suk!2sua"
@@ -149,7 +170,7 @@ export default function ContactPage() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
-            </div>
+            </Reveal>
           </div>
         </section>
       </main>

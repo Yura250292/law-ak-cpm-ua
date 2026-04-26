@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import ConsultationForm from "@/components/ConsultationForm";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 
 export const metadata: Metadata = {
   title: "Онлайн-консультація",
@@ -79,33 +81,46 @@ export default function ConsultationPage() {
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="bg-primary py-16 text-white">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold sm:text-5xl">Онлайн-консультація</h1>
-            <p className="mt-4 max-w-2xl text-lg text-white/60">
-              Отримайте професійну юридичну консультацію, не виходячи з дому.
-              Zoom, Google Meet або телефонний дзвінок — обирайте зручний формат.
-            </p>
+        <section className="relative overflow-hidden bg-primary py-16 text-white">
+          <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
+          <div className="absolute -bottom-40 -left-32 h-96 w-96 rounded-full bg-accent/[0.06] blur-3xl" />
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Stagger className="space-y-4" delayChildren={0.1} staggerChildren={0.12}>
+              <StaggerItem>
+                <h1 className="text-3xl font-bold sm:text-5xl">Онлайн-консультація</h1>
+              </StaggerItem>
+              <StaggerItem>
+                <p className="max-w-2xl text-lg text-white/60">
+                  Отримайте професійну юридичну консультацію, не виходячи з дому.
+                  Zoom, Google Meet або телефонний дзвінок — обирайте зручний формат.
+                </p>
+              </StaggerItem>
+            </Stagger>
           </div>
         </section>
 
         {/* Consultation types */}
         <section className="bg-surface py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-12 text-center">
+            <Reveal className="mb-12 text-center">
               <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-accent">
                 ТАРИФИ
               </p>
               <h2 className="text-3xl font-bold text-primary sm:text-4xl">
                 Оберіть тип консультації
               </h2>
-            </div>
+            </Reveal>
 
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <Stagger
+              className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
+              whileInView
+              delayChildren={0.1}
+              staggerChildren={0.12}
+            >
               {consultationTypes.map((ct) => (
+                <StaggerItem key={ct.title} className="h-full">
                 <div
-                  key={ct.title}
-                  className="group rounded-2xl border border-border bg-white p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  className="group h-full rounded-2xl border border-border bg-white p-8 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]"
                 >
                   <div className="mb-4 inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-primary">
                     {ct.duration}
@@ -116,37 +131,47 @@ export default function ConsultationPage() {
                     {ct.price}
                   </div>
                 </div>
+                </StaggerItem>
               ))}
-            </div>
+            </Stagger>
           </div>
         </section>
 
         {/* How it works */}
         <section className="bg-white py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-12 text-center">
+            <Reveal className="mb-12 text-center">
               <h2 className="text-3xl font-bold text-primary sm:text-4xl">
                 Як проходить консультація
               </h2>
               <p className="mt-4 text-lg text-muted">
                 Три прості кроки до вирішення вашого питання
               </p>
-            </div>
+            </Reveal>
 
-            <div className="relative grid gap-12 lg:grid-cols-3 lg:gap-8">
-              <div className="absolute left-[16.67%] right-[16.67%] top-6 hidden h-px border-t-2 border-dashed border-border lg:block" />
-              {howItWorks.map((item, idx) => (
-                <div key={idx} className="relative flex flex-col items-center text-center">
-                  {idx < howItWorks.length - 1 && (
-                    <div className="absolute left-1/2 top-12 h-full w-px -translate-x-1/2 border-l-2 border-dashed border-border lg:hidden" />
-                  )}
-                  <div className="relative z-10 mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-lg font-bold text-accent">
-                    {item.step}
+            <div className="relative">
+              <div className="pointer-events-none absolute left-[16.67%] right-[16.67%] top-6 hidden h-px border-t-2 border-dashed border-accent/40 lg:block" />
+              <Stagger
+                className="relative grid gap-12 lg:grid-cols-3 lg:gap-8"
+                whileInView
+                delayChildren={0.15}
+                staggerChildren={0.18}
+              >
+                {howItWorks.map((item, idx) => (
+                  <StaggerItem key={idx}>
+                  <div className="relative flex flex-col items-center text-center">
+                    {idx < howItWorks.length - 1 && (
+                      <div className="absolute left-1/2 top-12 h-full w-px -translate-x-1/2 border-l-2 border-dashed border-accent/40 lg:hidden" />
+                    )}
+                    <div className="relative z-10 mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-lg font-bold text-accent ring-2 ring-accent/30 transition-transform duration-300 hover:scale-110">
+                      {item.step}
+                    </div>
+                    <h3 className="mb-2 text-lg font-semibold text-primary">{item.title}</h3>
+                    <p className="max-w-xs text-sm leading-relaxed text-muted">{item.description}</p>
                   </div>
-                  <h3 className="mb-2 text-lg font-semibold text-primary">{item.title}</h3>
-                  <p className="max-w-xs text-sm leading-relaxed text-muted">{item.description}</p>
-                </div>
-              ))}
+                  </StaggerItem>
+                ))}
+              </Stagger>
             </div>
           </div>
         </section>
@@ -154,38 +179,47 @@ export default function ConsultationPage() {
         {/* Booking form */}
         <section className="bg-surface py-16">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-10 text-center">
+            <Reveal className="mb-10 text-center">
               <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-accent">
                 ЗАПИС
               </p>
               <h2 className="text-3xl font-bold text-primary sm:text-4xl">
                 Залишити заявку
               </h2>
-            </div>
-            <ConsultationForm />
+            </Reveal>
+            <Reveal delay={0.1}>
+              <ConsultationForm />
+            </Reveal>
           </div>
         </section>
 
         {/* Benefits */}
         <section className="bg-white py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-12 text-center">
+            <Reveal className="mb-12 text-center">
               <h2 className="text-3xl font-bold text-primary sm:text-4xl">
                 Переваги онлайн-консультації
               </h2>
-            </div>
+            </Reveal>
 
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <Stagger
+              className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
+              whileInView
+              delayChildren={0.1}
+              staggerChildren={0.1}
+            >
               {benefits.map((b) => (
-                <div key={b.title} className="flex flex-col items-center text-center">
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-primary">
+                <StaggerItem key={b.title}>
+                <div className="flex flex-col items-center text-center">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-primary ring-1 ring-accent/30 transition-transform duration-300 hover:scale-110">
                     <BenefitIcon icon={b.icon} />
                   </div>
                   <h3 className="mb-2 text-base font-semibold text-primary">{b.title}</h3>
                   <p className="text-sm leading-relaxed text-muted">{b.description}</p>
                 </div>
+                </StaggerItem>
               ))}
-            </div>
+            </Stagger>
           </div>
         </section>
 
@@ -194,7 +228,7 @@ export default function ConsultationPage() {
           <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
           <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-accent/5 blur-3xl" />
 
-          <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+          <Reveal className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold sm:text-4xl">Формат зв&apos;язку</h2>
             <p className="mt-4 text-lg text-white/60">
               Консультації проводяться через Zoom, Google Meet або за телефоном.
@@ -212,7 +246,7 @@ export default function ConsultationPage() {
                 Телефон
               </span>
             </div>
-          </div>
+          </Reveal>
         </section>
       </main>
 

@@ -5,6 +5,9 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { practiceAreas, getPracticeArea } from "@/lib/practice-areas";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
+import { MagneticButton } from "@/components/motion/MagneticButton";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -42,52 +45,64 @@ export default async function PracticeAreaPage({ params }: PageProps) {
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="bg-primary py-20 text-white">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-4 mb-4">
-              <span className="text-4xl">{area.icon}</span>
-              <h1 className="text-3xl font-bold sm:text-5xl">{area.title}</h1>
-            </div>
-            <p className="mt-4 max-w-2xl text-lg text-white/60">
-              {area.shortDescription}
-            </p>
+        <section className="relative overflow-hidden bg-primary py-20 text-white">
+          <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
+          <div className="absolute -bottom-40 -left-32 h-96 w-96 rounded-full bg-accent/[0.06] blur-3xl" />
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Stagger className="space-y-4" delayChildren={0.1} staggerChildren={0.12}>
+              <StaggerItem>
+                <div className="flex items-center gap-4 mb-4">
+                  <span className="text-4xl">{area.icon}</span>
+                  <h1 className="text-3xl font-bold sm:text-5xl">{area.title}</h1>
+                </div>
+              </StaggerItem>
+              <StaggerItem>
+                <p className="max-w-2xl text-lg text-white/60">
+                  {area.shortDescription}
+                </p>
+              </StaggerItem>
+            </Stagger>
           </div>
         </section>
 
         {/* Description */}
         <section className="bg-white py-20">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div className="space-y-6">
+            <Stagger className="space-y-6" whileInView delayChildren={0.05} staggerChildren={0.08}>
               {area.description.split("\n\n").map((paragraph, idx) => (
-                <p
-                  key={idx}
-                  className="text-base leading-relaxed text-muted"
-                >
-                  {paragraph}
-                </p>
+                <StaggerItem key={idx} y={12}>
+                  <p className="text-base leading-relaxed text-muted">
+                    {paragraph}
+                  </p>
+                </StaggerItem>
               ))}
-            </div>
+            </Stagger>
           </div>
         </section>
 
         {/* Services */}
         <section className="bg-surface py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-12 text-center">
+            <Reveal className="mb-12 text-center">
               <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-accent">
                 ПОСЛУГИ
               </p>
               <h2 className="text-3xl font-bold text-primary sm:text-4xl">
                 Що входить у цю спеціалізацію
               </h2>
-            </div>
+            </Reveal>
 
             <div className="mx-auto max-w-4xl">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <Stagger
+                className="grid gap-4 sm:grid-cols-2"
+                whileInView
+                delayChildren={0.1}
+                staggerChildren={0.06}
+              >
                 {area.services.map((service) => (
+                  <StaggerItem key={service} y={12}>
                   <div
-                    key={service}
-                    className="flex items-start gap-3 rounded-xl border border-border bg-white p-5 transition-all duration-200 hover:shadow-md"
+                    className="flex items-start gap-3 rounded-xl border border-border bg-white p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md"
                   >
                     <svg
                       className="mt-0.5 h-5 w-5 flex-shrink-0 text-accent"
@@ -106,8 +121,9 @@ export default async function PracticeAreaPage({ params }: PageProps) {
                       {service}
                     </span>
                   </div>
+                  </StaggerItem>
                 ))}
-              </div>
+              </Stagger>
             </div>
           </div>
         </section>
@@ -115,21 +131,26 @@ export default async function PracticeAreaPage({ params }: PageProps) {
         {/* Advantages */}
         <section className="bg-white py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-12 text-center">
+            <Reveal className="mb-12 text-center">
               <h2 className="text-3xl font-bold text-primary sm:text-4xl">
                 Чому обирають мене
               </h2>
               <p className="mt-4 text-lg text-muted">
                 Переваги роботи з адвокатом у сфері {area.title.toLowerCase()}
               </p>
-            </div>
+            </Reveal>
 
             <div className="mx-auto max-w-4xl">
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <Stagger
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                whileInView
+                delayChildren={0.1}
+                staggerChildren={0.1}
+              >
                 {area.advantages.map((advantage, idx) => (
+                  <StaggerItem key={idx} className="h-full">
                   <div
-                    key={idx}
-                    className="rounded-2xl border border-border bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                    className="h-full rounded-2xl border border-border bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]"
                   >
                     <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-accent/10">
                       <svg
@@ -150,8 +171,9 @@ export default async function PracticeAreaPage({ params }: PageProps) {
                       {advantage}
                     </p>
                   </div>
+                  </StaggerItem>
                 ))}
-              </div>
+              </Stagger>
             </div>
           </div>
         </section>
@@ -159,31 +181,37 @@ export default async function PracticeAreaPage({ params }: PageProps) {
         {/* Process Steps */}
         <section className="bg-surface py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-16 text-center">
+            <Reveal className="mb-16 text-center">
               <h2 className="text-3xl font-bold text-primary sm:text-4xl">
                 Як це працює
               </h2>
               <p className="mt-4 text-lg text-muted">
                 Етапи роботи над вашою справою
               </p>
-            </div>
+            </Reveal>
 
-            <div className="relative grid gap-12 lg:grid-cols-4 lg:gap-8">
+            <div className="relative">
               {/* Connecting line (desktop) */}
-              <div className="absolute left-[12.5%] right-[12.5%] top-6 hidden h-px border-t-2 border-dashed border-border lg:block" />
+              <div className="pointer-events-none absolute left-[12.5%] right-[12.5%] top-6 hidden h-px border-t-2 border-dashed border-accent/40 lg:block" />
 
+              <Stagger
+                className="relative grid gap-12 lg:grid-cols-4 lg:gap-8"
+                whileInView
+                delayChildren={0.15}
+                staggerChildren={0.18}
+              >
               {area.process.map((step, idx) => (
+                <StaggerItem key={step.step}>
                 <div
-                  key={step.step}
                   className="relative flex flex-col items-center text-center"
                 >
                   {/* Connecting line (mobile) */}
                   {idx < area.process.length - 1 && (
-                    <div className="absolute left-1/2 top-12 h-full w-px -translate-x-1/2 border-l-2 border-dashed border-border lg:hidden" />
+                    <div className="absolute left-1/2 top-12 h-full w-px -translate-x-1/2 border-l-2 border-dashed border-accent/40 lg:hidden" />
                   )}
 
                   {/* Number circle */}
-                  <div className="relative z-10 mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-lg font-bold text-accent">
+                  <div className="relative z-10 mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-lg font-bold text-accent ring-2 ring-accent/30 transition-transform duration-300 hover:scale-110">
                     {step.step}
                   </div>
 
@@ -194,7 +222,9 @@ export default async function PracticeAreaPage({ params }: PageProps) {
                     {step.description}
                   </p>
                 </div>
+                </StaggerItem>
               ))}
+              </Stagger>
             </div>
           </div>
         </section>
@@ -204,7 +234,7 @@ export default async function PracticeAreaPage({ params }: PageProps) {
           <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
           <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-accent/5 blur-3xl" />
 
-          <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+          <Reveal className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold sm:text-4xl">
               Потрібна допомога з {area.title.toLowerCase()}?
             </h2>
@@ -213,18 +243,20 @@ export default async function PracticeAreaPage({ params }: PageProps) {
               юридичного документа онлайн вже сьогодні.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link href="/services">
-                <Button className="rounded-xl bg-accent px-10 py-4 text-base font-semibold text-primary shadow-lg shadow-accent/20 transition hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/30">
-                  Замовити документ
-                </Button>
-              </Link>
+              <MagneticButton className="inline-block">
+                <Link href="/services">
+                  <Button className="rounded-xl bg-accent px-10 py-4 text-base font-semibold text-primary shadow-lg shadow-accent/20 transition hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/30">
+                    Замовити документ
+                  </Button>
+                </Link>
+              </MagneticButton>
               <Link href="/practices">
                 <Button className="rounded-xl border-2 border-white bg-transparent px-10 py-4 text-base font-semibold text-white transition hover:bg-white hover:text-primary">
                   Всі спеціалізації
                 </Button>
               </Link>
             </div>
-          </div>
+          </Reveal>
         </section>
       </main>
 

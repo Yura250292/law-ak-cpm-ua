@@ -9,6 +9,10 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/Card";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
+import { Counter } from "@/components/motion/Counter";
+import { MagneticButton } from "@/components/motion/MagneticButton";
 
 export const metadata = {
   title: "Відгуки клієнтів — Адвокат Кабаль Анастасія Ігорівна",
@@ -129,9 +133,9 @@ const caseResults = [
 ];
 
 const stats = [
-  { value: "50+", label: "клієнтів" },
-  { value: "95%", label: "задоволених" },
-  { value: "20+", label: "виграних справ" },
+  { count: 50, suffix: "+", label: "клієнтів" },
+  { count: 95, suffix: "%", label: "задоволених" },
+  { count: 20, suffix: "+", label: "виграних справ" },
 ];
 
 function StarRating({ rating }: { rating: number }) {
@@ -158,49 +162,70 @@ export default function ReviewsPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-primary py-20 text-white">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold sm:text-5xl">
-              Відгуки клієнтів
-            </h1>
-            <p className="mt-4 max-w-2xl text-lg text-white/60">
-              Реальні відгуки людей, яким я допомогла вирішити юридичні питання.
-              Кожна історія — це довіра, яку я ціную.
-            </p>
+        <section className="relative overflow-hidden bg-primary py-20 text-white">
+          <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
+          <div className="absolute -bottom-40 -left-32 h-96 w-96 rounded-full bg-accent/[0.06] blur-3xl" />
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Stagger className="space-y-4" delayChildren={0.1} staggerChildren={0.12}>
+              <StaggerItem>
+                <h1 className="text-3xl font-bold sm:text-5xl">
+                  Відгуки клієнтів
+                </h1>
+              </StaggerItem>
+              <StaggerItem>
+                <p className="max-w-2xl text-lg text-white/60">
+                  Реальні відгуки людей, яким я допомогла вирішити юридичні питання.
+                  Кожна історія — це довіра, яку я ціную.
+                </p>
+              </StaggerItem>
+            </Stagger>
           </div>
         </section>
 
         {/* Stats Bar */}
         <section className="border-b border-border bg-surface py-8">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-wrap items-center justify-center gap-12 sm:gap-20">
+            <Stagger
+              className="flex flex-wrap items-center justify-center gap-12 sm:gap-20"
+              whileInView
+              delayChildren={0.05}
+              staggerChildren={0.12}
+            >
               {stats.map((stat) => (
-                <div key={stat.label} className="text-center">
+                <StaggerItem key={stat.label}>
+                <div className="text-center">
                   <p className="text-3xl font-bold text-primary sm:text-4xl">
-                    {stat.value}
+                    <Counter to={stat.count} suffix={stat.suffix} />
                   </p>
                   <p className="mt-1 text-sm text-muted">{stat.label}</p>
                 </div>
+                </StaggerItem>
               ))}
-            </div>
+            </Stagger>
           </div>
         </section>
 
         {/* Reviews Section */}
         <section className="bg-white py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-16 text-center">
+            <Reveal className="mb-16 text-center">
               <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-accent">
                 ВІДГУКИ
               </p>
               <h2 className="text-3xl font-bold text-primary sm:text-4xl">
                 Що кажуть клієнти
               </h2>
-            </div>
+            </Reveal>
 
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <Stagger
+              className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
+              whileInView
+              delayChildren={0.05}
+              staggerChildren={0.08}
+            >
               {reviews.map((review, idx) => (
-                <Card key={idx} className="flex flex-col">
+                <StaggerItem key={idx} className="h-full">
+                <Card className="flex h-full flex-col transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]">
                   <CardHeader>
                     <div className="mb-3 flex items-center justify-between">
                       <StarRating rating={review.rating} />
@@ -219,15 +244,16 @@ export default function ReviewsPage() {
                     </p>
                   </CardContent>
                 </Card>
+                </StaggerItem>
               ))}
-            </div>
+            </Stagger>
           </div>
         </section>
 
         {/* Case Results Section */}
         <section className="bg-surface py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-16 text-center">
+            <Reveal className="mb-16 text-center">
               <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-accent">
                 ПРАКТИКА
               </p>
@@ -237,11 +263,17 @@ export default function ReviewsPage() {
               <p className="mt-4 text-lg text-muted">
                 Деякі з успішно вирішених справ (дані знеособлені)
               </p>
-            </div>
+            </Reveal>
 
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <Stagger
+              className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
+              whileInView
+              delayChildren={0.05}
+              staggerChildren={0.08}
+            >
               {caseResults.map((caseItem, idx) => (
-                <Card key={idx} className="flex flex-col">
+                <StaggerItem key={idx} className="h-full">
+                <Card className="flex h-full flex-col transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]">
                   <CardHeader>
                     <span className="mb-3 inline-block w-fit rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-primary">
                       {caseItem.category}
@@ -261,8 +293,9 @@ export default function ReviewsPage() {
                     </div>
                   </CardContent>
                 </Card>
+                </StaggerItem>
               ))}
-            </div>
+            </Stagger>
           </div>
         </section>
 
@@ -271,7 +304,7 @@ export default function ReviewsPage() {
           <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
           <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-accent/5 blur-3xl" />
 
-          <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+          <Reveal className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold sm:text-4xl">
               Залишити відгук
             </h2>
@@ -280,22 +313,24 @@ export default function ReviewsPage() {
               Це допомагає іншим людям зробити правильний вибір.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <a
-                href="https://www.instagram.com/k_anastasiya_i/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button className="rounded-xl bg-accent px-10 py-4 text-base font-semibold text-primary shadow-lg shadow-accent/20 transition hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/30">
-                  Написати в Instagram
-                </Button>
-              </a>
+              <MagneticButton className="inline-block">
+                <a
+                  href="https://www.instagram.com/k_anastasiya_i/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button className="rounded-xl bg-accent px-10 py-4 text-base font-semibold text-primary shadow-lg shadow-accent/20 transition hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/30">
+                    Написати в Instagram
+                  </Button>
+                </a>
+              </MagneticButton>
               <Link href="/services">
                 <Button className="rounded-xl border-2 border-white bg-transparent px-10 py-4 text-base font-semibold text-white transition hover:bg-white hover:text-primary">
                   Замовити документ
                 </Button>
               </Link>
             </div>
-          </div>
+          </Reveal>
         </section>
       </main>
 
