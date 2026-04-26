@@ -100,19 +100,46 @@ export async function POST(request: NextRequest) {
           fileName: file.name,
         });
       } else if (fileName.endsWith(".pdf")) {
+        // 1) Спробуємо витягти текстовий шар. Імпортуємо внутрішній модуль —
+        //    pdf-parse/index.js на Vercel падає через debug-режим (ENOENT).
+        let extractedText = "";
+        let parseError: unknown = null;
         try {
-          const pdfModule = await import("pdf-parse");
+          const pdfModule = await import(
+            /* @vite-ignore */ "pdf-parse/lib/pdf-parse.js" as string
+          );
           const pdfParse = (pdfModule as any).default ?? pdfModule;
           const parsed = await pdfParse(buffer);
-          documentText += parsed.text + "\n\n";
+          extractedText = (parsed?.text ?? "").trim();
         } catch (err) {
-          return NextResponse.json(
-            {
-              error: `Не вдалося прочитати PDF "${file.name}". Можливо файл пошкоджений, захищений паролем або містить тільки зображення. Спробуйте зберегти копію або завантажити як фото/JPG.`,
-              details: err instanceof Error ? err.message : String(err),
-            },
-            { status: 400 }
-          );
+          parseError = err;
+        }
+
+        if (extractedText.length >= 100) {
+          // Достатньо тексту — звичайний шлях.
+          documentText += extractedText + "\n\n";
+        } else {
+          // Скан-PDF або pdf-parse зламалось — віддаємо PDF напряму Gemini
+          // (він читає PDF нативно з OCR). Claude PDF не приймає inline.
+          if (parseError) {
+            console.warn(
+              `pdf-parse failed for ${file.name}, falling back to Gemini PDF input:`,
+              parseError
+            );
+          } else {
+            console.warn(
+              `pdf-parse returned ${extractedText.length} chars for ${file.name} (likely scanned), falling back to Gemini PDF input`
+            );
+          }
+          images.push({
+            mimeType: "application/pdf",
+            base64: buffer.toString("base64"),
+            fileName: file.name,
+          });
+          // Якщо щось маленьке витягли — додамо як підказку.
+          if (extractedText.length > 0) {
+            documentText += extractedText + "\n\n";
+          }
         }
       } else if (fileName.endsWith(".docx")) {
         try {
