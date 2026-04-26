@@ -9,6 +9,55 @@ interface ChatMessage {
   text: string;
 }
 
+// Per-file hard cap: avoid sending huge files even to R2. Multi-hundred-MB PDFs
+// would just stall the AI step. R2 itself can take much more if ever needed.
+const MAX_FILE_BYTES = 50 * 1024 * 1024;
+const IMAGE_RE = /\.(jpg|jpeg|png|webp|heic|heif)$/i;
+
+/**
+ * Downscale + re-encode an image via canvas so phone photos (often 4–8 MB)
+ * fit within Vercel's 4.5 MB body limit. HEIC/HEIF aren't decodable by canvas
+ * in most browsers — those pass through unchanged and rely on the size guard.
+ */
+async function compressImage(file: File): Promise<File> {
+  if (!/\.(jpe?g|png|webp)$/i.test(file.name)) return file;
+  if (file.size < 600 * 1024) return file;
+
+  const dataUrl: string = await new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result as string);
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(file);
+  });
+
+  const img: HTMLImageElement = await new Promise((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = () => reject(new Error("decode"));
+    i.src = dataUrl;
+  });
+
+  const MAX_DIM = 2000;
+  const scale = Math.min(1, MAX_DIM / Math.max(img.width, img.height));
+  const w = Math.round(img.width * scale);
+  const h = Math.round(img.height * scale);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return file;
+  ctx.drawImage(img, 0, 0, w, h);
+
+  const blob: Blob | null = await new Promise((resolve) =>
+    canvas.toBlob((b) => resolve(b), "image/jpeg", 0.85)
+  );
+  if (!blob || blob.size >= file.size) return file;
+
+  const newName = file.name.replace(/\.(jpe?g|png|webp)$/i, ".jpg");
+  return new File([blob], newName, { type: "image/jpeg" });
+}
+
 export default function CaseAnalysisPage() {
   const router = useRouter();
 
@@ -27,6 +76,7 @@ export default function CaseAnalysisPage() {
   const [analysis, setAnalysis] = useState("");
   const [caseContext, setCaseContext] = useState("");
   const [fileName, setFileName] = useState("");
+  const [analysisModels, setAnalysisModels] = useState<string[]>([]);
 
   // Chat state
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -41,9 +91,21 @@ export default function CaseAnalysisPage() {
   }, [chatMessages]);
 
   // ── Add files ──
-  function addFiles(newFiles: FileList | File[]) {
+  async function addFiles(newFiles: FileList | File[]) {
     const arr = Array.from(newFiles);
-    setFiles((prev) => [...prev, ...arr]);
+    const processed = await Promise.all(
+      arr.map(async (f) => {
+        if (IMAGE_RE.test(f.name)) {
+          try {
+            return await compressImage(f);
+          } catch {
+            return f;
+          }
+        }
+        return f;
+      })
+    );
+    setFiles((prev) => [...prev, ...processed]);
   }
 
   function removeFile(index: number) {
@@ -57,26 +119,66 @@ export default function CaseAnalysisPage() {
       return;
     }
 
+    const tooBig = files.find((f) => f.size > MAX_FILE_BYTES);
+    if (tooBig) {
+      setError(
+        `Файл "${tooBig.name}" завеликий (${(tooBig.size / 1024 / 1024).toFixed(1)} МБ). Максимум — 50 МБ на файл.`
+      );
+      return;
+    }
+
     setUploading(true);
     setError("");
     setAnalysis("");
     setChatMessages([]);
 
     try {
-      const fd = new FormData();
-      if (lawyerTask.trim()) {
-        fd.append("lawyerTask", lawyerTask.trim());
-      }
+      // Step 1: upload each file directly to R2 via presigned URL (bypasses
+      // Vercel's 4.5 MB serverless body limit).
+      const uploaded: { key: string; name: string }[] = [];
       for (const f of files) {
-        fd.append("files", f);
-      }
-      if (pastedText.trim()) {
-        fd.append("text", pastedText);
+        const presignRes = await fetch(
+          "/api/admin/case-analysis/upload-url",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fileName: f.name,
+              contentType: f.type || "application/octet-stream",
+            }),
+          }
+        );
+        if (presignRes.status === 401) {
+          router.push("/admin/login");
+          return;
+        }
+        const presignData = await presignRes.json();
+        if (!presignRes.ok) {
+          throw new Error(presignData.error ?? "Не вдалося отримати URL");
+        }
+
+        const putRes = await fetch(presignData.url, {
+          method: "PUT",
+          headers: { "Content-Type": presignData.contentType },
+          body: f,
+        });
+        if (!putRes.ok) {
+          throw new Error(
+            `Не вдалося завантажити "${f.name}" у сховище (${putRes.status})`
+          );
+        }
+        uploaded.push({ key: presignData.key, name: f.name });
       }
 
+      // Step 2: trigger analysis with R2 keys (small JSON payload).
       const res = await fetch("/api/admin/case-analysis", {
         method: "POST",
-        body: fd,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lawyerTask: lawyerTask.trim() || undefined,
+          text: pastedText.trim() || undefined,
+          files: uploaded,
+        }),
       });
 
       if (res.status === 401) {
@@ -93,6 +195,7 @@ export default function CaseAnalysisPage() {
       setAnalysis(data.analysis);
       setCaseContext(data.documentText);
       setFileName(data.fileName);
+      setAnalysisModels(Array.isArray(data.models) ? data.models : []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Помилка аналізу");
     } finally {
@@ -224,6 +327,7 @@ export default function CaseAnalysisPage() {
     setCaseContext("");
     setChatMessages([]);
     setFileName("");
+    setAnalysisModels([]);
     setError("");
     setGeneratedDoc("");
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -440,7 +544,7 @@ export default function CaseAnalysisPage() {
             {/* LEFT: Analysis results + Document generation */}
             <div className="space-y-5 max-h-[calc(100vh-140px)] overflow-y-auto">
               <div className="bg-white rounded-2xl border border-border p-6">
-                <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
+                <div className="flex items-center justify-between mb-2 gap-3 flex-wrap">
                   <h2 className="text-sm font-bold text-primary uppercase tracking-wide">
                     Результати аналізу
                   </h2>
@@ -454,6 +558,27 @@ export default function CaseAnalysisPage() {
                     }
                   />
                 </div>
+                {analysisModels.length > 0 && (
+                  <div className="flex items-center gap-1.5 flex-wrap mb-4 text-xs">
+                    <span className="text-muted">Брали участь:</span>
+                    {analysisModels.map((m, i) => (
+                      <span
+                        key={i}
+                        className="px-2 py-0.5 rounded-md bg-accent/15 text-primary font-medium border border-accent/30"
+                      >
+                        {m}
+                      </span>
+                    ))}
+                    {analysisModels.length > 1 && (
+                      <span
+                        className="text-muted"
+                        title="Перша модель готує чернетку, друга перевіряє і доповнює"
+                      >
+                        · синергія
+                      </span>
+                    )}
+                  </div>
+                )}
                 <div className="prose prose-sm max-w-none">
                   <MarkdownRenderer text={analysis} />
                 </div>

@@ -23,14 +23,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const answer = await chatAboutCase({
+    const result = await chatAboutCase({
       caseContext: caseContext ?? "",
       analysisResult: analysisResult ?? "",
       chatHistory: chatHistory ?? [],
       question: question.trim(),
     });
 
-    return NextResponse.json({ answer });
+    return NextResponse.json({ answer: result.text, model: result.model });
   } catch (error) {
     if (error instanceof AdminAuthError) {
       return NextResponse.json({ error: error.message }, { status: 401 });

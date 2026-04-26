@@ -4,6 +4,7 @@ import {
   analyzeLegalCase,
   analyzeLegalCaseWithImages,
 } from "@/lib/ai/case-analyzer";
+import { getObjectFromR2, deleteFromR2 } from "@/lib/r2";
 
 const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"];
 const DOC_EXTENSIONS = [".pdf", ".docx", ".txt"];
@@ -25,28 +26,69 @@ function getMimeType(name: string): string {
   return map[ext ?? ""] ?? "image/jpeg";
 }
 
+interface UploadedItem {
+  buffer: Buffer;
+  name: string;
+}
+
+export const maxDuration = 300;
+
 export async function POST(request: NextRequest) {
+  const r2KeysToCleanup: string[] = [];
+
   try {
     await requireAdmin();
 
-    const formData = await request.formData();
-    const lawyerTask = formData.get("lawyerTask") as string | null;
-    const pastedText = formData.get("text") as string | null;
+    let lawyerTask: string | null = null;
+    let pastedText: string | null = null;
+    const items: UploadedItem[] = [];
 
-    // Collect all files
-    const allFiles = formData.getAll("files") as File[];
-    // Also support single "file" key for backwards compat
-    const singleFile = formData.get("file") as File | null;
-    if (singleFile) allFiles.push(singleFile);
+    const contentType = request.headers.get("content-type") ?? "";
+
+    if (contentType.includes("application/json")) {
+      // R2-backed flow: client uploaded files directly to R2 and now sends keys.
+      const body = (await request.json()) as {
+        lawyerTask?: string;
+        text?: string;
+        files?: { key: string; name: string }[];
+      };
+      lawyerTask = body.lawyerTask ?? null;
+      pastedText = body.text ?? null;
+
+      const r2Files = body.files ?? [];
+      for (const f of r2Files) {
+        if (!f.key || !f.name) continue;
+        const buffer = await getObjectFromR2(f.key);
+        items.push({ buffer, name: f.name });
+        r2KeysToCleanup.push(f.key);
+      }
+    } else {
+      // Legacy FormData flow (small uploads, ≤ 4.5 MB Vercel cap).
+      const formData = await request.formData();
+      lawyerTask = formData.get("lawyerTask") as string | null;
+      pastedText = formData.get("text") as string | null;
+
+      const allFiles = formData.getAll("files") as File[];
+      const singleFile = formData.get("file") as File | null;
+      if (singleFile) allFiles.push(singleFile);
+
+      for (const file of allFiles) {
+        items.push({
+          buffer: Buffer.from(await file.arrayBuffer()),
+          name: file.name,
+        });
+      }
+    }
 
     let documentText = "";
     const images: { mimeType: string; base64: string; fileName: string }[] = [];
     const fileNames: string[] = [];
 
-    for (const file of allFiles) {
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const fileName = file.name.toLowerCase();
-      fileNames.push(file.name);
+    for (const item of items) {
+      const buffer = item.buffer;
+      const fileName = item.name.toLowerCase();
+      fileNames.push(item.name);
+      const file = { name: item.name } as { name: string };
 
       if (isImage(fileName)) {
         images.push({
@@ -123,27 +165,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call AI
-    let analysis: string;
-
-    if (images.length > 0) {
-      analysis = await analyzeLegalCaseWithImages({
-        documentText: documentText.trim(),
-        images,
-        lawyerTask: lawyerTask?.trim() ?? "",
-      });
-    } else {
-      analysis = await analyzeLegalCase(
-        documentText.trim(),
-        lawyerTask?.trim() ?? ""
-      );
-    }
+    // Call AI (Gemini draft + Claude review synergy)
+    const result =
+      images.length > 0
+        ? await analyzeLegalCaseWithImages({
+            documentText: documentText.trim(),
+            images,
+            lawyerTask: lawyerTask?.trim() ?? "",
+          })
+        : await analyzeLegalCase(
+            documentText.trim(),
+            lawyerTask?.trim() ?? ""
+          );
 
     const displayName =
       fileNames.length > 0 ? fileNames.join(", ") : "Вставлений текст";
 
     return NextResponse.json({
-      analysis,
+      analysis: result.text,
+      models: result.models,
       documentText: documentText.slice(0, 20000),
       fileName: displayName,
       imageCount: images.length,
@@ -160,5 +200,12 @@ export async function POST(request: NextRequest) {
       },
       { status: 500 }
     );
+  } finally {
+    // Clean up R2 staging objects — analysis is one-shot, no reason to keep them.
+    for (const key of r2KeysToCleanup) {
+      deleteFromR2(key).catch((err) =>
+        console.error(`R2 cleanup failed for ${key}:`, err)
+      );
+    }
   }
 }
