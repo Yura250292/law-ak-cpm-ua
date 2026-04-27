@@ -420,7 +420,11 @@ export default function CaseAnalysisPage() {
                 onChange={(e) => setLawyerTask(e.target.value)}
                 rows={4}
                 className="w-full px-4 py-3 rounded-xl border border-border bg-surface text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition"
-                placeholder="Наприклад: Надати хронологію кроків для отримання житла від держави для особи, позбавленої батьківського піклування (20 років). Знайти відповідне законодавство та судову практику. Підготувати заяву..."
+                placeholder="Наприклад:
+• Аналіз справи + стратегія захисту + підготовка позовної заяви
+• Перевір проєкт договору дарування частки в СК ТОВ — чи закриті всі питання, що додати
+• Аналіз статуту ТОВ для нового одноосібного учасника — які зміни внести, щоб у майбутньому без перешкод продати частку третім особам
+• Хронологія кроків + законодавство + судова практика по справі..."
               />
             </div>
 
