@@ -438,7 +438,7 @@ export default function CaseAnalysisPage() {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".pdf,.docx,.txt,.jpg,.jpeg,.png,.webp,.heic,.heif"
+                accept=".pdf,.docx,.doc,.rtf,.txt,.jpg,.jpeg,.png,.webp,.heic,.heif"
                 multiple
                 className="hidden"
                 onChange={(e) => {
@@ -494,7 +494,7 @@ export default function CaseAnalysisPage() {
                     Перетягніть файли сюди або натисніть для вибору
                   </p>
                   <p className="text-xs text-muted mt-2">
-                    Документи: PDF, DOCX, DOC, TXT
+                    Документи: PDF, DOCX, DOC, RTF, TXT
                   </p>
                   <p className="text-xs text-muted">
                     Фото документів: JPG, PNG, WEBP, HEIC

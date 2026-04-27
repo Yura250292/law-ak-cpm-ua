@@ -156,12 +156,48 @@ export async function POST(request: NextRequest) {
           );
         }
       } else if (fileName.endsWith(".doc")) {
-        return NextResponse.json(
-          {
-            error: `Старий формат .doc не підтримується ("${file.name}"). Відкрийте файл у Word і збережіть як .docx або PDF.`,
-          },
-          { status: 400 }
-        );
+        // Старий бінарний формат Word (OLE2). Використовуємо word-extractor.
+        try {
+          // @ts-expect-error — у пакета немає типів
+          const wordExtractorModule = await import("word-extractor");
+          const WordExtractor =
+            (wordExtractorModule as any).default ?? wordExtractorModule;
+          const extractor = new WordExtractor();
+          const doc = await extractor.extract(buffer);
+          const txt = (doc.getBody?.() ?? "").trim();
+          if (!txt) {
+            throw new Error("Empty .doc body");
+          }
+          documentText += txt + "\n\n";
+        } catch (err) {
+          return NextResponse.json(
+            {
+              error: `Не вдалося прочитати DOC "${file.name}". Файл може бути пошкоджений або захищений паролем. Відкрийте його у Word і збережіть як .docx або PDF.`,
+              details: err instanceof Error ? err.message : String(err),
+            },
+            { status: 400 }
+          );
+        }
+      } else if (fileName.endsWith(".rtf")) {
+        // RTF — простий текстовий формат з керуючими послідовностями.
+        // Витягуємо звичайний текст регекспом — досить для аналізу AI.
+        const raw = buffer.toString("utf-8");
+        const stripped = raw
+          .replace(/\\\*\\[a-z]+\s*[^{}]*?(?=[{}\\])/gi, "")
+          .replace(/\\[a-z]+-?\d* ?/gi, "")
+          .replace(/[{}]/g, "")
+          .replace(/\\'[0-9a-f]{2}/gi, "")
+          .replace(/\s+/g, " ")
+          .trim();
+        if (stripped.length < 20) {
+          return NextResponse.json(
+            {
+              error: `RTF "${file.name}" не вдалося розпарсити. Збережіть файл як .docx або PDF.`,
+            },
+            { status: 400 }
+          );
+        }
+        documentText += stripped + "\n\n";
       } else if (fileName.endsWith(".txt")) {
         documentText += buffer.toString("utf-8") + "\n\n";
       } else {

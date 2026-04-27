@@ -5,6 +5,8 @@ import { getPresignedPutUrl } from "@/lib/r2";
 const ALLOWED_EXT = [
   ".pdf",
   ".docx",
+  ".doc",
+  ".rtf",
   ".txt",
   ".jpg",
   ".jpeg",
@@ -17,6 +19,8 @@ const ALLOWED_EXT = [
 const MIME_BY_EXT: Record<string, string> = {
   pdf: "application/pdf",
   docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  doc: "application/msword",
+  rtf: "application/rtf",
   txt: "text/plain",
   jpg: "image/jpeg",
   jpeg: "image/jpeg",
