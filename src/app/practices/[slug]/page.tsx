@@ -250,7 +250,7 @@ export default async function PracticeAreaPage({ params }: PageProps) {
                   </Button>
                 </Link>
               </MagneticButton>
-              <Link href="/practices">
+              <Link href="/services">
                 <Button className="rounded-xl border-2 border-white bg-transparent px-10 py-4 text-base font-semibold text-white transition hover:bg-white hover:text-primary">
                   Всі спеціалізації
                 </Button>

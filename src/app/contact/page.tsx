@@ -111,7 +111,35 @@ export default function ContactPage() {
                     href="tel:+380956728005"
                     className="mt-1 block text-sm text-muted transition-colors hover:text-accent"
                   >
-                    +38 (095) 672-80-05
+                    +38 (095) 67-28-005
+                  </a>
+                </div>
+                </StaggerItem>
+
+                {/* Email */}
+                <StaggerItem>
+                <div className="rounded-xl border border-border bg-white p-6 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
+                    <svg
+                      className="h-5 w-5 text-accent"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                      />
+                    </svg>
+                  </div>
+                  <p className="font-semibold text-primary">Email</p>
+                  <a
+                    href="mailto:advocate.kabal.a@gmail.com"
+                    className="mt-1 block break-all text-sm text-muted transition-colors hover:text-accent"
+                  >
+                    advocate.kabal.a@gmail.com
                   </a>
                 </div>
                 </StaggerItem>
@@ -139,8 +167,15 @@ export default function ContactPage() {
                       />
                     </svg>
                   </div>
-                  <p className="font-semibold text-primary">Місто</p>
-                  <p className="mt-1 text-sm text-muted">м. Львів, Україна</p>
+                  <p className="font-semibold text-primary">Адреса</p>
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Львів%2C+вул.+Федьковича%2C+58"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 block text-sm text-muted transition-colors hover:text-accent"
+                  >
+                    м. Львів, вул. Федьковича, 58, літ. А-5
+                  </a>
                 </div>
                 </StaggerItem>
               </Stagger>
@@ -156,13 +191,13 @@ export default function ContactPage() {
                 Місцезнаходження
               </h2>
               <p className="mt-3 text-muted">
-                м. Львів, Україна
+                м. Львів, вул. Федьковича, 58, літ. А-5
               </p>
             </Reveal>
             <Reveal delay={0.1} className="overflow-hidden rounded-2xl border border-border shadow-sm">
               <iframe
-                title="Львів, Україна — місцезнаходження адвоката"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d82326.13253840556!2d23.95283135!3d49.839683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x473add7c09109a57%3A0x4223c517012378e2!2z0JvRjNCy0ZbQsiwg0JvRjNCy0ZbQstGB0YzQutCwINC-0LHQu9Cw0YHRgtGMLCA3OTAwMA!5e0!3m2!1suk!2sua!4v1700000000000!5m2!1suk!2sua"
+                title="м. Львів, вул. Федьковича, 58 — місцезнаходження адвоката"
+                src="https://maps.google.com/maps?q=%D0%9B%D1%8C%D0%B2%D1%96%D0%B2%2C%20%D0%B2%D1%83%D0%BB.%20%D0%A4%D0%B5%D0%B4%D1%8C%D0%BA%D0%BE%D0%B2%D0%B8%D1%87%D0%B0%2C%2058&t=&z=16&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="400"
                 style={{ border: 0 }}

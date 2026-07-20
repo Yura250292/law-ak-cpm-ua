@@ -11,9 +11,9 @@ import {
 import { blogPosts } from "@/lib/blog-data";
 
 export const metadata = {
-  title: "Юридичний блог | Корисні статті з права",
+  title: "Статті | Корисні матеріали з права",
   description:
-    "Юридичний блог адвоката Кабаль Анастасії. Корисні статті про сімейне, цивільне право, судові витрати та практичні поради. Актуальна інформація для громадян України.",
+    "Статті адвоката Кабаль Анастасії. Корисні матеріали про сімейне, цивільне право, судові витрати та практичні поради. Актуальна інформація для громадян України.",
 };
 
 function formatDate(iso: string): string {
@@ -35,10 +35,10 @@ export default function BlogPage() {
         <section className="bg-primary py-20 text-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <h1 className="text-3xl font-bold sm:text-5xl">
-              Юридичний блог
+              Статті
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-white/60">
-              Корисні статті про українське законодавство, судову практику та
+              Корисні матеріали про українське законодавство, судову практику та
               практичні поради від адвоката.
             </p>
           </div>

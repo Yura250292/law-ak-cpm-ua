@@ -5,11 +5,11 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { FAQSection } from "@/components/FAQSection";
+import { LawyerPhoto } from "@/components/LawyerPhoto";
 import { generalFAQ } from "@/lib/faq-data";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { Counter } from "@/components/motion/Counter";
-import { TiltCard } from "@/components/motion/TiltCard";
 import { MagneticButton } from "@/components/motion/MagneticButton";
 import { HeroBackdrop } from "@/components/motion/HeroBackdrop";
 import { ShimmerText } from "@/components/motion/ShimmerText";
@@ -151,54 +151,12 @@ const darkTrustItems = [
   },
 ];
 
-const documentCards = [
-  {
-    title: "Позовна заява",
-    href: "/templates/pozovna-zayava-zrazok.pdf",
-    size: "PDF · 240 KB",
-    icon: (
-      <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-      </svg>
-    ),
-  },
-  {
-    title: "Скарга",
-    href: "/templates/skarga-zrazok.pdf",
-    size: "PDF · 180 KB",
-    icon: (
-      <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H6m12 10.5H6a2.25 2.25 0 01-2.25-2.25V6.108c0-1.135.845-2.098 1.976-2.192a48.424 48.424 0 011.123-.08M15.75 18.75a3 3 0 01.954-2.194" />
-      </svg>
-    ),
-  },
-  {
-    title: "Договір",
-    href: "/templates/dogovir-zrazok.pdf",
-    size: "PDF · 320 KB",
-    icon: (
-      <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
-      </svg>
-    ),
-  },
-  {
-    title: "Заява до суду",
-    href: "/templates/zayava-do-sudu-zrazok.pdf",
-    size: "PDF · 280 KB",
-    icon: (
-      <svg className="h-5 w-5 text-white/70 transition-colors duration-300 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
-      </svg>
-    ),
-  },
+const aboutHighlights = [
+  "Понад 7 років досвіду в юридичній сфері",
+  "Спеціалізація: сімейне, цивільне, господарське та адміністративне право",
+  "Представництво інтересів клієнтів у судах усіх інстанцій",
+  "Індивідуальний підхід та повна конфіденційність кожної справи",
 ];
-
-const downloadIcon = (
-  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-  </svg>
-);
 
 export default function HomePage() {
   return (
@@ -333,45 +291,61 @@ export default function HomePage() {
                   </div>
 
                   {/* Card eyebrow + mini K+A logo */}
-                  <div className="relative mb-5 flex items-center gap-3">
+                  <div className="relative mb-6 flex items-center gap-3">
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.05] ring-1 ring-accent/30">
                       <Image src="/logo-mark.svg" alt="" width={32} height={32} className="opacity-90" />
                     </div>
                     <div className="flex flex-col leading-tight">
                       <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
-                        Зразки документів
+                        Перша консультація
                       </span>
                       <span className="font-display text-base font-semibold text-white/95">
-                        Завантажте безкоштовно
+                        Безкоштовно · 30 хвилин
                       </span>
                     </div>
                   </div>
 
-                  {/* Document cards grid */}
-                  <Stagger
-                    className="relative grid grid-cols-2 gap-4"
-                    delayChildren={0.6}
-                    staggerChildren={0.1}
-                  >
-                    {documentCards.map((doc) => (
-                      <StaggerItem key={doc.href} className="[transform-style:preserve-3d]">
-                        <TiltCard
-                          href={doc.href}
-                          download
-                          className="group block h-full rounded-2xl border border-accent-light/15 bg-white/[0.04] p-5 backdrop-blur-sm transition-colors duration-300 hover:border-accent/40 hover:bg-white/[0.08] hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]"
-                        >
-                          <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] transition-colors duration-300 group-hover:bg-accent/20">
-                            {doc.icon}
-                          </div>
-                          <p className="text-sm font-semibold text-white/90">{doc.title}</p>
-                          <div className="mt-2 flex items-center gap-1.5 text-xs text-white/40 transition-colors duration-300 group-hover:text-accent/70">
-                            {downloadIcon}
-                            {doc.size}
-                          </div>
-                        </TiltCard>
-                      </StaggerItem>
-                    ))}
-                  </Stagger>
+                  {/* Consultation promo */}
+                  <div className="relative space-y-6">
+                    <a
+                      href="tel:+380956728005"
+                      className="group block rounded-2xl border border-accent-light/15 bg-white/[0.04] p-5 backdrop-blur-sm transition-colors duration-300 hover:border-accent/40 hover:bg-white/[0.08]"
+                    >
+                      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/50">
+                        Зателефонуйте зараз
+                      </span>
+                      <span className="mt-1 block font-display text-2xl font-semibold text-white transition-colors group-hover:text-accent">
+                        +38 (095) 67-28-005
+                      </span>
+                    </a>
+
+                    <ul className="space-y-3">
+                      {[
+                        "Оцінимо перспективи вашої справи",
+                        "Запропонуємо покроковий план дій",
+                        "Повна конфіденційність — адвокатська таємниця",
+                      ].map((item) => (
+                        <li key={item} className="flex items-start gap-3">
+                          <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/15">
+                            <svg className="h-3 w-3 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </span>
+                          <span className="text-sm leading-relaxed text-white/80">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Link
+                      href="/consultation"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3.5 text-sm font-bold text-primary transition hover:bg-accent-hover"
+                    >
+                      Записатись на консультацію
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
 
                   {/* Bottom accent bar */}
                   <div className="absolute bottom-0 left-0 right-0 h-1 animate-shimmer rounded-b-3xl" />
@@ -401,6 +375,94 @@ export default function HomePage() {
                 </StaggerItem>
               ))}
             </Stagger>
+          </div>
+        </section>
+
+        {/* ── About the Lawyer ── */}
+        <section id="about" className="bg-white py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+              {/* Photo */}
+              <Reveal y={32} className="relative">
+                <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-3xl bg-surface shadow-[0_30px_80px_-30px_rgba(0,0,0,0.4)] ring-1 ring-accent/20">
+                  <LawyerPhoto />
+                  {/* Accent frame accents */}
+                  <span className="pointer-events-none absolute left-4 top-4 h-2 w-2 rounded-full bg-accent/50 ring-1 ring-accent/30" />
+                  <span className="pointer-events-none absolute right-4 top-4 h-2 w-2 rounded-full bg-accent/50 ring-1 ring-accent/30" />
+                  <span className="pointer-events-none absolute bottom-4 left-4 h-2 w-2 rounded-full bg-accent/50 ring-1 ring-accent/30" />
+                  <span className="pointer-events-none absolute bottom-4 right-4 h-2 w-2 rounded-full bg-accent/50 ring-1 ring-accent/30" />
+                </div>
+                {/* Floating experience badge */}
+                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 rounded-2xl bg-primary px-6 py-3 text-center text-white shadow-lg shadow-primary/25 ring-1 ring-accent/30">
+                  <span className="block font-display text-2xl font-bold text-accent">7+</span>
+                  <span className="text-[11px] uppercase tracking-[0.15em] text-white/70">
+                    років досвіду
+                  </span>
+                </div>
+              </Reveal>
+
+              {/* Text */}
+              <Reveal delay={0.15} y={32}>
+                <div className="space-y-6">
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                    Про адвоката
+                  </p>
+                  <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl lg:text-5xl">
+                    Кабаль Анастасія Ігорівна
+                  </h2>
+                  <div className="space-y-4 text-base leading-relaxed text-muted">
+                    <p>
+                      Адвокат зі Львова з понад 7-річним досвідом роботи в
+                      юридичній сфері. Спеціалізуюся на сімейному, цивільному,
+                      господарському та адміністративному праві — від першої
+                      консультації до результату в суді.
+                    </p>
+                    <p>
+                      Допомагаю клієнтам захищати їхні права: готую позовні заяви,
+                      скарги та договори, представляю інтереси в судах усіх
+                      інстанцій. Працюю особисто у Львові та онлайн по всій Україні.
+                    </p>
+                  </div>
+
+                  <Stagger
+                    className="space-y-3 pt-2"
+                    whileInView
+                    delayChildren={0.1}
+                    staggerChildren={0.08}
+                  >
+                    {aboutHighlights.map((item) => (
+                      <StaggerItem key={item} y={10}>
+                        <div className="flex items-start gap-3">
+                          <span className="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/10">
+                            <svg className="h-3 w-3 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </span>
+                          <span className="text-sm leading-relaxed text-primary/80">
+                            {item}
+                          </span>
+                        </div>
+                      </StaggerItem>
+                    ))}
+                  </Stagger>
+
+                  <div className="flex flex-col gap-4 pt-2 sm:flex-row">
+                    <MagneticButton className="w-full sm:w-auto">
+                      <Link href="/about" className="block w-full sm:w-auto">
+                        <Button className="w-full sm:w-auto rounded-xl bg-primary px-8 py-3 text-base font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary-light hover:shadow-xl">
+                          Дізнатися більше
+                        </Button>
+                      </Link>
+                    </MagneticButton>
+                    <Link href="/consultation" className="w-full sm:w-auto">
+                      <Button className="w-full sm:w-auto rounded-xl border-2 border-primary bg-transparent px-8 py-3 text-base font-semibold text-primary transition hover:bg-primary hover:text-white">
+                        Записатися на консультацію
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
           </div>
         </section>
 
@@ -454,7 +516,7 @@ export default function HomePage() {
               {/* "More" dark card */}
               <StaggerItem className="h-full sm:col-span-2 lg:col-span-1">
                 <Link
-                  href="/practices"
+                  href="/services"
                   className="group flex h-full flex-col rounded-2xl bg-primary p-7 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)]"
                 >
                   <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-light text-accent ring-1 ring-accent/40 transition group-hover:scale-110">
@@ -566,9 +628,9 @@ export default function HomePage() {
             </p>
             <div className="mt-10">
               <MagneticButton className="inline-block">
-                <Link href="/services">
+                <Link href="/consultation">
                   <Button className="rounded-xl bg-accent px-10 py-4 text-base font-semibold text-primary shadow-lg shadow-accent/20 transition hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/30">
-                    Замовити документ
+                    Записатись на консультацію
                   </Button>
                 </Link>
               </MagneticButton>

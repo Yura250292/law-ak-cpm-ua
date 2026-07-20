@@ -3,16 +3,16 @@ import Link from "next/link";
 
 const serviceLinks = [
   { href: "/services", label: "Всі послуги" },
-  { href: "/practices", label: "Спеціалізації" },
   { href: "/consultation", label: "Онлайн-консультація" },
-  { href: "/calculator", label: "Калькулятор судового збору" },
+  { href: "/samples", label: "Зразки документів" },
+  { href: "/contact", label: "Контакти" },
 ];
 
 const companyLinks = [
   { href: "/about", label: "Про адвоката" },
-  { href: "/blog", label: "Блог" },
-  { href: "/reviews", label: "Відгуки" },
-  { href: "/contact", label: "Контакти" },
+  { href: "/reviews", label: "Відгуки та кейси" },
+  { href: "/blog", label: "Статті" },
+  { href: "/consultation", label: "Записатись на консультацію" },
 ];
 
 export function Footer() {
@@ -86,7 +86,25 @@ export function Footer() {
                   href="tel:+380956728005"
                   className="hover:text-accent transition-colors duration-200"
                 >
-                  +38 (095) 672-80-05
+                  +38 (095) 67-28-005
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:advocate.kabal.a@gmail.com"
+                  className="break-all hover:text-accent transition-colors duration-200"
+                >
+                  advocate.kabal.a@gmail.com
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=Львів%2C+вул.+Федьковича%2C+58"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-accent transition-colors duration-200"
+                >
+                  м. Львів, вул. Федьковича, 58, літ. А-5
                 </a>
               </li>
               <li>
@@ -99,7 +117,6 @@ export function Footer() {
                   @k_anastasiya_i
                 </a>
               </li>
-              <li>м. Львів, Україна</li>
             </ul>
           </div>
         </div>
@@ -109,9 +126,15 @@ export function Footer() {
           <p className="text-sm text-white/40">
             &copy; 2026 Адвокат Кабаль Анастасія Ігорівна. Всі права захищені.
           </p>
-          <p className="text-xs text-white/25">
-            Розробка та дизайн сайту
-          </p>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/admin/login"
+              className="text-xs text-white/25 hover:text-accent transition-colors duration-200"
+            >
+              Вхід у кабінет
+            </Link>
+            <span className="text-xs text-white/25">Розробка та дизайн сайту</span>
+          </div>
         </div>
       </div>
     </footer>

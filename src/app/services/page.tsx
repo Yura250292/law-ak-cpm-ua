@@ -11,6 +11,7 @@ import {
   CardFooter,
 } from "@/components/ui/Card";
 import { prisma } from "@/lib/prisma";
+import { practiceAreas } from "@/lib/practice-areas";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 
@@ -55,9 +56,82 @@ export default async function ServicesPage() {
           </div>
         </section>
 
+        {/* Спеціалізації (сфери практики) */}
+        <section className="bg-white py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Reveal className="mb-12 text-center">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                Спеціалізації
+              </p>
+              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl">
+                Сфери практики
+              </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-base text-muted">
+                Надаю професійну юридичну допомогу у ключових галузях права — від
+                консультації до представництва у суді. Оберіть напрямок, щоб
+                дізнатися більше.
+              </p>
+            </Reveal>
+
+            <Stagger
+              className="grid gap-8 sm:grid-cols-2"
+              whileInView
+              delayChildren={0.1}
+              staggerChildren={0.1}
+            >
+              {practiceAreas.map((area) => (
+                <StaggerItem key={area.slug} className="h-full">
+                  <Link href={`/practices/${area.slug}`} className="group block h-full">
+                    <div className="h-full rounded-2xl border border-border bg-white p-8 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]">
+                      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-surface text-3xl">
+                        {area.icon}
+                      </div>
+                      <h3 className="mb-2 text-xl font-bold text-primary">
+                        {area.title}
+                      </h3>
+                      <p className="mb-5 text-sm leading-relaxed text-muted">
+                        {area.shortDescription}
+                      </p>
+                      <div className="mb-5 flex flex-wrap gap-2">
+                        {area.services.slice(0, 3).map((service) => (
+                          <span
+                            key={service}
+                            className="inline-block rounded-full bg-surface px-3 py-1 text-xs font-medium text-muted"
+                          >
+                            {service}
+                          </span>
+                        ))}
+                        {area.services.length > 3 && (
+                          <span className="inline-block rounded-full bg-surface px-3 py-1 text-xs font-medium text-accent">
+                            +{area.services.length - 3} послуг
+                          </span>
+                        )}
+                      </div>
+                      <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent transition group-hover:gap-2.5">
+                        Детальніше
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                      </span>
+                    </div>
+                  </Link>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </div>
+        </section>
+
         {/* Services Grid */}
         <section className="bg-surface py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Reveal className="mb-12 text-center">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                Документи онлайн
+              </p>
+              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl">
+                Замовити юридичний документ
+              </h2>
+            </Reveal>
             {templates.length === 0 ? (
               <Reveal>
                 <div className="rounded-2xl border border-border bg-white p-12 text-center">

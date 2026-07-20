@@ -1,24 +1,51 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
   { href: "/", label: "Головна" },
   { href: "/services", label: "Послуги" },
-  { href: "/practices", label: "Спеціалізації" },
-  { href: "/consultation", label: "Консультація" },
-  { href: "/calculator", label: "Калькулятор" },
-  { href: "/blog", label: "Блог" },
   { href: "/about", label: "Про адвоката" },
+  { href: "/reviews", label: "Відгуки та кейси" },
+  { href: "/contact", label: "Контакти" },
+  { href: "/samples", label: "Зразки документів" },
+  { href: "/blog", label: "Статті" },
 ];
+
+// ── Contact details ──
+const PHONE_DISPLAY = "+38 (095) 67-28-005";
+const PHONE_HREF = "tel:+380956728005";
+const EMAIL = "advocate.kabal.a@gmail.com";
+const EMAIL_HREF = `mailto:${EMAIL}`;
+const ADDRESS_DISPLAY = "м. Львів, вул. Федьковича, 58, літ. А-5";
+const MAPS_HREF = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  "Львів, вул. Федьковича, 58"
+)}`;
+
+const PhoneIcon = () => (
+  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.7">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+  </svg>
+);
+
+const MailIcon = () => (
+  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.7">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+  </svg>
+);
+
+const PinIcon = () => (
+  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.7">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+  </svg>
+);
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
   const pathname = usePathname();
 
   // Close mobile menu on route change
@@ -39,6 +66,36 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-[70] bg-white/95 backdrop-blur-sm border-b border-border">
+      {/* ── Top contact bar ── */}
+      <div className="bg-primary text-white">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-6 gap-y-1.5 px-4 py-2 text-[12.5px] sm:justify-end sm:px-6 lg:px-8">
+          <a
+            href={PHONE_HREF}
+            className="inline-flex items-center gap-1.5 text-white/85 transition-colors hover:text-accent"
+          >
+            <span className="text-accent"><PhoneIcon /></span>
+            <span className="font-medium">{PHONE_DISPLAY}</span>
+          </a>
+          <a
+            href={EMAIL_HREF}
+            className="inline-flex items-center gap-1.5 text-white/85 transition-colors hover:text-accent"
+          >
+            <span className="text-accent"><MailIcon /></span>
+            <span>{EMAIL}</span>
+          </a>
+          <a
+            href={MAPS_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden items-center gap-1.5 text-white/85 transition-colors hover:text-accent md:inline-flex"
+          >
+            <span className="text-accent"><PinIcon /></span>
+            <span>{ADDRESS_DISPLAY}</span>
+          </a>
+        </div>
+      </div>
+
+      {/* ── Main bar ── */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -62,7 +119,7 @@ export function Header() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -77,26 +134,12 @@ export function Header() {
               </Link>
             ))}
 
-            {/* Кабінет */}
-            <button
-              type="button"
-              onClick={() => setLoginOpen(true)}
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-muted hover:text-primary transition-colors duration-200"
-              aria-label="Кабінет"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" />
-              </svg>
-              Кабінет
-            </button>
-
             {/* CTA */}
             <Link
-              href="/services"
+              href="/consultation"
               className="ml-2 inline-flex items-center px-5 py-2 text-sm font-semibold rounded-md bg-accent text-primary transition-all duration-200 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
             >
-              Замовити
+              Записатись на консультацію
             </Link>
           </nav>
 
@@ -104,7 +147,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden relative flex flex-col justify-center items-center w-10 h-10 gap-[5px]"
+            className="lg:hidden relative flex flex-col justify-center items-center w-10 h-10 gap-[5px]"
             aria-label={mobileOpen ? "Закрити меню" : "Відкрити меню"}
           >
             <span
@@ -128,7 +171,7 @@ export function Header() {
 
       {/* Mobile slide-in nav */}
       <div
-        className={`fixed inset-0 top-16 z-[60] md:hidden transition-all duration-300 ${
+        className={`fixed inset-0 z-[60] lg:hidden transition-all duration-300 ${
           mobileOpen
             ? "visible opacity-100"
             : "invisible opacity-0 pointer-events-none"
@@ -144,7 +187,7 @@ export function Header() {
 
         {/* Panel */}
         <nav
-          className={`absolute right-0 top-0 h-full w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-out ${
+          className={`absolute right-0 top-0 h-full w-72 overflow-y-auto bg-white shadow-2xl transform transition-transform duration-300 ease-out ${
             mobileOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
@@ -171,163 +214,39 @@ export function Header() {
               </Link>
             ))}
 
-            <div className="mt-6 pt-6 border-t border-border space-y-3">
+            <div className="mt-6 pt-6 border-t border-border">
               <Link
-                href="/services"
+                href="/consultation"
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center justify-center w-full px-5 py-3 text-sm font-semibold rounded-md bg-accent text-primary transition-all duration-200 hover:bg-accent-hover active:scale-[0.97]"
               >
-                Замовити
+                Записатись на консультацію
               </Link>
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileOpen(false);
-                  setLoginOpen(true);
-                }}
-                className="flex items-center justify-center gap-2 w-full px-5 py-3 text-sm font-medium rounded-md border border-border text-primary hover:bg-surface transition-all duration-200"
+            </div>
+
+            {/* Contact block */}
+            <div className="mt-6 pt-6 border-t border-border space-y-3 text-sm">
+              <a href={PHONE_HREF} className="flex items-center gap-2.5 text-muted hover:text-accent transition-colors">
+                <span className="text-accent"><PhoneIcon /></span>
+                {PHONE_DISPLAY}
+              </a>
+              <a href={EMAIL_HREF} className="flex items-center gap-2.5 text-muted hover:text-accent transition-colors">
+                <span className="text-accent"><MailIcon /></span>
+                <span className="break-all">{EMAIL}</span>
+              </a>
+              <a
+                href={MAPS_HREF}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2.5 text-muted hover:text-accent transition-colors"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="8" r="4" />
-                  <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" />
-                </svg>
-                Кабінет
-              </button>
+                <span className="mt-0.5 text-accent"><PinIcon /></span>
+                {ADDRESS_DISPLAY}
+              </a>
             </div>
           </div>
         </nav>
       </div>
-
-      {loginOpen && <LoginModal onClose={() => setLoginOpen(false)} />}
     </header>
-  );
-}
-
-function LoginModal({ onClose }: { onClose: () => void }) {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    window.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [onClose]);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        setError(data.error ?? "Помилка авторизації");
-        return;
-      }
-      onClose();
-      router.push("/admin");
-    } catch {
-      setError("Помилка з'єднання");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (!mounted) return null;
-
-  return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
-        onClick={onClose}
-      />
-      <div className="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-border p-7">
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Закрити"
-          className="absolute top-3 right-3 w-8 h-8 inline-flex items-center justify-center rounded-full text-muted hover:bg-surface hover:text-primary transition"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-
-        <div className="text-center mb-5">
-          <div className="inline-flex items-baseline gap-0.5 mb-1">
-            <span className="text-2xl font-extrabold tracking-tight text-primary">LAW</span>
-            <span className="relative text-2xl font-extrabold tracking-tight text-primary">
-              AK
-              <span className="absolute -bottom-0.5 left-0 h-[3px] w-full bg-accent rounded-full" />
-            </span>
-          </div>
-          <p className="text-muted text-sm">Вхід у кабінет</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="cab-email" className="block text-sm font-medium text-primary mb-1.5">
-              Email
-            </label>
-            <input
-              id="cab-email"
-              type="email"
-              required
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-11 px-4 rounded-lg border border-border bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition"
-              placeholder="admin@example.com"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="cab-password" className="block text-sm font-medium text-primary mb-1.5">
-              Пароль
-            </label>
-            <input
-              id="cab-password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full h-11 px-4 rounded-lg border border-border bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition"
-              placeholder="••••••••"
-            />
-          </div>
-
-          {error && (
-            <div className="text-red-600 text-sm bg-red-50 rounded-lg px-4 py-2.5">
-              {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full h-11 bg-accent text-primary font-bold rounded-xl hover:bg-accent-hover transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
-          >
-            {loading ? "Вхід..." : "Увійти"}
-          </button>
-        </form>
-      </div>
-    </div>,
-    document.body
   );
 }

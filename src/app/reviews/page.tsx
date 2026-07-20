@@ -15,7 +15,7 @@ import { Counter } from "@/components/motion/Counter";
 import { MagneticButton } from "@/components/motion/MagneticButton";
 
 export const metadata = {
-  title: "Відгуки клієнтів — Адвокат Кабаль Анастасія Ігорівна",
+  title: "Відгуки та кейси — Адвокат Кабаль Анастасія Ігорівна",
   description:
     "Відгуки клієнтів адвоката Кабаль Анастасії Ігорівни. Реальні результати справ у сімейному, цивільному та господарському праві. Львів.",
 };
@@ -169,7 +169,7 @@ export default function ReviewsPage() {
             <Stagger className="space-y-4" delayChildren={0.1} staggerChildren={0.12}>
               <StaggerItem>
                 <h1 className="text-3xl font-bold sm:text-5xl">
-                  Відгуки клієнтів
+                  Відгуки та кейси
                 </h1>
               </StaggerItem>
               <StaggerItem>
