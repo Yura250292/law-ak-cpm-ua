@@ -7,12 +7,12 @@ import { usePathname } from "next/navigation";
 
 const navLinks = [
   { href: "/", label: "Головна" },
-  { href: "/services", label: "Послуги" },
   { href: "/about", label: "Про адвоката" },
+  { href: "/services", label: "Послуги" },
   { href: "/reviews", label: "Відгуки та кейси" },
-  { href: "/contact", label: "Контакти" },
   { href: "/samples", label: "Зразки документів" },
   { href: "/blog", label: "Статті" },
+  { href: "/contact", label: "Контакти" },
 ];
 
 // ── Contact details ──
@@ -108,23 +108,23 @@ export function Header() {
               priority
               className="transition-transform duration-300 group-hover:scale-105"
             />
-            <span className="hidden sm:flex flex-col leading-tight">
-              <span className="font-display text-[15px] font-semibold tracking-wide text-primary">
-                Кабаль Анастасія
+            <span className="hidden xl:flex flex-col leading-tight">
+              <span className="font-display text-[13px] font-semibold uppercase tracking-[0.1em] text-primary">
+                Кабаль Анастасія Ігорівна
               </span>
-              <span className="text-[10px] uppercase tracking-[0.18em] text-muted">
-                Адвокат · Львів
+              <span className="text-[10px] uppercase tracking-[0.28em] text-accent">
+                Адвокат
               </span>
             </span>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-6">
+          <nav className="hidden lg:flex items-center gap-x-5">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative text-sm tracking-wide transition-colors duration-200 py-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-accent after:transition-all after:duration-300 ${
+                className={`relative whitespace-nowrap text-[13px] tracking-wide transition-colors duration-200 py-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-accent after:transition-all after:duration-300 ${
                   isActive(link.href)
                     ? "text-primary font-semibold after:w-full"
                     : "text-muted font-medium hover:text-primary after:w-0 hover:after:w-full"
@@ -137,7 +137,7 @@ export function Header() {
             {/* CTA */}
             <Link
               href="/consultation"
-              className="ml-2 inline-flex items-center px-5 py-2 text-sm font-semibold rounded-md bg-accent text-primary transition-all duration-200 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
+              className="ml-1 inline-flex items-center whitespace-nowrap px-4 py-2 text-[13px] font-semibold rounded-md bg-accent text-primary transition-all duration-200 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
             >
               Записатись на консультацію
             </Link>

@@ -1,22 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" fill="none">
   <defs>
     <linearGradient id="goldPlate" x1="0" y1="0" x2="240" y2="280" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#F0DDB0"/>
-      <stop offset="0.5" stop-color="#C9A96E"/>
-      <stop offset="1" stop-color="#A8854A"/>
+      <stop offset="0" stop-color="#E4CF9F"/>
+      <stop offset="0.5" stop-color="#C6A667"/>
+      <stop offset="1" stop-color="#AD8B49"/>
     </linearGradient>
-    <linearGradient id="goldPlateA" x1="0" y1="0" x2="0" y2="280" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#F0DDB0"/>
-      <stop offset="1" stop-color="#B8964F"/>
+    <linearGradient id="plateBg" x1="0" y1="0" x2="0" y2="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5C5A62"/>
+      <stop offset="1" stop-color="#413F48"/>
     </linearGradient>
-    <linearGradient id="slate" x1="0" y1="0" x2="0" y2="280" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#2A2A2D"/>
-      <stop offset="1" stop-color="#1A1A1C"/>
-    </linearGradient>
-    <radialGradient id="marble" cx="0.5" cy="0.5" r="0.7">
-      <stop offset="0" stop-color="#3A3A3D" stop-opacity="0.5"/>
-      <stop offset="0.5" stop-color="#2A2A2D" stop-opacity="0"/>
-      <stop offset="1" stop-color="#1A1A1C" stop-opacity="0.4"/>
+    <radialGradient id="plateSheen" cx="0.5" cy="0.4" r="0.75">
+      <stop offset="0" stop-color="#6B6872" stop-opacity="0.55"/>
+      <stop offset="0.55" stop-color="#55535B" stop-opacity="0"/>
+      <stop offset="1" stop-color="#3A3840" stop-opacity="0.4"/>
     </radialGradient>
     <linearGradient id="silverScrew" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#F5F5F0"/>
@@ -24,38 +20,34 @@
     </linearGradient>
   </defs>
 
-  <rect x="0" y="0" width="240" height="280" rx="6" fill="url(#slate)"/>
-  <rect x="0" y="0" width="240" height="280" rx="6" fill="url(#marble)"/>
+  <rect x="0" y="0" width="240" height="280" rx="6" fill="url(#plateBg)"/>
+  <rect x="0" y="0" width="240" height="280" rx="6" fill="url(#plateSheen)"/>
 
-  <g><circle cx="22" cy="22" r="5" fill="url(#silverScrew)"/><line x1="18" y1="22" x2="26" y2="22" stroke="#6A6A65" stroke-width="0.8"/></g>
-  <g><circle cx="218" cy="22" r="5" fill="url(#silverScrew)"/><line x1="214" y1="22" x2="222" y2="22" stroke="#6A6A65" stroke-width="0.8"/></g>
-  <g><circle cx="22" cy="258" r="5" fill="url(#silverScrew)"/><line x1="18" y1="258" x2="26" y2="258" stroke="#6A6A65" stroke-width="0.8"/></g>
-  <g><circle cx="218" cy="258" r="5" fill="url(#silverScrew)"/><line x1="214" y1="258" x2="222" y2="258" stroke="#6A6A65" stroke-width="0.8"/></g>
+  <g><circle cx="22" cy="22" r="5" fill="url(#silverScrew)"/><line x1="18" y1="22" x2="26" y2="22" stroke="#3E3C44" stroke-width="0.8"/></g>
+  <g><circle cx="218" cy="22" r="5" fill="url(#silverScrew)"/><line x1="214" y1="22" x2="222" y2="22" stroke="#3E3C44" stroke-width="0.8"/></g>
+  <g><circle cx="22" cy="258" r="5" fill="url(#silverScrew)"/><line x1="18" y1="258" x2="26" y2="258" stroke="#3E3C44" stroke-width="0.8"/></g>
+  <g><circle cx="218" cy="258" r="5" fill="url(#silverScrew)"/><line x1="214" y1="258" x2="222" y2="258" stroke="#3E3C44" stroke-width="0.8"/></g>
 
-  <!-- КА monogram, centered, ~120px wide -->
-  <g transform="translate(60 42)">
-    <!-- К -->
-    <g fill="url(#goldPlate)">
-      <rect x="6" y="6" width="8" height="68" rx="0.8"/>
-      <polygon points="14,42 14,52 38,6 30,6"/>
-      <polygon points="14,42 14,52 38,80 30,80"/>
-      <polygon points="20,46 32,30 27,30 16,46"/>
+  <!-- thin-line КА monogram -->
+  <g transform="translate(63 40)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <g stroke="url(#goldPlate)">
+      <!-- К -->
+      <path d="M12 6 V80"/>
+      <path d="M12 43 L40 6"/>
+      <path d="M12 43 L40 80"/>
+      <!-- А: right leg + crossbar -->
+      <path d="M70 6 L84 80"/>
+      <path d="M60 58 H80"/>
     </g>
-    <!-- separator dot -->
-    <circle cx="56" cy="42" r="2.4" fill="url(#goldPlate)"/>
-    <!-- А -->
-    <g fill="url(#goldPlateA)">
-      <polygon points="74,6 82,6 70,80 62,80"/>
-      <polygon points="74,6 82,6 94,80 86,80"/>
-      <rect x="66" y="50" width="24" height="5.5" rx="0.6"/>
-    </g>
+    <!-- А left leg — white accent -->
+    <path d="M56 80 L70 6" stroke="#FBFAF7"/>
   </g>
 
-  <text x="120" y="170" font-family="Georgia, 'Cormorant Garamond', serif" font-size="18" font-weight="600" letter-spacing="2.5" fill="url(#goldPlate)" text-anchor="middle">КАБАЛЬ АНАСТАСІЯ</text>
-  <text x="120" y="193" font-family="Georgia, 'Cormorant Garamond', serif" font-size="14" font-weight="500" letter-spacing="3" fill="url(#goldPlate)" text-anchor="middle">ІГОРІВНА</text>
+  <text x="120" y="172" font-family="Georgia, 'Cormorant Garamond', serif" font-size="18" font-weight="600" letter-spacing="2.5" fill="url(#goldPlate)" text-anchor="middle">КАБАЛЬ АНАСТАСІЯ</text>
+  <text x="120" y="195" font-family="Georgia, 'Cormorant Garamond', serif" font-size="14" font-weight="500" letter-spacing="3" fill="url(#goldPlate)" text-anchor="middle">ІГОРІВНА</text>
 
-  <line x1="80" y1="210" x2="160" y2="210" stroke="url(#goldPlate)" stroke-width="0.8" opacity="0.6"/>
+  <line x1="80" y1="212" x2="160" y2="212" stroke="url(#goldPlate)" stroke-width="0.8" opacity="0.6"/>
 
-  <text x="120" y="232" font-family="Georgia, serif" font-size="9" letter-spacing="2.5" fill="url(#goldPlate)" text-anchor="middle" opacity="0.85">АДВОКАТ · ЛЬВІВ</text>
-  <text x="120" y="252" font-family="Georgia, serif" font-size="11" letter-spacing="1" fill="url(#goldPlate)" text-anchor="middle">+38 (095) 672 80 05</text>
+  <text x="120" y="234" font-family="Georgia, serif" font-size="9" letter-spacing="2.5" fill="url(#goldPlate)" text-anchor="middle" opacity="0.85">АДВОКАТ · ЛЬВІВ</text>
+  <text x="120" y="254" font-family="Georgia, serif" font-size="11" letter-spacing="1" fill="url(#goldPlate)" text-anchor="middle">+38 (095) 672 80 05</text>
 </svg>

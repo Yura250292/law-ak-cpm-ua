@@ -156,7 +156,7 @@ export default function SamplesPage() {
               </MagneticButton>
               <Link href="/services">
                 <Button className="rounded-xl border-2 border-white bg-transparent px-10 py-4 text-base font-semibold text-white transition hover:bg-white hover:text-primary">
-                  Замовити документ
+                  Переглянути послуги
                 </Button>
               </Link>
             </div>

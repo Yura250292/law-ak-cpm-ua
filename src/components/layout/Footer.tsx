@@ -5,14 +5,13 @@ const serviceLinks = [
   { href: "/services", label: "Всі послуги" },
   { href: "/consultation", label: "Онлайн-консультація" },
   { href: "/samples", label: "Зразки документів" },
-  { href: "/contact", label: "Контакти" },
 ];
 
 const companyLinks = [
   { href: "/about", label: "Про адвоката" },
   { href: "/reviews", label: "Відгуки та кейси" },
   { href: "/blog", label: "Статті" },
-  { href: "/consultation", label: "Записатись на консультацію" },
+  { href: "/contact", label: "Контакти" },
 ];
 
 export function Footer() {

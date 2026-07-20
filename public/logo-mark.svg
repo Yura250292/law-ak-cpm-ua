@@ -1,38 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <defs>
-    <linearGradient id="goldMark" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#F0DDB0"/>
-      <stop offset="0.45" stop-color="#C9A96E"/>
-      <stop offset="1" stop-color="#A8854A"/>
-    </linearGradient>
-    <linearGradient id="goldA" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#F0DDB0"/>
-      <stop offset="1" stop-color="#B8964F"/>
+    <linearGradient id="goldLine" x1="8" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E4CF9F"/>
+      <stop offset="0.5" stop-color="#C6A667"/>
+      <stop offset="1" stop-color="#AD8B49"/>
     </linearGradient>
   </defs>
 
-  <!-- К -->
-  <g fill="url(#goldMark)">
-    <!-- vertical bar -->
-    <rect x="6" y="10" width="5" height="44" rx="0.5"/>
-    <!-- upper arm: from middle of bar to upper-right of K's box -->
-    <polygon points="11,29 11,35 27,10 22,10"/>
-    <!-- lower arm -->
-    <polygon points="11,29 11,35 27,54 22,54"/>
-    <!-- inner notch accent -->
-    <polygon points="14.5,32 22,22 19,22 11.5,32"/>
+  <!-- thin-line КА monogram -->
+  <g stroke="url(#goldLine)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+    <!-- К -->
+    <path d="M15 9 V55"/>
+    <path d="M15 33 L33 9"/>
+    <path d="M15 33 L33 55"/>
+    <!-- А: right leg + crossbar -->
+    <path d="M49 9 L57 55"/>
+    <path d="M42.5 43 H54"/>
   </g>
 
-  <!-- thin separator dot -->
-  <circle cx="32" cy="32" r="1.5" fill="url(#goldMark)"/>
-
-  <!-- А -->
-  <g fill="url(#goldA)">
-    <!-- left leg -->
-    <polygon points="44,10 49,10 41,54 36,54"/>
-    <!-- right leg -->
-    <polygon points="44,10 49,10 57,54 52,54"/>
-    <!-- crossbar -->
-    <rect x="39.5" y="36" width="14" height="3.4" rx="0.4"/>
-  </g>
+  <!-- А left leg — white accent stroke -->
+  <path d="M41 55 L49 9" stroke="#FBFAF7" stroke-width="2.3" stroke-linecap="round"/>
 </svg>

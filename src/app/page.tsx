@@ -244,7 +244,7 @@ export default function HomePage() {
 
               {/* Right column — Premium document showcase */}
               <Reveal delay={0.35} y={32} className="relative flex items-center justify-center">
-                <div className="relative w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#1C1C1E] via-[#2A2A2D] to-[#0E0E10] p-6 sm:p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.5)] ring-1 ring-accent/20">
+                <div className="relative w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#5C5A62] via-[#4E4C54] to-[#3A3840] p-6 sm:p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.45)] ring-1 ring-accent/20">
                   {/* Slate micro-texture overlay */}
                   <div
                     className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay"
