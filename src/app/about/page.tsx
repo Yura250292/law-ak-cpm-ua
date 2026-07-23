@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { MagneticButton } from "@/components/motion/MagneticButton";
+import { LawyerPhoto } from "@/components/LawyerPhoto";
 import { getCertificates } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
@@ -80,29 +81,10 @@ export default async function AboutPage() {
         <section className="bg-white py-20">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div className="grid items-start gap-12 lg:grid-cols-2">
-              {/* Photo Placeholder */}
+              {/* Photo */}
               <Reveal>
-                <div className="flex aspect-square items-center justify-center rounded-2xl bg-surface">
-                  <div className="text-center">
-                    <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-accent/10">
-                      <svg
-                        className="h-10 w-10 text-accent"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={1.5}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                        />
-                      </svg>
-                    </div>
-                    <p className="text-sm font-medium text-muted">
-                      Фото адвоката
-                    </p>
-                  </div>
+                <div className="relative aspect-square overflow-hidden rounded-2xl bg-surface">
+                  <LawyerPhoto />
                 </div>
               </Reveal>
 
