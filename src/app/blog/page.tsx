@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/Card";
-import { blogPosts } from "@/lib/blog-data";
+import { getPublishedArticles } from "@/lib/content";
 
 export const metadata = {
   title: "Статті | Корисні матеріали з права",
@@ -16,8 +16,10 @@ export const metadata = {
     "Статті адвоката Кабаль Анастасії. Корисні матеріали про сімейне, цивільне право, судові витрати та практичні поради. Актуальна інформація для громадян України.",
 };
 
-function formatDate(iso: string): string {
-  const date = new Date(iso);
+export const dynamic = "force-dynamic";
+
+function formatDate(iso: string | Date): string {
+  const date = typeof iso === "string" ? new Date(iso) : iso;
   return date.toLocaleDateString("uk-UA", {
     day: "numeric",
     month: "long",
@@ -25,7 +27,8 @@ function formatDate(iso: string): string {
   });
 }
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const blogPosts = await getPublishedArticles();
   return (
     <>
       <Header />
@@ -72,7 +75,7 @@ export default function BlogPage() {
                     <CardContent className="mt-auto">
                       <div className="flex items-center justify-between border-t border-border pt-4">
                         <span className="text-xs text-muted">
-                          {formatDate(post.date)}
+                          {formatDate(post.publishedAt ?? post.createdAt)}
                         </span>
                         <span className="text-sm font-semibold text-accent transition-transform duration-200 group-hover:translate-x-1">
                           Читати &rarr;

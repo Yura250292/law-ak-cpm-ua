@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -61,7 +60,7 @@ const processSteps = [
   },
   {
     number: "02",
-    title: "Безкоштовна консультація",
+    title: "Консультація",
     description: "Зустріч 30 хв — оцінюю шанси і пропоную план.",
   },
   {
@@ -78,7 +77,7 @@ const processSteps = [
 
 const heroTrustSignals = [
   {
-    count: 10,
+    count: 7,
     suffix: "+",
     title: "років",
     subtitle: "практики",
@@ -89,7 +88,7 @@ const heroTrustSignals = [
     ),
   },
   {
-    count: 500,
+    count: 100,
     suffix: "+",
     title: "справ",
     subtitle: "доведено до перемоги",
@@ -151,6 +150,12 @@ const darkTrustItems = [
   },
 ];
 
+const heroPromises = [
+  "Оцінимо перспективи вашої справи",
+  "Запропонуємо покроковий план дій",
+  "Повна конфіденційність — адвокатська таємниця",
+];
+
 const aboutHighlights = [
   "Понад 7 років досвіду в юридичній сфері",
   "Спеціалізація: сімейне, цивільне, господарське та адміністративне право",
@@ -167,191 +172,105 @@ export default function HomePage() {
         {/* ── Hero Section ── */}
         <section className="relative bg-white overflow-hidden">
           <HeroBackdrop />
-          <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
-            <div className="grid items-center gap-12 lg:grid-cols-2">
-              {/* Left column */}
-              <Stagger className="space-y-8" delayChildren={0.15} staggerChildren={0.14}>
-                {/* Eyebrow badge with golden dot */}
-                <StaggerItem>
-                  <span className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted">
-                    <span className="h-2 w-2 rounded-full bg-accent animate-gentle-pulse" />
-                    Адвокат · Львів · Онлайн по Україні
-                  </span>
-                </StaggerItem>
+          <div className="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24 lg:px-8 lg:py-32">
+            <Stagger className="space-y-8" delayChildren={0.15} staggerChildren={0.14}>
+              {/* Eyebrow badge with golden dot */}
+              <StaggerItem>
+                <span className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted">
+                  <span className="h-2 w-2 rounded-full bg-accent animate-gentle-pulse" />
+                  Адвокат · Львів · Онлайн по Україні
+                </span>
+              </StaggerItem>
 
-                {/* Heading */}
-                <StaggerItem>
-                  <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.05] tracking-tight text-primary lg:text-6xl">
-                    Юридичний захист,
-                    <br />
-                    якому <ShimmerText>довіряють</ShimmerText>
-                  </h1>
-                </StaggerItem>
+              {/* Heading */}
+              <StaggerItem>
+                <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.05] tracking-tight text-primary lg:text-6xl">
+                  Юридичний захист,
+                  <br />
+                  якому <ShimmerText>довіряють</ShimmerText>
+                </h1>
+              </StaggerItem>
 
-                {/* Subtitle */}
-                <StaggerItem>
-                  <p className="max-w-lg text-lg leading-relaxed text-muted">
-                    10+ років практики у Львові. Сімейне, цивільне, господарське та
-                    адміністративне право. Підготовка позовних заяв і консультації
-                    онлайн по всій Україні.
+              {/* Subtitle */}
+              <StaggerItem>
+                <div className="mx-auto max-w-2xl space-y-4 text-lg leading-relaxed text-muted">
+                  <p className="font-semibold text-primary">
+                    Понад 7 років юридичної практики.
                   </p>
-                </StaggerItem>
+                  <p>
+                    Надаю кваліфіковану правову допомогу у справах сімейного,
+                    цивільного, господарського та адміністративного права.
+                    Супроводжую клієнтів на всіх етапах вирішення правових питань —
+                    від консультації до представництва інтересів у суді.
+                  </p>
+                  <p>
+                    Підготовка позовних заяв, процесуальних документів, договорів
+                    та інших юридичних документів. Консультації проводяться як
+                    особисто у Львові, так і онлайн для клієнтів з усієї України.
+                  </p>
+                </div>
+              </StaggerItem>
 
-                {/* Buttons */}
-                <StaggerItem>
-                  <div className="flex flex-col gap-4 sm:flex-row">
-                    <MagneticButton className="w-full sm:w-auto">
-                      <Link href="/consultation" className="block w-full sm:w-auto">
-                        <Button className="group w-full sm:w-auto rounded-xl bg-primary px-8 py-3 text-base font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary-light hover:shadow-xl">
-                          <span>Безкоштовна консультація</span>
-                          <svg className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-                          </svg>
-                        </Button>
-                      </Link>
-                    </MagneticButton>
-                    <Link href="#process" className="w-full sm:w-auto">
-                      <Button className="w-full sm:w-auto rounded-xl border-2 border-primary bg-transparent px-8 py-3 text-base font-semibold text-primary transition hover:bg-primary hover:text-white">
-                        <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                          <circle cx="12" cy="12" r="10" />
-                          <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" />
+              {/* Buttons */}
+              <StaggerItem>
+                <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                  <MagneticButton className="w-full sm:w-auto">
+                    <Link href="/consultation" className="block w-full sm:w-auto">
+                      <Button className="group w-full sm:w-auto rounded-xl bg-primary px-8 py-3 text-base font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary-light hover:shadow-xl">
+                        <span>Записатись на консультацію</span>
+                        <svg className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
-                        <span>Як це працює</span>
                       </Button>
                     </Link>
-                  </div>
-                </StaggerItem>
-
-                {/* Hero trust signals */}
-                <StaggerItem>
-                  <div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-3">
-                    {heroTrustSignals.map((signal) => (
-                      <div key={signal.title} className="flex items-center gap-3">
-                        <span className="text-accent shrink-0">{signal.icon}</span>
-                        <div className="flex flex-col leading-tight">
-                          <span className="text-sm font-bold text-primary">
-                            <Counter to={signal.count} suffix={signal.suffix} /> {signal.title}
-                          </span>
-                          <span className="text-xs text-muted">
-                            {signal.subtitle}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </StaggerItem>
-              </Stagger>
-
-              {/* Right column — Premium document showcase */}
-              <Reveal delay={0.35} y={32} className="relative flex items-center justify-center">
-                <div className="relative w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#5C5A62] via-[#4E4C54] to-[#3A3840] p-6 sm:p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.45)] ring-1 ring-accent/20">
-                  {/* Slate micro-texture overlay */}
-                  <div
-                    className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay"
-                    style={{
-                      backgroundImage:
-                        "repeating-linear-gradient(135deg, #ffffff 0 1px, transparent 1px 4px), repeating-linear-gradient(45deg, #ffffff 0 1px, transparent 1px 6px)",
-                    }}
-                  />
-                  {/* Corner studs (як на плитці) */}
-                  <span className="pointer-events-none absolute left-3 top-3 h-1.5 w-1.5 rounded-full bg-accent/40 ring-1 ring-accent/20" />
-                  <span className="pointer-events-none absolute right-3 top-3 h-1.5 w-1.5 rounded-full bg-accent/40 ring-1 ring-accent/20" />
-                  <span className="pointer-events-none absolute left-3 bottom-3 h-1.5 w-1.5 rounded-full bg-accent/40 ring-1 ring-accent/20" />
-                  <span className="pointer-events-none absolute right-3 bottom-3 h-1.5 w-1.5 rounded-full bg-accent/40 ring-1 ring-accent/20" />
-                  {/* Abstract legal background patterns */}
-                  <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                    {/* Scales of justice watermark */}
-                    <svg className="absolute -right-6 -top-6 opacity-[0.04]" width="200" height="200" viewBox="0 0 200 200" fill="none" stroke="white" strokeWidth="1.5">
-                      <line x1="100" y1="20" x2="100" y2="180" />
-                      <line x1="60" y1="170" x2="140" y2="170" />
-                      <line x1="100" y1="40" x2="40" y2="60" />
-                      <line x1="100" y1="40" x2="160" y2="60" />
-                      <path d="M25 60 Q40 90 55 60" />
-                      <path d="M145 60 Q160 90 175 60" />
-                    </svg>
-                    {/* Column pillars */}
-                    <svg className="absolute -left-4 bottom-0 opacity-[0.03]" width="120" height="280" viewBox="0 0 120 280" fill="none" stroke="white" strokeWidth="1">
-                      <rect x="10" y="20" width="8" height="240" />
-                      <rect x="35" y="20" width="8" height="240" />
-                      <rect x="60" y="20" width="8" height="240" />
-                      <rect x="0" y="10" width="80" height="10" rx="2" />
-                      <rect x="0" y="260" width="80" height="10" rx="2" />
-                    </svg>
-                    {/* Geometric lines */}
-                    <svg className="absolute right-10 bottom-10 opacity-[0.05]" width="100" height="100" viewBox="0 0 100 100" fill="none" stroke="white" strokeWidth="0.5">
-                      <line x1="0" y1="0" x2="100" y2="100" />
-                      <line x1="20" y1="0" x2="100" y2="80" />
-                      <line x1="40" y1="0" x2="100" y2="60" />
-                      <line x1="0" y1="20" x2="80" y2="100" />
-                      <line x1="0" y1="40" x2="60" y2="100" />
-                    </svg>
-                    {/* Subtle gradient glows */}
-                    <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-accent/[0.06] blur-3xl" />
-                    <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-accent/[0.04] blur-3xl" />
-                  </div>
-
-                  {/* Card eyebrow + mini K+A logo */}
-                  <div className="relative mb-6 flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.05] ring-1 ring-accent/30">
-                      <Image src="/logo-mark.svg" alt="" width={32} height={32} className="opacity-90" />
-                    </div>
-                    <div className="flex flex-col leading-tight">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
-                        Перша консультація
-                      </span>
-                      <span className="font-display text-base font-semibold text-white/95">
-                        Безкоштовно · 30 хвилин
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Consultation promo */}
-                  <div className="relative space-y-6">
-                    <a
-                      href="tel:+380956728005"
-                      className="group block rounded-2xl border border-accent-light/15 bg-white/[0.04] p-5 backdrop-blur-sm transition-colors duration-300 hover:border-accent/40 hover:bg-white/[0.08]"
-                    >
-                      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/50">
-                        Зателефонуйте зараз
-                      </span>
-                      <span className="mt-1 block font-display text-2xl font-semibold text-white transition-colors group-hover:text-accent">
-                        +38 (095) 67-28-005
-                      </span>
-                    </a>
-
-                    <ul className="space-y-3">
-                      {[
-                        "Оцінимо перспективи вашої справи",
-                        "Запропонуємо покроковий план дій",
-                        "Повна конфіденційність — адвокатська таємниця",
-                      ].map((item) => (
-                        <li key={item} className="flex items-start gap-3">
-                          <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/15">
-                            <svg className="h-3 w-3 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          </span>
-                          <span className="text-sm leading-relaxed text-white/80">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Link
-                      href="/consultation"
-                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3.5 text-sm font-bold text-primary transition hover:bg-accent-hover"
-                    >
-                      Записатись на консультацію
-                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                  </MagneticButton>
+                  <Link href="#process" className="w-full sm:w-auto">
+                    <Button className="w-full sm:w-auto rounded-xl border-2 border-primary bg-transparent px-8 py-3 text-base font-semibold text-primary transition hover:bg-primary hover:text-white">
+                      <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" />
                       </svg>
-                    </Link>
-                  </div>
-
-                  {/* Bottom accent bar */}
-                  <div className="absolute bottom-0 left-0 right-0 h-1 animate-shimmer rounded-b-3xl" />
+                      <span>Як це працює</span>
+                    </Button>
+                  </Link>
                 </div>
-              </Reveal>
-            </div>
+              </StaggerItem>
+
+              {/* Hero trust signals */}
+              <StaggerItem>
+                <div className="mx-auto grid max-w-2xl grid-cols-1 gap-4 pt-4 sm:grid-cols-3">
+                  {heroTrustSignals.map((signal) => (
+                    <div key={signal.title} className="flex items-center justify-center gap-3 sm:justify-start">
+                      <span className="text-accent shrink-0">{signal.icon}</span>
+                      <div className="flex flex-col text-left leading-tight">
+                        <span className="text-sm font-bold text-primary">
+                          <Counter to={signal.count} suffix={signal.suffix} /> {signal.title}
+                        </span>
+                        <span className="text-xs text-muted">
+                          {signal.subtitle}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </StaggerItem>
+
+              {/* Promises checklist */}
+              <StaggerItem>
+                <ul className="mx-auto flex max-w-2xl flex-col gap-3 pt-2 text-left sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-6">
+                  {heroPromises.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/15">
+                        <svg className="h-3 w-3 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span className="text-sm leading-relaxed text-primary/80">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </StaggerItem>
+            </Stagger>
           </div>
         </section>
 

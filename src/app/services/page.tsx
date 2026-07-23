@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { practiceAreas } from "@/lib/practice-areas";
+import { getPracticeAreas } from "@/lib/content";
 import { lawyerServicesFAQ } from "@/lib/faq-data";
 import { FAQSection } from "@/components/FAQSection";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Послуги — Адвокат Кабаль Анастасія Ігорівна",
@@ -15,7 +15,8 @@ export const metadata = {
     "Юридичні послуги адвоката у Львові: сімейне, цивільне, господарське та адміністративне право. Консультації, підготовка документів, представництво в суді.",
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const practiceAreas = await getPracticeAreas();
   return (
     <>
       <Header />

@@ -24,6 +24,82 @@ enum PaymentStatus {
   REVERSED
 }
 
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Article {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  title       String
+  excerpt     String
+  category    String
+  author      String        @default("Кабаль Анастасія")
+  coverImage  String?
+  readTime    String        @default("5 хв")
+  blocks      Json // ContentBlock[] — див. src/lib/content-blocks.ts
+  status      ContentStatus @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model PracticeArea {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  title            String
+  shortDescription String
+  icon             String // emoji
+  description      String // абзаци, розділені \n\n
+  services         String[]
+  advantages       String[]
+  process          Json // { step, title, description }[]
+  status           ContentStatus @default(PUBLISHED)
+  sortOrder        Int           @default(0)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model Review {
+  id        String        @id @default(cuid())
+  kind      String        @default("review") // "review" | "case"
+  name      String
+  text      String
+  result    String? // для кейсів
+  rating    Int           @default(5)
+  service   String
+  photos    String[] // URL скріншотів у R2
+  featured  Boolean       @default(false) // показ на головній
+  status    ContentStatus @default(PUBLISHED)
+  sortOrder Int           @default(0)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model Sample {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  fileUrl     String
+  sizeLabel   String
+  iconKey     String        @default("document")
+  status      ContentStatus @default(PUBLISHED)
+  sortOrder   Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Certificate {
+  id        String        @id @default(cuid())
+  title     String
+  imageUrl  String
+  status    ContentStatus @default(PUBLISHED)
+  sortOrder Int           @default(0)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique

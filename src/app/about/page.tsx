@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { MagneticButton } from "@/components/motion/MagneticButton";
+import { getCertificates } from "@/lib/content";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Про адвоката — Кабаль Анастасія Ігорівна",
@@ -46,7 +47,8 @@ const values = [
   },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const certificates = await getCertificates();
   return (
     <>
       <Header />
@@ -152,8 +154,81 @@ export default function AboutPage() {
                 </div>
               </Reveal>
             </div>
+
+            {/* Профіль у Єдиному реєстрі адвокатів України */}
+            <Reveal delay={0.2}>
+              <a
+                href="https://erau.unba.org.ua/profile/91726"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group mt-12 flex items-center gap-4 rounded-2xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]"
+              >
+                <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-surface text-accent ring-1 ring-accent/30">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z M9 12l2 2 4-4" />
+                  </svg>
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-accent">
+                    Офіційне підтвердження
+                  </p>
+                  <p className="mt-1 font-semibold text-primary">
+                    Профіль у Єдиному реєстрі адвокатів України
+                  </p>
+                  <p className="mt-0.5 text-sm text-muted">
+                    Перевірте інформацію про мене на erau.unba.org.ua
+                  </p>
+                </div>
+                <svg className="h-5 w-5 flex-shrink-0 text-accent transition-transform duration-200 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </Reveal>
           </div>
         </section>
+
+        {/* Підвищення кваліфікації */}
+        {certificates.length > 0 && (
+          <section className="bg-surface py-20">
+            <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+              <Reveal className="mb-10 text-center">
+                <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                  Кваліфікація
+                </p>
+                <h2 className="text-3xl font-bold text-primary sm:text-4xl">
+                  Підвищення кваліфікації
+                </h2>
+                <p className="mx-auto mt-4 max-w-2xl text-base text-muted">
+                  Сертифікати та підтвердження проходження навчальних програм і
+                  підвищення кваліфікації.
+                </p>
+              </Reveal>
+
+              <Stagger
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                whileInView
+                delayChildren={0.1}
+                staggerChildren={0.1}
+              >
+                {certificates.map((cert) => (
+                  <StaggerItem key={cert.id}>
+                    <figure className="overflow-hidden rounded-2xl border border-border bg-white transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-md">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={cert.imageUrl}
+                        alt={cert.title}
+                        className="aspect-[4/3] w-full object-cover"
+                      />
+                      <figcaption className="p-4 text-sm font-medium text-primary">
+                        {cert.title}
+                      </figcaption>
+                    </figure>
+                  </StaggerItem>
+                ))}
+              </Stagger>
+            </div>
+          </section>
+        )}
 
         {/* Values Section */}
         <section className="bg-surface py-20">

@@ -4,22 +4,26 @@ import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
-import { practiceAreas, getPracticeArea } from "@/lib/practice-areas";
+import { getPracticeAreaBySlug } from "@/lib/content";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { MagneticButton } from "@/components/motion/MagneticButton";
+
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  return practiceAreas.map((area) => ({ slug: area.slug }));
+interface ProcessStep {
+  step: number;
+  title: string;
+  description: string;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const area = getPracticeArea(slug);
+  const area = await getPracticeAreaBySlug(slug);
 
   if (!area) {
     return { title: "Спеціалізація не знайдена" };
@@ -33,11 +37,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PracticeAreaPage({ params }: PageProps) {
   const { slug } = await params;
-  const area = getPracticeArea(slug);
+  const area = await getPracticeAreaBySlug(slug);
 
   if (!area) {
     notFound();
   }
+
+  const process = (area.process as unknown as ProcessStep[]) ?? [];
 
   return (
     <>
@@ -200,13 +206,13 @@ export default async function PracticeAreaPage({ params }: PageProps) {
                 delayChildren={0.15}
                 staggerChildren={0.18}
               >
-              {area.process.map((step, idx) => (
+              {process.map((step, idx) => (
                 <StaggerItem key={step.step}>
                 <div
                   className="relative flex flex-col items-center text-center"
                 >
                   {/* Connecting line (mobile) */}
-                  {idx < area.process.length - 1 && (
+                  {idx < process.length - 1 && (
                     <div className="absolute left-1/2 top-12 h-full w-px -translate-x-1/2 border-l-2 border-dashed border-accent/40 lg:hidden" />
                   )}
 

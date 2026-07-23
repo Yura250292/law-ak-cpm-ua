@@ -203,6 +203,33 @@ export default function AdminDashboardPage() {
           </span>
         </Link>
 
+        {/* Content management */}
+        <div className="mb-8">
+          <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-muted">
+            Керування сайтом
+          </h2>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {[
+              { href: "/admin/articles", label: "Статті", desc: "Блог, конструктор" },
+              { href: "/admin/practice-areas", label: "Послуги", desc: "Сфери практики" },
+              { href: "/admin/reviews", label: "Відгуки та кейси", desc: "Скріншоти, відгуки" },
+              { href: "/admin/samples", label: "Зразки", desc: "PDF-документи" },
+              { href: "/admin/certificates", label: "Сертифікати", desc: "Підвищення кваліфікації" },
+            ].map((c) => (
+              <Link
+                key={c.href}
+                href={c.href}
+                className="group flex flex-col rounded-2xl border border-border bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md"
+              >
+                <span className="font-bold text-primary transition group-hover:text-accent">
+                  {c.label}
+                </span>
+                <span className="mt-1 text-xs text-muted">{c.desc}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {/* Filters */}
         <div className="flex items-center gap-3 mb-6 flex-wrap">
           <span className="text-sm font-medium text-muted">Фільтр:</span>

@@ -6,27 +6,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/Card";
-
-const featuredReviews = [
-  {
-    name: "Олена К.",
-    text: "Зверталася з приводу розірвання шлюбу. Анастасія дуже уважно вислухала мою ситуацію, пояснила всі нюанси процесу та підготувала документи швидко і якісно. Дуже вдячна за професійний підхід!",
-    rating: 5,
-    service: "Розірвання шлюбу",
-  },
-  {
-    name: "Тарас М.",
-    text: "Потрібна була допомога зі стягненням аліментів. Ситуація була непроста, бо колишня дружина переїхала в інше місто. Анастасія Ігорівна все зробила дистанційно, пояснювала кожен крок. Результат позитивний!",
-    rating: 5,
-    service: "Стягнення аліментів",
-  },
-  {
-    name: "Ірина В.",
-    text: "Замовляла позовну заяву про відшкодування моральної шкоди після ДТП. Документ підготовлений грамотно, з посиланнями на актуальне законодавство. Суд задовольнив позов повністю. Рекомендую!",
-    rating: 5,
-    service: "Відшкодування шкоди",
-  },
-];
+import { getFeaturedReviews } from "@/lib/content";
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -45,7 +25,11 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-export function ReviewsSection() {
+export async function ReviewsSection() {
+  const featuredReviews = await getFeaturedReviews(3);
+
+  if (featuredReviews.length === 0) return null;
+
   return (
     <section className="bg-surface py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -62,8 +46,8 @@ export function ReviewsSection() {
         </div>
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredReviews.map((review, idx) => (
-            <Card key={idx} className="flex flex-col">
+          {featuredReviews.map((review) => (
+            <Card key={review.id} className="flex flex-col">
               <CardHeader>
                 <div className="mb-3 flex items-center justify-between">
                   <StarRating rating={review.rating} />

@@ -13,6 +13,8 @@ import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { Counter } from "@/components/motion/Counter";
 import { MagneticButton } from "@/components/motion/MagneticButton";
+import { ReviewPhotos } from "@/components/content/ReviewPhotos";
+import { getReviews, getCases } from "@/lib/content";
 
 export const metadata = {
   title: "Відгуки та кейси — Адвокат Кабаль Анастасія Ігорівна",
@@ -20,121 +22,11 @@ export const metadata = {
     "Відгуки клієнтів адвоката Кабаль Анастасії Ігорівни. Реальні результати справ у сімейному, цивільному та господарському праві. Львів.",
 };
 
-const reviews = [
-  {
-    name: "Олена К.",
-    text: "Зверталася з приводу розірвання шлюбу. Анастасія дуже уважно вислухала мою ситуацію, пояснила всі нюанси процесу та підготувала документи швидко і якісно. Справу вирішили без зайвих нервів. Дуже вдячна за професійний підхід!",
-    rating: 5,
-    service: "Розірвання шлюбу",
-    date: "Листопад 2025",
-  },
-  {
-    name: "Тарас М.",
-    text: "Потрібна була допомога зі стягненням аліментів. Ситуація була непроста, бо колишня дружина переїхала в інше місто. Анастасія Ігорівна все зробила дистанційно, пояснювала кожен крок. Результат позитивний, аліменти призначені судом.",
-    rating: 5,
-    service: "Стягнення аліментів",
-    date: "Жовтень 2025",
-  },
-  {
-    name: "Ірина В.",
-    text: "Замовляла позовну заяву про відшкодування моральної шкоди після ДТП. Документ підготовлений грамотно, з посиланнями на актуальне законодавство. Суд задовольнив позов повністю. Рекомендую!",
-    rating: 5,
-    service: "Відшкодування шкоди",
-    date: "Вересень 2025",
-  },
-  {
-    name: "Андрій Л.",
-    text: "Звернувся за консультацією щодо поділу майна при розлученні. Анастасія чітко розклала все по поличках: що мені належить, які шанси в суді, скільки це займе часу. Після консультації замовив підготовку позову. Все пройшло успішно.",
-    rating: 5,
-    service: "Поділ майна",
-    date: "Серпень 2025",
-  },
-  {
-    name: "Наталія П.",
-    text: "Дуже задоволена роботою! Мені потрібно було терміново підготувати заяву на аліменти. Анастасія зробила все за один день, документ був бездоганний. Суд все задовольнив без проблем. Дякую за оперативність!",
-    rating: 5,
-    service: "Стягнення аліментів",
-    date: "Липень 2025",
-  },
-  {
-    name: "Василь Р.",
-    text: "Потрібна була позовна заява про відшкодування матеріальної шкоди. Справа була складна, багато доказів потрібно було правильно оформити. Анастасія Ігорівна підійшла до справи ретельно, врахувала всі деталі. Суд виніс рішення на мою користь.",
-    rating: 5,
-    service: "Відшкодування шкоди",
-    date: "Червень 2025",
-  },
-  {
-    name: "Марина С.",
-    text: "Розводилася з чоловіком, ситуація була конфліктна. Боялася, що буде довго і складно. Але Анастасія все організувала максимально спокійно і професійно. Документи підготовлені ідеально, справа вирішена за два місяці.",
-    rating: 4,
-    service: "Розірвання шлюбу",
-    date: "Травень 2025",
-  },
-  {
-    name: "Дмитро Б.",
-    text: "Замовляв документи онлайн, живу не у Львові. Все пройшло дистанційно без жодних проблем. Консультація по телефону, оплата онлайн, документ отримав на пошту. Зручний сервіс, юридично все грамотно.",
-    rating: 5,
-    service: "Стягнення аліментів",
-    date: "Квітень 2025",
-  },
-  {
-    name: "Оксана Г.",
-    text: "Зверталася щодо стягнення заборгованості з аліментів. Колишній чоловік не платив більше року. Анастасія підготувала всі необхідні документи для виконавчої служби. Зараз борг поступово стягується. Нарешті зрушилася справа!",
-    rating: 5,
-    service: "Стягнення аліментів",
-    date: "Березень 2025",
-  },
-  {
-    name: "Юрій Н.",
-    text: "Потрібна була юридична допомога з господарського спору. Анастасія Ігорівна швидко розібралася в ситуації, підготувала претензію та позовну заяву. Справа вирішена на мою користь. Цінна якість адвоката, що пояснює простою мовою.",
-    rating: 5,
-    service: "Господарський спір",
-    date: "Лютий 2025",
-  },
-];
-
-const caseResults = [
-  {
-    category: "Сімейне право",
-    description:
-      "Розірвання шлюбу з одночасним визначенням місця проживання дитини та стягненням аліментів.",
-    result: "Шлюб розірвано, місце проживання дитини визначено з матір'ю, аліменти призначені у розмірі 1/4 доходу відповідача.",
-  },
-  {
-    category: "Стягнення аліментів",
-    description:
-      "Стягнення заборгованості з аліментів за 2 роки та збільшення розміру аліментів у зв'язку зі зростанням потреб дитини.",
-    result: "Суд стягнув заборгованість у повному обсязі та збільшив розмір аліментів до 1/3 доходу.",
-  },
-  {
-    category: "Відшкодування шкоди",
-    description:
-      "Відшкодування моральної та матеріальної шкоди, завданої внаслідок ДТП. Винуватець відмовлявся від відповідальності.",
-    result: "Суд задовольнив позов: стягнуто 85 000 грн матеріальної та 30 000 грн моральної шкоди.",
-  },
-  {
-    category: "Поділ майна",
-    description:
-      "Поділ спільного майна подружжя після розірвання шлюбу: квартира, автомобіль, банківські вклади.",
-    result: "Досягнуто мирову угоду: квартира залишилась клієнтці з компенсацією, автомобіль — колишньому чоловіку.",
-  },
-  {
-    category: "Сімейне право",
-    description:
-      "Встановлення графіку побачень батька з дитиною після розлучення. Мати перешкоджала спілкуванню.",
-    result: "Суд встановив графік побачень: щотижневі зустрічі та спільні канікули.",
-  },
-  {
-    category: "Цивільне право",
-    description:
-      "Стягнення заборгованості за договором позики. Боржник не повертав кошти протягом року.",
-    result: "Суд стягнув повну суму боргу з відсотками та судовими витратами.",
-  },
-];
+export const dynamic = "force-dynamic";
 
 const stats = [
   { count: 50, suffix: "+", label: "клієнтів" },
-  { count: 95, suffix: "%", label: "задоволених" },
+  { count: 100, suffix: "%", label: "задоволених" },
   { count: 20, suffix: "+", label: "виграних справ" },
 ];
 
@@ -155,7 +47,9 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-export default function ReviewsPage() {
+export default async function ReviewsPage() {
+  const reviews = await getReviews();
+  const caseResults = await getCases();
   return (
     <>
       <Header />
@@ -223,13 +117,12 @@ export default function ReviewsPage() {
               delayChildren={0.05}
               staggerChildren={0.08}
             >
-              {reviews.map((review, idx) => (
-                <StaggerItem key={idx} className="h-full">
+              {reviews.map((review) => (
+                <StaggerItem key={review.id} className="h-full">
                 <Card className="flex h-full flex-col transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]">
                   <CardHeader>
                     <div className="mb-3 flex items-center justify-between">
                       <StarRating rating={review.rating} />
-                      <span className="text-xs text-muted">{review.date}</span>
                     </div>
                     <CardTitle className="text-base">{review.name}</CardTitle>
                     <CardDescription>
@@ -242,6 +135,9 @@ export default function ReviewsPage() {
                     <p className="text-sm leading-relaxed text-muted">
                       &ldquo;{review.text}&rdquo;
                     </p>
+                    {review.photos.length > 0 ? (
+                      <ReviewPhotos photos={review.photos} />
+                    ) : null}
                   </CardContent>
                 </Card>
                 </StaggerItem>
@@ -271,18 +167,21 @@ export default function ReviewsPage() {
               delayChildren={0.05}
               staggerChildren={0.08}
             >
-              {caseResults.map((caseItem, idx) => (
-                <StaggerItem key={idx} className="h-full">
+              {caseResults.map((caseItem) => (
+                <StaggerItem key={caseItem.id} className="h-full">
                 <Card className="flex h-full flex-col transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]">
                   <CardHeader>
                     <span className="mb-3 inline-block w-fit rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-primary">
-                      {caseItem.category}
+                      {caseItem.service}
                     </span>
                     <CardTitle className="text-base">
-                      {caseItem.description}
+                      {caseItem.text}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex-1">
+                    {caseItem.photos.length > 0 ? (
+                      <ReviewPhotos photos={caseItem.photos} />
+                    ) : null}
                     <div className="rounded-xl bg-surface p-4">
                       <p className="text-xs font-semibold uppercase tracking-wider text-muted">
                         Результат
