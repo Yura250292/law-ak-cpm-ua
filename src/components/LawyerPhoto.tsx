@@ -43,7 +43,7 @@ export function LawyerPhoto() {
       alt="Кабаль Анастасія Ігорівна — адвокат у Львові"
       fill
       sizes="(max-width: 1024px) 100vw, 40vw"
-      className="object-cover"
+      className="object-cover object-top"
       onError={() => setFailed(true)}
     />
   );
