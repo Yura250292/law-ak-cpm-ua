@@ -144,6 +144,12 @@ export default function AdminDashboardPage() {
           </div>
           <div className="flex items-center gap-4">
             <Link
+              href="/admin/analytics"
+              className="text-sm text-accent hover:text-accent-hover transition font-medium"
+            >
+              Аналітика
+            </Link>
+            <Link
               href="/admin/case-analysis"
               className="text-sm text-accent hover:text-accent-hover transition font-medium"
             >
@@ -215,6 +221,7 @@ export default function AdminDashboardPage() {
               { href: "/admin/reviews", label: "Відгуки та кейси", desc: "Скріншоти, відгуки" },
               { href: "/admin/samples", label: "Зразки", desc: "PDF-документи" },
               { href: "/admin/certificates", label: "Сертифікати", desc: "Підвищення кваліфікації" },
+              { href: "/admin/analytics", label: "Аналітика", desc: "Відвідування, сторінки" },
             ].map((c) => (
               <Link
                 key={c.href}

@@ -100,6 +100,27 @@ model Certificate {
   updatedAt DateTime      @updatedAt
 }
 
+/// Перегляд сторінки. Без cookie: visitorId — це денний хеш (IP + UA + сіль),
+/// тому одна й та сама людина в різні дні дає різні id (privacy-friendly).
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  referrer  String?
+  visitorId String
+  sessionId String
+  country   String?
+  device    String   @default("desktop") // desktop | mobile | tablet | bot
+  browser   String?
+  isNewVisit Boolean @default(true) // перша сторінка в сесії
+  duration  Int? // секунди на сторінці (надсилається при виході)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path, createdAt])
+  @@index([visitorId, createdAt])
+  @@index([sessionId])
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
