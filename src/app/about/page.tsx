@@ -33,28 +33,6 @@ const certificate = {
   authority: "Рада адвокатів Львівської області",
 };
 
-/** Чому саме адвокатура */
-const reasons = [
-  {
-    number: "01",
-    title: "Характер і прагнення справедливості",
-    description:
-      "Впертість, наполегливість та внутрішня потреба доводити почате до кінця — саме ті риси, без яких у цій професії не обійтися.",
-  },
-  {
-    number: "02",
-    title: "Робота з нормою та доказом",
-    description:
-      "Люблю «ритись» у нормативно-правових актах і вишукувати доказову базу, щоб потім використати її в конкретній справі.",
-  },
-  {
-    number: "03",
-    title: "Незалежність адвокатури",
-    description:
-      "Інститут адвокатури є незалежним і самоврядним: закон забороняє втручання органів влади в адвокатську діяльність. Адвокат — вільний «гравець».",
-  },
-];
-
 const approach = [
   "Індивідуальний підхід до кожної справи",
   "Детальний правовий аналіз ситуації перед початком роботи",
@@ -148,8 +126,7 @@ export default async function AboutPage() {
                       адміністративного права.
                     </p>
                     <p>
-                      Офіційно практикую у сфері права понад 7 років — не беручи
-                      до уваги практику та стажування в органах місцевого
+                      Цьому передували практика та стажування в органах місцевого
                       самоврядування, прокуратурі, судах різних ланок та
                       адвокатурі. Навчалася на юридичному факультеті Львівського
                       національного університету імені Івана Франка, за освітою —
@@ -194,10 +171,100 @@ export default async function AboutPage() {
                 </div>
               </Reveal>
             </div>
+          </div>
+        </section>
 
+        {/* Мій підхід до роботи */}
+        <section className="bg-white pb-20">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+            <Reveal className="mb-12 text-center">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                Методика
+              </p>
+              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl">
+                Мій підхід до роботи
+              </h2>
+            </Reveal>
+
+            <Stagger
+              className="grid gap-4 sm:grid-cols-2"
+              whileInView
+              delayChildren={0.1}
+              staggerChildren={0.08}
+            >
+              {approach.map((item) => (
+                <StaggerItem key={item} className="h-full">
+                  <div className="flex h-full items-start gap-4 rounded-2xl border border-border bg-surface/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-white hover:shadow-[0_20px_40px_-15px_rgba(198,166,103,0.25)]">
+                    <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 ring-1 ring-accent/30">
+                      <svg className="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                    <span className="text-sm leading-relaxed text-primary/85">
+                      {item}
+                    </span>
+                  </div>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </div>
+        </section>
+
+        {/* Принципи роботи */}
+        <section className="bg-surface py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Reveal className="mb-12 text-center">
+              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl">
+                Принципи роботи
+              </h2>
+              <p className="mt-4 text-lg text-muted">
+                Цінності, на яких базується моя юридична практика
+              </p>
+            </Reveal>
+
+            <Stagger
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+              whileInView
+              delayChildren={0.1}
+              staggerChildren={0.1}
+            >
+              {values.map((value) => (
+                <StaggerItem key={value.title} className="h-full">
+                  <div className="h-full rounded-2xl border border-border bg-white p-8 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]">
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-surface ring-1 ring-accent/20 transition group-hover:bg-accent/10">
+                      <svg
+                        className="h-6 w-6 text-accent"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="mb-2 text-lg font-bold text-primary">
+                      {value.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-muted">
+                      {value.description}
+                    </p>
+                  </div>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </div>
+        </section>
+
+        {/* Офіційні відомості */}
+        <section className="bg-white py-20">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             {/* Свідоцтво про право на заняття адвокатською діяльністю */}
             <Reveal delay={0.15}>
-              <div className="relative mt-14 overflow-hidden rounded-3xl border border-border bg-gradient-to-b from-surface/80 to-white p-8 shadow-[0_30px_70px_-40px_rgba(69,66,75,0.5)] sm:p-10">
+              <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-b from-surface/80 to-white p-8 shadow-[0_30px_70px_-40px_rgba(69,66,75,0.5)] sm:p-10">
                 <span className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
                 <span className="pointer-events-none absolute left-5 top-5 h-7 w-7 rounded-tl-lg border-l border-t border-accent/40" />
                 <span className="pointer-events-none absolute bottom-5 right-5 h-7 w-7 rounded-br-lg border-b border-r border-accent/40" />
@@ -295,97 +362,6 @@ export default async function AboutPage() {
           </div>
         </section>
 
-        {/* Чому саме адвокатура */}
-        <section className="relative overflow-hidden bg-primary py-20 text-white">
-          <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
-          <div className="absolute -bottom-40 -left-32 h-96 w-96 rounded-full bg-accent/[0.06] blur-3xl" />
-          <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <Reveal className="mb-12 max-w-2xl">
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
-                Моя історія
-              </p>
-              <h2 className="font-display text-3xl font-semibold sm:text-4xl">
-                Чому я обрала саме напрямок адвокатури
-              </h2>
-              <p className="mt-4 text-lg leading-relaxed text-white/60">
-                Причин є декілька — і кожна з них досі щодня підтверджується на
-                практиці.
-              </p>
-            </Reveal>
-
-            <Stagger
-              className="grid gap-6 sm:grid-cols-3"
-              whileInView
-              delayChildren={0.1}
-              staggerChildren={0.12}
-            >
-              {reasons.map((reason) => (
-                <StaggerItem key={reason.number} className="h-full">
-                  <div className="h-full rounded-2xl border border-white/10 bg-white/[0.04] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-white/[0.07]">
-                    <span className="font-display text-3xl font-bold text-accent">
-                      {reason.number}
-                    </span>
-                    <h3 className="mt-4 font-display text-lg font-semibold leading-snug">
-                      {reason.title}
-                    </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-white/60">
-                      {reason.description}
-                    </p>
-                  </div>
-                </StaggerItem>
-              ))}
-            </Stagger>
-
-            <Reveal delay={0.2}>
-              <blockquote className="relative mt-12 rounded-2xl border-l-2 border-accent bg-white/[0.04] px-7 py-6">
-                <p className="font-display text-xl leading-relaxed text-white/90 sm:text-2xl">
-                  «Професія адвоката — це не тільки про закони і кодекси. Це про
-                  долі людей, про емоції, про нові знайомства та комунікацію».
-                </p>
-                <footer className="mt-4 text-sm text-accent">
-                  Анастасія Кабаль, адвокат
-                </footer>
-              </blockquote>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* Мій підхід до роботи */}
-        <section className="bg-white py-20">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <Reveal className="mb-12 text-center">
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
-                Методика
-              </p>
-              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl">
-                Мій підхід до роботи
-              </h2>
-            </Reveal>
-
-            <Stagger
-              className="grid gap-4 sm:grid-cols-2"
-              whileInView
-              delayChildren={0.1}
-              staggerChildren={0.08}
-            >
-              {approach.map((item) => (
-                <StaggerItem key={item} className="h-full">
-                  <div className="flex h-full items-start gap-4 rounded-2xl border border-border bg-surface/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-white hover:shadow-[0_20px_40px_-15px_rgba(198,166,103,0.25)]">
-                    <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 ring-1 ring-accent/30">
-                      <svg className="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </span>
-                    <span className="text-sm leading-relaxed text-primary/85">
-                      {item}
-                    </span>
-                  </div>
-                </StaggerItem>
-              ))}
-            </Stagger>
-          </div>
-        </section>
-
         {/* Підвищення кваліфікації */}
         {certificates.length > 0 && (
           <section className="bg-surface py-20">
@@ -428,55 +404,6 @@ export default async function AboutPage() {
             </div>
           </section>
         )}
-
-        {/* Values Section */}
-        <section className="bg-surface py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <Reveal className="mb-12 text-center">
-              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl">
-                Принципи роботи
-              </h2>
-              <p className="mt-4 text-lg text-muted">
-                Цінності, на яких базується моя юридична практика
-              </p>
-            </Reveal>
-
-            <Stagger
-              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-              whileInView
-              delayChildren={0.1}
-              staggerChildren={0.1}
-            >
-              {values.map((value) => (
-                <StaggerItem key={value.title} className="h-full">
-                  <div className="h-full rounded-2xl border border-border bg-white p-8 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]">
-                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-surface ring-1 ring-accent/20 transition group-hover:bg-accent/10">
-                      <svg
-                        className="h-6 w-6 text-accent"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </div>
-                    <h3 className="mb-2 text-lg font-bold text-primary">
-                      {value.title}
-                    </h3>
-                    <p className="text-sm leading-relaxed text-muted">
-                      {value.description}
-                    </p>
-                  </div>
-                </StaggerItem>
-              ))}
-            </Stagger>
-          </div>
-        </section>
 
         {/* Contact Section */}
         <section className="bg-white py-20">

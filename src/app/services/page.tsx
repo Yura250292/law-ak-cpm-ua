@@ -9,7 +9,7 @@ import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Послуги — Адвокат Кабаль Анастасія Ігорівна",
+  title: "Послуги та вартість — Адвокат Кабаль Анастасія Ігорівна",
   description:
     "Юридичні послуги адвоката у Львові: сімейне, цивільне, господарське та адміністративне право. Консультації, підготовка документів, представництво в суді.",
 };
@@ -29,7 +29,7 @@ export default async function ServicesPage() {
             <Stagger className="space-y-4" delayChildren={0.1} staggerChildren={0.12}>
               <StaggerItem>
                 <h1 className="text-3xl font-bold sm:text-5xl">
-                  Послуги
+                  Послуги та вартість
                 </h1>
               </StaggerItem>
               <StaggerItem>
@@ -110,19 +110,6 @@ export default async function ServicesPage() {
         {/* Послуги у сферах права — детальні переліки */}
         <section className="bg-surface py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <Reveal className="mb-14 text-center">
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
-                Повний перелік
-              </p>
-              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl">
-                Послуги у сферах права
-              </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-base text-muted">
-                Конкретні категорії справ, з якими я працюю у кожному з чотирьох
-                напрямків практики.
-              </p>
-            </Reveal>
-
             <Stagger
               className="grid gap-6 lg:grid-cols-2"
               whileInView

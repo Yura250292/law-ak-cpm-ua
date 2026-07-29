@@ -4,7 +4,6 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { FAQCategorized } from "@/components/FAQCategorized";
-import { LawyerPhoto } from "@/components/LawyerPhoto";
 import { homeFAQCategories } from "@/lib/faq-data";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
@@ -14,43 +13,6 @@ import { HeroBackdrop } from "@/components/motion/HeroBackdrop";
 import { ShimmerText } from "@/components/motion/ShimmerText";
 
 export const revalidate = 60;
-
-const practiceAreas = [
-  {
-    slug: "simejne-pravo",
-    title: "Сімейне право",
-    description:
-      "Розлучення, аліменти, поділ майна, опіка над дітьми, позбавлення батьківських прав.",
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-      </svg>
-    ),
-  },
-  {
-    slug: "cyvilne-pravo",
-    title: "Цивільне право",
-    description:
-      "Договори, відшкодування шкоди, спадкові спори, захист прав споживачів.",
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19 17V5a2 2 0 0 0-2-2H4M22 17H7a2 2 0 0 0-2 2 2 2 0 0 0 2 2h12a3 3 0 0 0 3-3z M9 7h6 M9 11h6" />
-      </svg>
-    ),
-  },
-  {
-    slug: "gospodarske-pravo",
-    title: "Господарське право",
-    description:
-      "Договори, корпоративні спори, банкрутство, реєстрація бізнесу.",
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
-        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-      </svg>
-    ),
-  },
-];
 
 const processSteps = [
   {
@@ -115,13 +77,6 @@ const heroPromises = [
   "Оцінимо перспективи вашої справи",
   "Запропонуємо покроковий план дій",
   "Повна конфіденційність — адвокатська таємниця",
-];
-
-const aboutHighlights = [
-  "Понад 7 років досвіду в юридичній сфері",
-  "Спеціалізація: сімейне, цивільне, господарське та адміністративне право",
-  "Представництво інтересів клієнтів у судах усіх інстанцій",
-  "Індивідуальний підхід та повна конфіденційність кожної справи",
 ];
 
 export default function HomePage() {
@@ -253,170 +208,6 @@ export default function HomePage() {
                 </StaggerItem>
               </Stagger>
             </div>
-          </div>
-        </section>
-
-        {/* ── About the Lawyer ── */}
-        <section id="about" className="bg-white py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-              {/* Photo */}
-              <Reveal y={32} className="relative">
-                <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-3xl bg-surface shadow-[0_30px_80px_-30px_rgba(0,0,0,0.4)] ring-1 ring-accent/20">
-                  <LawyerPhoto />
-                  {/* Accent frame accents */}
-                  <span className="pointer-events-none absolute left-4 top-4 h-2 w-2 rounded-full bg-accent/50 ring-1 ring-accent/30" />
-                  <span className="pointer-events-none absolute right-4 top-4 h-2 w-2 rounded-full bg-accent/50 ring-1 ring-accent/30" />
-                  <span className="pointer-events-none absolute bottom-4 left-4 h-2 w-2 rounded-full bg-accent/50 ring-1 ring-accent/30" />
-                  <span className="pointer-events-none absolute bottom-4 right-4 h-2 w-2 rounded-full bg-accent/50 ring-1 ring-accent/30" />
-                </div>
-                {/* Floating experience badge */}
-                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 rounded-2xl bg-primary px-6 py-3 text-center text-white shadow-lg shadow-primary/25 ring-1 ring-accent/30">
-                  <span className="block font-display text-2xl font-bold text-accent">7+</span>
-                  <span className="text-[11px] uppercase tracking-[0.15em] text-white/70">
-                    років досвіду
-                  </span>
-                </div>
-              </Reveal>
-
-              {/* Text */}
-              <Reveal delay={0.15} y={32}>
-                <div className="space-y-6">
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
-                    Про адвоката
-                  </p>
-                  <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl lg:text-5xl">
-                    Кабаль Анастасія Ігорівна
-                  </h2>
-                  <div className="space-y-4 text-base leading-relaxed text-muted">
-                    <p>
-                      Адвокат зі Львова з понад 7-річним досвідом роботи в
-                      юридичній сфері. Спеціалізуюся на сімейному, цивільному,
-                      господарському та адміністративному праві — від першої
-                      консультації до результату в суді.
-                    </p>
-                    <p>
-                      Допомагаю клієнтам захищати їхні права: готую позовні заяви,
-                      скарги та договори, представляю інтереси в судах усіх
-                      інстанцій. Працюю особисто у Львові та онлайн по всій Україні.
-                    </p>
-                  </div>
-
-                  <Stagger
-                    className="space-y-3 pt-2"
-                    whileInView
-                    delayChildren={0.1}
-                    staggerChildren={0.08}
-                  >
-                    {aboutHighlights.map((item) => (
-                      <StaggerItem key={item} y={10}>
-                        <div className="flex items-start gap-3">
-                          <span className="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/10">
-                            <svg className="h-3 w-3 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          </span>
-                          <span className="text-sm leading-relaxed text-primary/80">
-                            {item}
-                          </span>
-                        </div>
-                      </StaggerItem>
-                    ))}
-                  </Stagger>
-
-                  <div className="flex flex-col gap-4 pt-2 sm:flex-row">
-                    <MagneticButton className="w-full sm:w-auto">
-                      <Link href="/about" className="block w-full sm:w-auto">
-                        <Button className="w-full sm:w-auto rounded-xl bg-primary px-8 py-3 text-base font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary-light hover:shadow-xl">
-                          Дізнатися більше
-                        </Button>
-                      </Link>
-                    </MagneticButton>
-                    <Link href="/consultation" className="w-full sm:w-auto">
-                      <Button className="w-full sm:w-auto rounded-xl border-2 border-primary bg-transparent px-8 py-3 text-base font-semibold text-primary transition hover:bg-primary hover:text-white">
-                        Записатися на консультацію
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Practice Areas ── */}
-        <section className="bg-white py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <Reveal className="mb-16 text-center">
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
-                Спеціалізації
-              </p>
-              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl lg:text-5xl">
-                Сфери практики
-              </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-base text-muted">
-                Допомагаю в основних галузях українського права — від першої
-                консультації до результату в суді
-              </p>
-            </Reveal>
-
-            <Stagger
-              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-              whileInView
-              delayChildren={0.1}
-              staggerChildren={0.1}
-            >
-              {practiceAreas.map((area) => (
-                <StaggerItem key={area.slug} className="h-full">
-                  <Link
-                    href={`/practices/${area.slug}`}
-                    className="group flex h-full flex-col rounded-2xl border border-border bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-15px_rgba(201,169,110,0.25)]"
-                  >
-                    <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-surface text-accent ring-1 ring-accent/30 transition group-hover:bg-accent/10 group-hover:scale-110">
-                      {area.icon}
-                    </div>
-                    <h3 className="mb-2 font-display text-xl font-semibold text-primary">
-                      {area.title}
-                    </h3>
-                    <p className="mb-6 flex-1 text-sm leading-relaxed text-muted">
-                      {area.description}
-                    </p>
-                    <span className="inline-flex items-center gap-1.5 text-sm font-bold text-accent transition group-hover:gap-2.5">
-                      Дізнатися більше
-                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
-                    </span>
-                  </Link>
-                </StaggerItem>
-              ))}
-
-              {/* "More" dark card */}
-              <StaggerItem className="h-full sm:col-span-2 lg:col-span-1">
-                <Link
-                  href="/services"
-                  className="group flex h-full flex-col rounded-2xl bg-primary p-7 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)]"
-                >
-                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-light text-accent ring-1 ring-accent/40 transition group-hover:scale-110">
-                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z M9 12l2 2 4-4" />
-                    </svg>
-                  </div>
-                  <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
-                    Ще +12 напрямків
-                  </p>
-                  <h3 className="mb-6 font-display text-xl font-semibold leading-tight">
-                    Кримінальне, спадкове, адміністративне
-                  </h3>
-                  <span className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-bold text-primary transition group-hover:bg-accent-hover">
-                    Усі спеціалізації
-                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </span>
-                </Link>
-              </StaggerItem>
-            </Stagger>
           </div>
         </section>
 
