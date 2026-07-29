@@ -1,23 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="КА — Кабаль Анастасія, адвокат">
   <defs>
-    <linearGradient id="goldLine" x1="8" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+    <linearGradient id="km-gold" x1="10" y1="8" x2="54" y2="56" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#E4CF9F"/>
       <stop offset="0.5" stop-color="#C6A667"/>
       <stop offset="1" stop-color="#AD8B49"/>
     </linearGradient>
   </defs>
 
-  <!-- thin-line КА monogram -->
-  <g stroke="url(#goldLine)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-    <!-- К -->
-    <path d="M15 9 V55"/>
-    <path d="M15 33 L33 9"/>
-    <path d="M15 33 L33 55"/>
-    <!-- А: right leg + crossbar -->
-    <path d="M49 9 L57 55"/>
-    <path d="M42.5 43 H54"/>
+  <!--
+    КА monogram, after the office door plaque.
+    А is the dominant form: a tall, narrow triangle with a high apex, its long left
+    leg sweeping down to the left. К is smaller and tucks under that leg — its stem
+    and diagonals overlap the А, so the two interlock rather than sit side by side.
+  -->
+  <g fill="none" stroke="url(#km-gold)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+    <!-- А — high apex, long shallow left leg -->
+    <path d="M20 54 L38 9 L50 54"/>
+    <path d="M31.5 42 H45.5"/>
+    <!-- К — tucked beneath the А's left leg -->
+    <path d="M15 24 V54"/>
+    <path d="M15 39 L29 24"/>
+    <path d="M15 39 L29 54"/>
   </g>
-
-  <!-- А left leg — white accent stroke -->
-  <path d="M41 55 L49 9" stroke="#FBFAF7" stroke-width="2.3" stroke-linecap="round"/>
 </svg>
