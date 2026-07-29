@@ -17,34 +17,78 @@ export const metadata = {
 };
 
 const qualifications = [
-  "Випускниця юридичного факультету ЛНУ імені Івана Франка",
-  "Спеціалізація на сімейному, цивільному, господарському та адміністративному праві",
-  "Понад 20 успішно проведених судових справ",
+  "Магістр права — юридичний факультет ЛНУ імені Івана Франка",
+  "Понад 7 років офіційної адвокатської практики",
+  "Практика та стажування в органах місцевого самоврядування, прокуратурі, судах різних ланок та адвокатурі",
+  "Спеціалізація: сімейне, цивільне, господарське та адміністративне право",
   "Представництво інтересів клієнтів у судах усіх інстанцій",
-  "Впровадження сучасних технологій у юридичну практику",
-  "Підготовка юридичних документів відповідно до чинного законодавства",
+  "Правова допомога фізичним особам, ФОП та юридичним особам",
+];
+
+/** Свідоцтво про право на заняття адвокатською діяльністю */
+const certificate = {
+  number: "№ 002697",
+  issuedAt: "22 березня 2024 року",
+  decision: "№ 191 від 01 березня 2024 року",
+  authority: "Рада адвокатів Львівської області",
+};
+
+/** Чому саме адвокатура */
+const reasons = [
+  {
+    number: "01",
+    title: "Характер і прагнення справедливості",
+    description:
+      "Впертість, наполегливість та внутрішня потреба доводити почате до кінця — саме ті риси, без яких у цій професії не обійтися.",
+  },
+  {
+    number: "02",
+    title: "Робота з нормою та доказом",
+    description:
+      "Люблю «ритись» у нормативно-правових актах і вишукувати доказову базу, щоб потім використати її в конкретній справі.",
+  },
+  {
+    number: "03",
+    title: "Незалежність адвокатури",
+    description:
+      "Інститут адвокатури є незалежним і самоврядним: закон забороняє втручання органів влади в адвокатську діяльність. Адвокат — вільний «гравець».",
+  },
+];
+
+const approach = [
+  "Індивідуальний підхід до кожної справи",
+  "Детальний правовий аналіз ситуації перед початком роботи",
+  "Чесна оцінка перспектив справи без необґрунтованих обіцянок",
+  "Повна конфіденційність отриманої інформації",
+  "Оперативна комунікація та супровід клієнта на всіх етапах",
+  "Орієнтація не лише на судовий спір, а й на пошук найефективнішого способу захисту прав клієнта",
 ];
 
 const values = [
   {
+    title: "Конфіденційність",
+    description:
+      "Вся інформація, отримана під час співпраці, захищається адвокатською таємницею відповідно до законодавства України.",
+  },
+  {
+    title: "Професіоналізм",
+    description:
+      "Кожна справа опрацьовується з урахуванням актуальної судової практики та вимог законодавства.",
+  },
+  {
+    title: "Чесність",
+    description:
+      "Клієнт отримує об'єктивну оцінку перспектив справи, можливих ризиків та варіантів її вирішення.",
+  },
+  {
+    title: "Відповідальність",
+    description:
+      "Всі процесуальні документи та правові позиції готуються з максимальною увагою до деталей.",
+  },
+  {
     title: "Індивідуальний підхід",
     description:
-      "Кожна справа розглядається з урахуванням усіх обставин та особливостей конкретної ситуації клієнта.",
-  },
-  {
-    title: "Прозорість",
-    description:
-      "Відкрита комунікація щодо перспектив справи, термінів та вартості послуг без прихованих платежів.",
-  },
-  {
-    title: "Доступність",
-    description:
-      "Завдяки сучасним технологіям юридична допомога стає доступною кожному, незалежно від місця проживання.",
-  },
-  {
-    title: "Результативність",
-    description:
-      "Орієнтація на досягнення конкретного результату для клієнта з використанням усіх законних засобів.",
+      "Кожне правове питання потребує окремої стратегії, що враховує конкретні обставини справи та інтереси клієнта.",
   },
 ];
 
@@ -96,22 +140,36 @@ export default async function AboutPage() {
                   </h2>
                   <div className="space-y-4 text-base leading-relaxed text-muted">
                     <p>
-                      Мене звати Анастасія Кабаль — я адвокат зі Львова,
-                      випускниця юридичного факультету Львівського національного
-                      університету імені Івана Франка. Спеціалізуюся на сімейному,
-                      цивільному, господарському та адміністративному праві.
+                      Мене звати <span className="font-semibold text-primary">Анастасія Кабаль</span> — адвокат
+                      із понад 7-річним досвідом роботи у сфері права. У своїй
+                      практиці я надаю комплексну правову допомогу фізичним
+                      особам, фізичним особам-підприємцям та юридичним особам у
+                      справах сімейного, цивільного, господарського та
+                      адміністративного права.
                     </p>
                     <p>
-                      За час практики успішно провела понад 20 судових справ —
-                      від розірвання шлюбу та стягнення аліментів до
-                      відшкодування шкоди та господарських спорів. Надаю
-                      професійну допомогу у підготовці юридичних документів та
-                      представництві інтересів клієнтів у судах усіх інстанцій.
+                      Офіційно практикую у сфері права понад 7 років — не беручи
+                      до уваги практику та стажування в органах місцевого
+                      самоврядування, прокуратурі, судах різних ланок та
+                      адвокатурі. Навчалася на юридичному факультеті Львівського
+                      національного університету імені Івана Франка, за освітою —
+                      магістр права.
                     </p>
                     <p>
-                      Впроваджую сучасні технології у юридичну практику, щоб
-                      зробити правову допомогу швидшою та доступнішою для кожного
-                      громадянина України.
+                      Моєю метою є не лише вирішення правового спору, а й пошук
+                      найбільш ефективного та економічно доцільного рішення для
+                      кожного клієнта. Професійний досвід дозволяє комплексно
+                      оцінювати кожну ситуацію, прогнозувати можливі ризики та
+                      будувати стратегію захисту, спрямовану на досягнення
+                      найкращого результату.
+                    </p>
+                    <p>
+                      У своїй роботі я дотримуюся принципів законності,
+                      професійної етики та максимальної відповідальності перед
+                      клієнтом. Кожна справа є індивідуальною, тому універсальних
+                      рішень не існує — саме тому я детально аналізую всі
+                      обставини, документи та можливі варіанти розвитку подій
+                      перед наданням рекомендацій.
                     </p>
                   </div>
 
@@ -136,6 +194,74 @@ export default async function AboutPage() {
                 </div>
               </Reveal>
             </div>
+
+            {/* Свідоцтво про право на заняття адвокатською діяльністю */}
+            <Reveal delay={0.15}>
+              <div className="relative mt-14 overflow-hidden rounded-3xl border border-border bg-gradient-to-b from-surface/80 to-white p-8 shadow-[0_30px_70px_-40px_rgba(69,66,75,0.5)] sm:p-10">
+                <span className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
+                <span className="pointer-events-none absolute left-5 top-5 h-7 w-7 rounded-tl-lg border-l border-t border-accent/40" />
+                <span className="pointer-events-none absolute bottom-5 right-5 h-7 w-7 rounded-br-lg border-b border-r border-accent/40" />
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute -bottom-6 right-6 select-none font-display text-[8rem] font-bold leading-none text-accent/[0.07]"
+                >
+                  КА
+                </span>
+
+                <div className="relative">
+                  <div className="mb-6 flex items-center gap-4">
+                    <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white text-accent ring-1 ring-accent/30">
+                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z M7 21h10 M12 3v18 M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />
+                      </svg>
+                    </span>
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-accent">
+                        Офіційні відомості
+                      </p>
+                      <h3 className="mt-1 font-display text-xl font-semibold text-primary sm:text-2xl">
+                        Право на заняття адвокатською діяльністю
+                      </h3>
+                    </div>
+                  </div>
+
+                  <dl className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2">
+                    <div className="bg-white p-5">
+                      <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">
+                        Свідоцтво
+                      </dt>
+                      <dd className="mt-1.5 font-display text-lg font-semibold text-primary">
+                        {certificate.number}
+                      </dd>
+                    </div>
+                    <div className="bg-white p-5">
+                      <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">
+                        Дата видачі
+                      </dt>
+                      <dd className="mt-1.5 font-display text-lg font-semibold text-primary">
+                        {certificate.issuedAt}
+                      </dd>
+                    </div>
+                    <div className="bg-white p-5">
+                      <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">
+                        Рішення
+                      </dt>
+                      <dd className="mt-1.5 font-display text-lg font-semibold text-primary">
+                        {certificate.decision}
+                      </dd>
+                    </div>
+                    <div className="bg-white p-5">
+                      <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">
+                        Орган, що видав
+                      </dt>
+                      <dd className="mt-1.5 text-base font-semibold leading-snug text-primary">
+                        {certificate.authority}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </Reveal>
 
             {/* Профіль у Єдиному реєстрі адвокатів України */}
             <Reveal delay={0.2}>
@@ -166,6 +292,97 @@ export default async function AboutPage() {
                 </svg>
               </a>
             </Reveal>
+          </div>
+        </section>
+
+        {/* Чому саме адвокатура */}
+        <section className="relative overflow-hidden bg-primary py-20 text-white">
+          <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
+          <div className="absolute -bottom-40 -left-32 h-96 w-96 rounded-full bg-accent/[0.06] blur-3xl" />
+          <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+            <Reveal className="mb-12 max-w-2xl">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                Моя історія
+              </p>
+              <h2 className="font-display text-3xl font-semibold sm:text-4xl">
+                Чому я обрала саме напрямок адвокатури
+              </h2>
+              <p className="mt-4 text-lg leading-relaxed text-white/60">
+                Причин є декілька — і кожна з них досі щодня підтверджується на
+                практиці.
+              </p>
+            </Reveal>
+
+            <Stagger
+              className="grid gap-6 sm:grid-cols-3"
+              whileInView
+              delayChildren={0.1}
+              staggerChildren={0.12}
+            >
+              {reasons.map((reason) => (
+                <StaggerItem key={reason.number} className="h-full">
+                  <div className="h-full rounded-2xl border border-white/10 bg-white/[0.04] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-white/[0.07]">
+                    <span className="font-display text-3xl font-bold text-accent">
+                      {reason.number}
+                    </span>
+                    <h3 className="mt-4 font-display text-lg font-semibold leading-snug">
+                      {reason.title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-relaxed text-white/60">
+                      {reason.description}
+                    </p>
+                  </div>
+                </StaggerItem>
+              ))}
+            </Stagger>
+
+            <Reveal delay={0.2}>
+              <blockquote className="relative mt-12 rounded-2xl border-l-2 border-accent bg-white/[0.04] px-7 py-6">
+                <p className="font-display text-xl leading-relaxed text-white/90 sm:text-2xl">
+                  «Професія адвоката — це не тільки про закони і кодекси. Це про
+                  долі людей, про емоції, про нові знайомства та комунікацію».
+                </p>
+                <footer className="mt-4 text-sm text-accent">
+                  Анастасія Кабаль, адвокат
+                </footer>
+              </blockquote>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* Мій підхід до роботи */}
+        <section className="bg-white py-20">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+            <Reveal className="mb-12 text-center">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                Методика
+              </p>
+              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl">
+                Мій підхід до роботи
+              </h2>
+            </Reveal>
+
+            <Stagger
+              className="grid gap-4 sm:grid-cols-2"
+              whileInView
+              delayChildren={0.1}
+              staggerChildren={0.08}
+            >
+              {approach.map((item) => (
+                <StaggerItem key={item} className="h-full">
+                  <div className="flex h-full items-start gap-4 rounded-2xl border border-border bg-surface/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-white hover:shadow-[0_20px_40px_-15px_rgba(198,166,103,0.25)]">
+                    <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 ring-1 ring-accent/30">
+                      <svg className="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                    <span className="text-sm leading-relaxed text-primary/85">
+                      {item}
+                    </span>
+                  </div>
+                </StaggerItem>
+              ))}
+            </Stagger>
           </div>
         </section>
 
@@ -216,7 +433,7 @@ export default async function AboutPage() {
         <section className="bg-surface py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <Reveal className="mb-12 text-center">
-              <h2 className="text-3xl font-bold text-primary sm:text-4xl">
+              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl">
                 Принципи роботи
               </h2>
               <p className="mt-4 text-lg text-muted">
@@ -225,7 +442,7 @@ export default async function AboutPage() {
             </Reveal>
 
             <Stagger
-              className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
               whileInView
               delayChildren={0.1}
               staggerChildren={0.1}

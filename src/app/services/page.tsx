@@ -2,8 +2,7 @@ import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { getPracticeAreas } from "@/lib/content";
-import { lawyerServicesFAQ } from "@/lib/faq-data";
-import { FAQSection } from "@/components/FAQSection";
+import { serviceAreas, priceGroups } from "@/lib/services-data";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 
@@ -108,13 +107,166 @@ export default async function ServicesPage() {
           </div>
         </section>
 
-        {/* Часті запитання */}
-        <FAQSection
-          title="Часті запитання"
-          subtitle="Відповіді на найпоширеніші питання про послуги та співпрацю"
-          items={lawyerServicesFAQ}
-          className="!bg-surface"
-        />
+        {/* Послуги у сферах права — детальні переліки */}
+        <section className="bg-surface py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Reveal className="mb-14 text-center">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                Повний перелік
+              </p>
+              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl">
+                Послуги у сферах права
+              </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-base text-muted">
+                Конкретні категорії справ, з якими я працюю у кожному з чотирьох
+                напрямків практики.
+              </p>
+            </Reveal>
+
+            <Stagger
+              className="grid gap-6 lg:grid-cols-2"
+              whileInView
+              delayChildren={0.1}
+              staggerChildren={0.12}
+            >
+              {serviceAreas.map((area) => (
+                <StaggerItem key={area.id} className="h-full">
+                  <div className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-white p-8 transition-all duration-300 hover:border-accent/40 hover:shadow-[0_28px_60px_-30px_rgba(198,166,103,0.35)]">
+                    <span className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute -top-4 right-5 select-none font-display text-[5.5rem] font-bold leading-none text-accent/[0.09]"
+                    >
+                      {area.number}
+                    </span>
+
+                    <div className="relative mb-5">
+                      <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
+                        Напрямок {area.number}
+                      </p>
+                      <h3 className="font-display text-2xl font-semibold text-primary">
+                        {area.title}
+                      </h3>
+                      <p className="mt-3 text-sm leading-relaxed text-muted">
+                        {area.description}
+                      </p>
+                    </div>
+
+                    <ul className="relative mt-2 grid flex-1 gap-x-6 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                      {area.services.map((service) => (
+                        <li key={service} className="flex items-start gap-2.5">
+                          <span className="mt-[7px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent" />
+                          <span className="text-sm leading-snug text-primary/80">
+                            {service}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Link
+                      href={`/practices/${area.id}`}
+                      className="group relative mt-7 inline-flex items-center gap-1.5 text-sm font-bold text-accent transition-all"
+                    >
+                      Детальніше про напрямок
+                      <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </div>
+        </section>
+
+        {/* Вартість послуг */}
+        <section className="relative overflow-hidden bg-primary py-20 text-white">
+          <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
+          <div className="absolute -bottom-40 -left-32 h-96 w-96 rounded-full bg-accent/[0.06] blur-3xl" />
+
+          <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <Reveal className="mb-14 text-center">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                Прайс
+              </p>
+              <h2 className="font-display text-3xl font-semibold sm:text-4xl">
+                Вартість послуг
+              </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-base text-white/60">
+                Орієнтовні ціни на основні види правничої допомоги. Остаточна
+                вартість завжди узгоджується до початку співпраці.
+              </p>
+            </Reveal>
+
+            <Stagger
+              className="grid gap-6 lg:grid-cols-2"
+              whileInView
+              delayChildren={0.1}
+              staggerChildren={0.1}
+            >
+              {priceGroups.map((group) => (
+                <StaggerItem key={group.title} className="h-full">
+                  <div className="h-full rounded-3xl border border-white/10 bg-white/[0.04] p-7 transition-all duration-300 hover:border-accent/30 hover:bg-white/[0.06]">
+                    <h3 className="mb-5 flex items-center gap-3 font-display text-lg font-semibold">
+                      <span className="h-px w-6 bg-accent" />
+                      {group.title}
+                    </h3>
+                    <ul className="divide-y divide-white/10">
+                      {group.items.map((item) => (
+                        <li
+                          key={item.service}
+                          className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3.5"
+                        >
+                          <span
+                            className={`text-sm ${
+                              item.featured
+                                ? "font-semibold text-white"
+                                : "text-white/75"
+                            }`}
+                          >
+                            {item.service}
+                          </span>
+                          <span
+                            className={`whitespace-nowrap text-sm font-semibold ${
+                              item.featured ? "text-accent" : "text-white/90"
+                            }`}
+                          >
+                            {item.price}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </StaggerItem>
+              ))}
+            </Stagger>
+
+            <Reveal delay={0.2}>
+              <div className="mt-10 rounded-2xl border-l-2 border-accent bg-white/[0.04] px-7 py-6">
+                <p className="text-sm leading-relaxed text-white/70">
+                  Вартість правничої допомоги визначається індивідуально після
+                  аналізу обставин справи, обсягу необхідної роботи, складності
+                  правового питання та наданих документів.{" "}
+                  <span className="font-semibold text-white">
+                    Остаточна вартість узгоджується з клієнтом до початку
+                    співпраці.
+                  </span>
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.25}>
+              <div className="mt-10 text-center">
+                <Link
+                  href="/consultation"
+                  className="inline-flex items-center justify-center rounded-xl bg-accent px-8 py-3.5 text-base font-semibold text-primary shadow-lg shadow-accent/20 transition-all duration-200 hover:bg-accent-hover hover:shadow-xl active:scale-[0.98]"
+                >
+                  Записатись на консультацію
+                </Link>
+              </div>
+            </Reveal>
+          </div>
+        </section>
       </main>
 
       <Footer />

@@ -3,9 +3,9 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { ReviewsSection } from "@/components/ReviewsSection";
-import { FAQSection } from "@/components/FAQSection";
+import { FAQCategorized } from "@/components/FAQCategorized";
 import { LawyerPhoto } from "@/components/LawyerPhoto";
-import { generalFAQ } from "@/lib/faq-data";
+import { homeFAQCategories } from "@/lib/faq-data";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { Counter } from "@/components/motion/Counter";
@@ -88,7 +88,7 @@ const heroTrustSignals = [
     ),
   },
   {
-    count: 100,
+    count: 50,
     suffix: "+",
     title: "справ",
     subtitle: "доведено до перемоги",
@@ -106,45 +106,6 @@ const heroTrustSignals = [
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
         <path strokeLinecap="round" strokeLinejoin="round" d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z M9 12l2 2 4-4" />
-      </svg>
-    ),
-  },
-];
-
-const darkTrustItems = [
-  {
-    label: "Свідоцтво № 12345",
-    icon: (
-      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z M7 21h10 M12 3v18 M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />
-      </svg>
-    ),
-  },
-  {
-    label: "Член НААУ",
-    icon: (
-      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
-        <circle cx="12" cy="8" r="7" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8.21 13.89 7 23l5-3 5 3-1.21-9.12" />
-      </svg>
-    ),
-  },
-  {
-    label: "Відповідь за 30 хв",
-    icon: (
-      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
-        <circle cx="12" cy="12" r="10" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
-      </svg>
-    ),
-  },
-  {
-    label: "Онлайн по Україні",
-    icon: (
-      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
-        <circle cx="12" cy="12" r="10" />
-        <line x1="2" y1="12" x2="22" y2="12" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
       </svg>
     ),
   },
@@ -172,8 +133,28 @@ export default function HomePage() {
         {/* ── Hero Section ── */}
         <section className="relative bg-white overflow-hidden">
           <HeroBackdrop />
-          <div className="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24 lg:px-8 lg:py-32">
-            <Stagger className="space-y-8" delayChildren={0.15} staggerChildren={0.14}>
+          <div className="relative mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-28">
+            {/* Warm content panel — brand backdrop under the hero copy */}
+            <div className="relative overflow-hidden rounded-[2rem] border border-border/80 bg-gradient-to-b from-white/95 via-surface/70 to-white/95 px-5 py-12 text-center shadow-[0_40px_100px_-45px_rgba(69,66,75,0.45)] backdrop-blur-sm sm:px-10 sm:py-16 lg:px-16">
+              {/* gold hairlines top & bottom */}
+              <span className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
+              <span className="pointer-events-none absolute inset-x-10 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+              {/* corner brackets */}
+              <span className="pointer-events-none absolute left-5 top-5 h-8 w-8 rounded-tl-xl border-l border-t border-accent/40 sm:left-7 sm:top-7" />
+              <span className="pointer-events-none absolute right-5 top-5 h-8 w-8 rounded-tr-xl border-r border-t border-accent/40 sm:right-7 sm:top-7" />
+              <span className="pointer-events-none absolute bottom-5 left-5 h-8 w-8 rounded-bl-xl border-b border-l border-accent/40 sm:bottom-7 sm:left-7" />
+              <span className="pointer-events-none absolute bottom-5 right-5 h-8 w-8 rounded-br-xl border-b border-r border-accent/40 sm:bottom-7 sm:right-7" />
+              {/* soft gold glow behind the heading */}
+              <span className="pointer-events-none absolute left-1/2 top-0 h-64 w-[36rem] max-w-full -translate-x-1/2 -translate-y-1/3 rounded-full bg-accent/10 blur-3xl" />
+              {/* monogram watermark */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute bottom-2 right-6 select-none font-display text-[9rem] font-bold leading-none text-accent/[0.07] sm:text-[12rem]"
+              >
+                КА
+              </span>
+
+              <Stagger className="relative space-y-8" delayChildren={0.15} staggerChildren={0.14}>
               {/* Eyebrow badge with golden dot */}
               <StaggerItem>
                 <span className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted">
@@ -269,31 +250,9 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-              </StaggerItem>
-            </Stagger>
-          </div>
-        </section>
-
-        {/* ── Trust Bar (Dark) ── */}
-        <section className="relative bg-primary py-7 text-white">
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <Stagger
-              className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4 md:justify-between"
-              whileInView
-              delayChildren={0}
-              staggerChildren={0.08}
-            >
-              {darkTrustItems.map((item) => (
-                <StaggerItem key={item.label} y={10}>
-                  <div className="flex items-center gap-3 text-sm text-white/85">
-                    <span className="text-accent shrink-0">{item.icon}</span>
-                    <span>{item.label}</span>
-                  </div>
                 </StaggerItem>
-              ))}
-            </Stagger>
+              </Stagger>
+            </div>
           </div>
         </section>
 
@@ -527,11 +486,26 @@ export default function HomePage() {
         <ReviewsSection />
 
         {/* ── FAQ Section ── */}
-        <FAQSection
-          title="Часті запитання"
-          subtitle="Відповіді на найпоширеніші питання про наші послуги"
-          items={generalFAQ}
-        />
+        <section className="bg-white py-24">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+            <Reveal className="mb-12 text-center">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                FAQ
+              </p>
+              <h2 className="font-display text-3xl font-semibold text-primary sm:text-4xl lg:text-5xl">
+                Часті запитання
+              </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-base text-muted">
+                Відповіді на найпоширеніші питання про співпрацю, судові справи,
+                сімейні спори та юридичний супровід бізнесу
+              </p>
+            </Reveal>
+
+            <Reveal delay={0.1}>
+              <FAQCategorized categories={homeFAQCategories} />
+            </Reveal>
+          </div>
+        </section>
 
         {/* ── CTA Section ── */}
         <section className="relative overflow-hidden bg-primary py-24 text-white">
