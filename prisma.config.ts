@@ -10,6 +10,7 @@ export default defineConfig({
     seed: "npx tsx prisma/seed.ts",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // Міграції — через пряме підключення (у Neon DATABASE_URL іде через пулер).
+    url: process.env["MIGRATE_DATABASE_URL"] ?? process.env["DATABASE_URL"],
   },
 });
