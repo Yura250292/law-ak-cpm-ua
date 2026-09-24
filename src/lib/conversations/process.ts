@@ -25,6 +25,7 @@ import { ProviderError, errorMessage } from "./errors";
 import { audioKey, normalizeContentType } from "./keys";
 import { summarizeTranscript } from "./summarize";
 import { escapeHtml, formatSummaryMessage, notify } from "./telegram";
+import { HOME, cb, fresh } from "./bot/keyboard";
 
 /** Скільки чекати вебхук, перш ніж опитати AssemblyAI самим. */
 const STUCK_MS = 10 * 60_000;
@@ -63,7 +64,8 @@ async function fail(id: string, e: unknown): Promise<void> {
   await notify(
     row.telegramChatId,
     `⚠️ Не вдалося обробити запис: ${escapeHtml(message)}\nМожна повторити з картки розмови в адмінці.`,
-    row.telegramMessageId ?? undefined
+    row.telegramMessageId ?? undefined,
+    [[fresh(cb("📄 Картка розмови", `c:${id}`)), fresh(HOME)]]
   );
 }
 
@@ -216,8 +218,9 @@ export async function summarize(id: string): Promise<void> {
     if (done) {
       await notify(
         row.telegramChatId,
-        formatSummaryMessage({ id, structured: s, durationMs: row.audioDurationMs }),
-        row.telegramMessageId ?? undefined
+        formatSummaryMessage({ id, structured: s, durationMs: row.audioDurationMs, withLink: false }),
+        row.telegramMessageId ?? undefined,
+        [[fresh(cb("📄 Картка й транскрипт", `c:${id}`)), fresh(HOME)]]
       );
     }
   } catch (e) {

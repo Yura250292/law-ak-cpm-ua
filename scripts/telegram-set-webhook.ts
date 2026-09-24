@@ -1,5 +1,5 @@
 /**
- * Прив'язати бота розмов до сайту.
+ * Прив'язати бота розмов до сайту і задати меню команд.
  *
  *   npx tsx scripts/telegram-set-webhook.ts https://<домен>
  *
@@ -20,11 +20,24 @@ async function main() {
     body: JSON.stringify({
       url: `${base}/api/telegram/webhook`,
       secret_token: secret,
-      allowed_updates: ["message"],
+      allowed_updates: ["message", "callback_query"],
       drop_pending_updates: true,
     }),
   });
   console.log(await res.json());
+
+  // Меню команд біля поля вводу.
+  const commands = await fetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      commands: [
+        { command: "menu", description: "🏠 Головне меню" },
+        { command: "new", description: "🆕 Нова розмова з асистентом" },
+      ],
+    }),
+  });
+  console.log("setMyCommands:", await commands.json());
 
   const info = await fetch(`https://api.telegram.org/bot${token}/getWebhookInfo`);
   console.log(await info.json());

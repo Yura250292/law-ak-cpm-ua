@@ -253,3 +253,14 @@ model Conversation {
   @@index([recordedAt(sort: Desc)])
   @@index([status])
 }
+
+/// Історія діалогу з AI-асистентом у Telegram (без проміжних викликів інструментів).
+model AssistantMessage {
+  id        String   @id @default(cuid())
+  chatId    String
+  role      String // user | model
+  text      String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([chatId, createdAt])
+}
