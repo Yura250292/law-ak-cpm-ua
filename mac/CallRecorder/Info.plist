@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>ua.com.law-ak.callrecorder</string>
+	<key>CFBundleName</key>
+	<string>Запис дзвінків</string>
+	<key>CFBundleDisplayName</key>
+	<string>Запис дзвінків</string>
+	<key>CFBundleExecutable</key>
+	<string>CallRecorder</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>14.4</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Щоб записувати ваш голос під час дзвінків з клієнтами.</string>
+	<key>NSAudioCaptureUsageDescription</key>
+	<string>Щоб записувати голос співрозмовника під час дзвінків з клієнтами.</string>
+</dict>
+</plist>

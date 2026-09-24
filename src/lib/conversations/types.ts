@@ -54,6 +54,7 @@ export const SOURCE_LABELS: Record<string, string> = {
   TELEGRAM: "Telegram",
   UPLOAD: "Завантаження",
   BINOTEL: "Binotel",
+  MAC: "Дзвінок на Mac",
 };
 
 /** Одна репліка з розпізнавання: хто, коли (мс від початку), що сказав. */

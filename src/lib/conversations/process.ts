@@ -13,7 +13,7 @@
 
 import { prisma } from "@/lib/prisma";
 import type { ConversationStatus, Prisma } from "@/generated/prisma/client";
-import { deletePrivate, presignedGetPrivate, putPrivate } from "@/lib/r2";
+import { deletePrivate, headPrivate, presignedGetPrivate, putPrivate } from "@/lib/r2";
 import {
   deleteTranscript,
   getTranscript,
@@ -22,7 +22,7 @@ import {
   transcriptErrorKind,
 } from "./assemblyai";
 import { ProviderError, errorMessage } from "./errors";
-import { audioKey, normalizeContentType } from "./keys";
+import { audioKey, isConversationKey, normalizeContentType } from "./keys";
 import { summarizeTranscript } from "./summarize";
 import { escapeHtml, formatSummaryMessage, notify } from "./telegram";
 import { HOME, cb, fresh } from "./bot/keyboard";
@@ -108,6 +108,32 @@ export async function storeAudioAndSubmit(id: string, fetchAudio: AudioSource): 
     return;
   }
   await submitForTranscription(id);
+}
+
+/**
+ * Файл уже лежить у R2 (його поклав браузер адмінки чи застосунок на Mac за
+ * підписаним посиланням): перевірити, що він справді там, і прив'язати до
+ * розмови. Після "ok" викликач замовляє розпізнавання через submitForTranscription.
+ */
+export async function attachUploadedAudio(
+  id: string,
+  key: string,
+  contentType: string
+): Promise<"ok" | "bad-key" | "missing" | "busy"> {
+  if (!isConversationKey(id, key)) return "bad-key";
+  const size = await headPrivate(key);
+  if (size === null) return "missing";
+  const r = await prisma.conversation.updateMany({
+    where: { id, status: "RECEIVED" },
+    data: {
+      audioR2Key: key,
+      audioMimeType: normalizeContentType(contentType),
+      audioSizeBytes: size,
+      status: "UPLOADED",
+      statusChangedAt: new Date(),
+    },
+  });
+  return r.count === 1 ? "ok" : "busy";
 }
 
 /* ---------- Розпізнавання ---------- */

@@ -208,6 +208,7 @@ enum ConversationSource {
   TELEGRAM
   UPLOAD
   BINOTEL
+  MAC
 }
 
 model Conversation {
