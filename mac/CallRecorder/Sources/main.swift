@@ -4,7 +4,17 @@ import AVFoundation
 // Службові режими для перевірки з терміналу:
 //   CallRecorder --diagnose              — хто зараз працює з мікрофоном і звуком
 //   CallRecorder --test-record 10 a.m4a  — записати N секунд і зберегти файл (без надсилання)
+//   CallRecorder --flush                 — надіслати чергу й вийти
 let args = CommandLine.arguments
+
+if args.contains("--flush") {
+    Task {
+        let sent = await Uploader().flush()
+        print("надіслано: \(sent), у черзі: \(Uploader.pendingCount())")
+        exit(0)
+    }
+    RunLoop.main.run()
+}
 
 if args.contains("--diagnose") {
     for p in AudioProcess.all() where p.input || p.output {
