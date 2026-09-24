@@ -216,6 +216,7 @@ export default function AdminDashboardPage() {
           </h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {[
+              { href: "/admin/conversations", label: "Розмови", desc: "Записи, транскрипти, самарі" },
               { href: "/admin/articles", label: "Статті", desc: "Блог, конструктор" },
               { href: "/admin/practice-areas", label: "Послуги", desc: "Сфери практики" },
               { href: "/admin/reviews", label: "Відгуки та кейси", desc: "Скріншоти, відгуки" },

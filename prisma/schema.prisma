@@ -103,17 +103,17 @@ model Certificate {
 /// Перегляд сторінки. Без cookie: visitorId — це денний хеш (IP + UA + сіль),
 /// тому одна й та сама людина в різні дні дає різні id (privacy-friendly).
 model PageView {
-  id        String   @id @default(cuid())
-  path      String
-  referrer  String?
-  visitorId String
-  sessionId String
-  country   String?
-  device    String   @default("desktop") // desktop | mobile | tablet | bot
-  browser   String?
-  isNewVisit Boolean @default(true) // перша сторінка в сесії
-  duration  Int? // секунди на сторінці (надсилається при виході)
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  path       String
+  referrer   String?
+  visitorId  String
+  sessionId  String
+  country    String?
+  device     String   @default("desktop") // desktop | mobile | tablet | bot
+  browser    String?
+  isNewVisit Boolean  @default(true) // перша сторінка в сесії
+  duration   Int? // секунди на сторінці (надсилається при виході)
+  createdAt  DateTime @default(now())
 
   @@index([createdAt])
   @@index([path, createdAt])
@@ -134,16 +134,16 @@ model User {
 }
 
 model DocumentTemplate {
-  id          String  @id @default(cuid())
-  slug        String  @unique
+  id          String   @id @default(cuid())
+  slug        String   @unique
   title       String
   description String
   category    String
   price       Float
   promptHint  String?
   fields      Json
-  isActive    Boolean @default(true)
-  sortOrder   Int     @default(0)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -190,4 +190,66 @@ model Payment {
 
   documentRequest DocumentRequest @relation(fields: [documentRequestId], references: [id])
   user            User?           @relation(fields: [userId], references: [id])
+}
+
+// ─── Розмови з клієнтами (аудіо → транскрипт → самарі) ───
+
+enum ConversationStatus {
+  RECEIVED // рядок створено, аудіо ще не в R2
+  UPLOADED // аудіо в R2, розпізнавання ще не замовлено
+  TRANSCRIBING // AssemblyAI працює, чекаємо вебхук
+  TRANSCRIBED // текст є, самарі ще немає
+  SUMMARIZING
+  READY
+  FAILED
+}
+
+enum ConversationSource {
+  TELEGRAM
+  UPLOAD
+  BINOTEL
+}
+
+model Conversation {
+  id         String             @id @default(cuid())
+  source     ConversationSource
+  externalId String? // file_unique_id Telegram / id дзвінка АТС — захист від дублів
+  direction  String? // IN | OUT, коли відомо від АТС
+
+  title       String?
+  clientName  String?
+  clientPhone String?
+  recordedAt  DateTime @default(now())
+
+  telegramChatId    String? // куди відповідати ботом
+  telegramMessageId Int? // на яке повідомлення відповідати
+  fileName          String? // назва файлу запису — у Samsung там контакт і дата
+
+  audioR2Key      String? // ключ у приватному бакеті R2_PRIVATE_BUCKET_NAME
+  audioMimeType   String?
+  audioSizeBytes  Int?
+  audioDurationMs Int?
+
+  status               ConversationStatus @default(RECEIVED)
+  assemblyTranscriptId String?            @unique
+  transcript           String?            @db.Text
+  utterances           Json? // Utterance[] — див. src/lib/conversations/types.ts
+
+  summary        String? @db.Text
+  structured     Json? // ConversationSummary — див. src/lib/conversations/summarize.ts
+  aiModel        String?
+  aiInputTokens  Int?
+  aiOutputTokens Int?
+
+  lawyerNotes String? @db.Text
+
+  attempts        Int      @default(0)
+  processingError String?  @db.Text
+  statusChangedAt DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([source, externalId])
+  @@index([recordedAt(sort: Desc)])
+  @@index([status])
 }
