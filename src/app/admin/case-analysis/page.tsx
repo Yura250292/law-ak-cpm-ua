@@ -10,10 +10,98 @@ interface ChatMessage {
   text: string;
 }
 
+interface GeneratedDocument {
+  type: string;
+  text: string;
+  createdAt: string;
+}
+
+interface HistoryItem {
+  id: string;
+  title: string;
+  models: string[];
+  messageCount: number;
+  documentCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleString("uk-UA", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 // Per-file hard cap: avoid sending huge files even to R2. Multi-hundred-MB PDFs
 // would just stall the AI step. R2 itself can take much more if ever needed.
 const MAX_FILE_BYTES = 50 * 1024 * 1024;
 const IMAGE_RE = /\.(jpg|jpeg|png|webp|heic|heif)$/i;
+const ACCEPTED_FILES =
+  ".pdf,.docx,.doc,.rtf,.txt,.jpg,.jpeg,.png,.webp,.heic,.heif";
+
+async function prepareFiles(newFiles: FileList | File[]): Promise<File[]> {
+  return Promise.all(
+    Array.from(newFiles).map(async (f) => {
+      if (IMAGE_RE.test(f.name)) {
+        try {
+          return await compressImage(f);
+        } catch {
+          return f;
+        }
+      }
+      return f;
+    })
+  );
+}
+
+class UnauthorizedError extends Error {}
+
+/**
+ * Uploads files directly to R2 via presigned URL (bypasses the server body
+ * size limit) and returns their keys.
+ */
+async function uploadToR2(files: File[]): Promise<{ key: string; name: string }[]> {
+  const uploaded: { key: string; name: string }[] = [];
+  for (const f of files) {
+    const presignRes = await fetch("/api/admin/case-analysis/upload-url", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fileName: f.name,
+        contentType: f.type || "application/octet-stream",
+      }),
+    });
+    if (presignRes.status === 401) throw new UnauthorizedError();
+    const presignData = await presignRes.json();
+    if (!presignRes.ok) {
+      throw new Error(presignData.error ?? "Не вдалося отримати URL");
+    }
+
+    const putRes = await fetch(presignData.url, {
+      method: "PUT",
+      headers: { "Content-Type": presignData.contentType },
+      body: f,
+    });
+    if (!putRes.ok) {
+      throw new Error(
+        `Не вдалося завантажити "${f.name}" у сховище (${putRes.status})`
+      );
+    }
+    uploaded.push({ key: presignData.key, name: f.name });
+  }
+  return uploaded;
+}
+
+function findTooBig(files: File[]): string | null {
+  const tooBig = files.find((f) => f.size > MAX_FILE_BYTES);
+  return tooBig
+    ? `Файл "${tooBig.name}" завеликий (${(tooBig.size / 1024 / 1024).toFixed(1)} МБ). Максимум — 50 МБ на файл.`
+    : null;
+}
 
 export default function CaseAnalysisPage() {
   const router = useRouter();
@@ -30,7 +118,15 @@ export default function CaseAnalysisPage() {
 
   // Document generation state
   const [generatingDoc, setGeneratingDoc] = useState(false);
-  const [generatedDoc, setGeneratedDoc] = useState("");
+  const [documents, setDocuments] = useState<GeneratedDocument[]>([]);
+  const [activeDocIndex, setActiveDocIndex] = useState(-1);
+  const activeDoc = documents[activeDocIndex] ?? null;
+  const generatedDoc = activeDoc?.text ?? "";
+
+  // History state
+  const [analysisId, setAnalysisId] = useState<string | null>(null);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   // Analysis state
   const [analysis, setAnalysis] = useState("");
@@ -42,30 +138,86 @@ export default function CaseAnalysisPage() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
+  const [chatFiles, setChatFiles] = useState<File[]>([]);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const chatFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
 
+  const loadHistory = useCallback(async () => {
+    setHistoryLoading(true);
+    try {
+      const res = await fetch("/api/admin/case-analysis/history");
+      if (res.status === 401) {
+        router.push("/admin/login");
+        return;
+      }
+      const data = await res.json();
+      if (res.ok) setHistory(data.items ?? []);
+    } catch {
+      // History is optional — the page works without it.
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, [router]);
+
+  const hasAnalysisNow = !!analysis;
+  useEffect(() => {
+    if (!hasAnalysisNow) loadHistory();
+  }, [hasAnalysisNow, loadHistory]);
+
+  async function openHistory(id: string) {
+    setError("");
+    try {
+      const res = await fetch(`/api/admin/case-analysis/history/${id}`);
+      if (res.status === 401) {
+        router.push("/admin/login");
+        return;
+      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Не вдалося відкрити аналіз");
+      const item = data.item;
+      const docs: GeneratedDocument[] = Array.isArray(item.documents) ? item.documents : [];
+      setAnalysisId(item.id);
+      setLawyerTask(item.lawyerTask ?? "");
+      setAnalysis(item.analysis);
+      setCaseContext(item.caseContext);
+      setFileName(item.fileNames?.length ? item.fileNames.join(", ") : item.title);
+      setAnalysisModels(item.models ?? []);
+      if (item.mode === "gemini" || item.mode === "claude") setAiMode(item.mode);
+      setChatMessages(Array.isArray(item.messages) ? item.messages : []);
+      setDocuments(docs);
+      setActiveDocIndex(docs.length - 1);
+      setFiles([]);
+      setChatFiles([]);
+      setPastedText("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Не вдалося відкрити аналіз");
+    }
+  }
+
+  async function deleteHistory(item: HistoryItem) {
+    if (!window.confirm(`Видалити аналіз «${item.title}» разом із чатом і документами?`)) return;
+    const res = await fetch(`/api/admin/case-analysis/history/${item.id}`, {
+      method: "DELETE",
+    });
+    if (res.ok) setHistory((prev) => prev.filter((h) => h.id !== item.id));
+    else setError("Не вдалося видалити аналіз");
+  }
+
   // ── Add files ──
   async function addFiles(newFiles: FileList | File[]) {
-    const arr = Array.from(newFiles);
-    const processed = await Promise.all(
-      arr.map(async (f) => {
-        if (IMAGE_RE.test(f.name)) {
-          try {
-            return await compressImage(f);
-          } catch {
-            return f;
-          }
-        }
-        return f;
-      })
-    );
+    const processed = await prepareFiles(newFiles);
     setFiles((prev) => [...prev, ...processed]);
+  }
+
+  async function addChatFiles(newFiles: FileList | File[]) {
+    const processed = await prepareFiles(newFiles);
+    setChatFiles((prev) => [...prev, ...processed]);
   }
 
   function removeFile(index: number) {
@@ -79,11 +231,9 @@ export default function CaseAnalysisPage() {
       return;
     }
 
-    const tooBig = files.find((f) => f.size > MAX_FILE_BYTES);
-    if (tooBig) {
-      setError(
-        `Файл "${tooBig.name}" завеликий (${(tooBig.size / 1024 / 1024).toFixed(1)} МБ). Максимум — 50 МБ на файл.`
-      );
+    const tooBigError = findTooBig(files);
+    if (tooBigError) {
+      setError(tooBigError);
       return;
     }
 
@@ -93,42 +243,8 @@ export default function CaseAnalysisPage() {
     setChatMessages([]);
 
     try {
-      // Step 1: upload each file directly to R2 via presigned URL (bypasses
-      // Vercel's 4.5 MB serverless body limit).
-      const uploaded: { key: string; name: string }[] = [];
-      for (const f of files) {
-        const presignRes = await fetch(
-          "/api/admin/case-analysis/upload-url",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              fileName: f.name,
-              contentType: f.type || "application/octet-stream",
-            }),
-          }
-        );
-        if (presignRes.status === 401) {
-          router.push("/admin/login");
-          return;
-        }
-        const presignData = await presignRes.json();
-        if (!presignRes.ok) {
-          throw new Error(presignData.error ?? "Не вдалося отримати URL");
-        }
-
-        const putRes = await fetch(presignData.url, {
-          method: "PUT",
-          headers: { "Content-Type": presignData.contentType },
-          body: f,
-        });
-        if (!putRes.ok) {
-          throw new Error(
-            `Не вдалося завантажити "${f.name}" у сховище (${putRes.status})`
-          );
-        }
-        uploaded.push({ key: presignData.key, name: f.name });
-      }
+      // Step 1: upload each file directly to R2 via presigned URL.
+      const uploaded = await uploadToR2(files);
 
       // Step 2: trigger analysis with R2 keys (small JSON payload).
       const res = await fetch("/api/admin/case-analysis", {
@@ -153,11 +269,18 @@ export default function CaseAnalysisPage() {
         throw new Error(data.error ?? "Помилка аналізу");
       }
 
+      setAnalysisId(data.analysisId ?? null);
+      setDocuments([]);
+      setActiveDocIndex(-1);
       setAnalysis(data.analysis);
       setCaseContext(data.documentText);
       setFileName(data.fileName);
       setAnalysisModels(Array.isArray(data.models) ? data.models : []);
     } catch (err) {
+      if (err instanceof UnauthorizedError) {
+        router.push("/admin/login");
+        return;
+      }
       setError(err instanceof Error ? err.message : "Помилка аналізу");
     } finally {
       setUploading(false);
@@ -167,14 +290,34 @@ export default function CaseAnalysisPage() {
   // ── Chat ──
   const handleSendChat = useCallback(async () => {
     const q = chatInput.trim();
-    if (!q || chatLoading) return;
+    const attached = chatFiles;
+    if ((!q && attached.length === 0) || chatLoading) return;
 
-    const userMsg: ChatMessage = { role: "user", text: q };
+    const tooBigError = findTooBig(attached);
+    if (tooBigError) {
+      setChatMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: `Помилка: ${tooBigError}` },
+      ]);
+      return;
+    }
+
+    const fileLine = attached.length
+      ? `📎 ${attached.map((f) => f.name).join(", ")}`
+      : "";
+    const userMsg: ChatMessage = {
+      role: "user",
+      text: [fileLine, q].filter(Boolean).join("\n"),
+    };
     setChatMessages((prev) => [...prev, userMsg]);
     setChatInput("");
+    setChatFiles([]);
+    if (chatFileInputRef.current) chatFileInputRef.current.value = "";
     setChatLoading(true);
 
     try {
+      const uploaded = attached.length ? await uploadToR2(attached) : [];
+
       const res = await fetch("/api/admin/case-analysis/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -185,20 +328,32 @@ export default function CaseAnalysisPage() {
           analysisResult: analysis,
           chatHistory: [...chatMessages, userMsg],
           question: q,
+          files: uploaded,
+          analysisId,
         }),
       });
 
+      if (res.status === 401) throw new UnauthorizedError();
       const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.error ?? "Помилка");
       }
 
+      // Added documents stay in the case context for the next questions
+      // and for document generation.
+      if (data.addedText) {
+        setCaseContext((prev) => prev + data.addedText);
+      }
       setChatMessages((prev) => [
         ...prev,
         { role: "assistant", text: data.answer },
       ]);
     } catch (err) {
+      if (err instanceof UnauthorizedError) {
+        router.push("/admin/login");
+        return;
+      }
       setChatMessages((prev) => [
         ...prev,
         {
@@ -209,12 +364,21 @@ export default function CaseAnalysisPage() {
     } finally {
       setChatLoading(false);
     }
-  }, [chatInput, chatLoading, caseContext, analysis, chatMessages]);
+  }, [
+    chatInput,
+    chatFiles,
+    chatLoading,
+    lawyerTask,
+    caseContext,
+    analysis,
+    chatMessages,
+    analysisId,
+    router,
+  ]);
 
   // ── Generate document ──
   async function handleGenerateDocument(docType: string) {
     setGeneratingDoc(true);
-    setGeneratedDoc("");
 
     try {
       const res = await fetch("/api/admin/case-analysis/chat", {
@@ -224,6 +388,8 @@ export default function CaseAnalysisPage() {
           caseContext,
           analysisResult: analysis,
           chatHistory: [],
+          analysisId,
+          documentType: docType,
           question: `Сформуй повний текст процесуального документа: "${docType}".
 
 Вимоги:
@@ -238,7 +404,12 @@ export default function CaseAnalysisPage() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Помилка");
-      setGeneratedDoc(data.answer);
+      // Buttons are disabled while generating, so `documents` is current here.
+      setDocuments([
+        ...documents,
+        { type: docType, text: data.answer, createdAt: new Date().toISOString() },
+      ]);
+      setActiveDocIndex(documents.length);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Помилка формування документа"
@@ -287,10 +458,13 @@ export default function CaseAnalysisPage() {
     setAnalysis("");
     setCaseContext("");
     setChatMessages([]);
+    setChatFiles([]);
     setFileName("");
     setAnalysisModels([]);
     setError("");
-    setGeneratedDoc("");
+    setDocuments([]);
+    setActiveDocIndex(-1);
+    setAnalysisId(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
@@ -395,7 +569,7 @@ export default function CaseAnalysisPage() {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".pdf,.docx,.doc,.rtf,.txt,.jpg,.jpeg,.png,.webp,.heic,.heif"
+                accept={ACCEPTED_FILES}
                 multiple
                 className="hidden"
                 onChange={(e) => {
@@ -542,6 +716,53 @@ export default function CaseAnalysisPage() {
             >
               Аналізувати справу
             </button>
+
+            {/* History */}
+            <div className="bg-white rounded-2xl border border-border p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-primary">
+                  Історія аналізів
+                </h3>
+                {historyLoading && (
+                  <div className="animate-spin h-4 w-4 border-2 border-accent border-t-transparent rounded-full" />
+                )}
+              </div>
+              {history.length === 0 && !historyLoading ? (
+                <p className="text-xs text-muted">
+                  Тут з’являться збережені аналізи — з чатом і сформованими
+                  документами.
+                </p>
+              ) : (
+                <ul className="divide-y divide-border">
+                  {history.map((h) => (
+                    <li key={h.id} className="flex items-center gap-3 py-2.5">
+                      <button
+                        onClick={() => openHistory(h.id)}
+                        className="flex-1 min-w-0 text-left group"
+                      >
+                        <div className="text-sm font-medium text-primary truncate group-hover:underline">
+                          {h.title}
+                        </div>
+                        <div className="text-[11px] text-muted mt-0.5">
+                          {formatDate(h.updatedAt)}
+                          {h.messageCount > 0 &&
+                            ` · чат: ${Math.ceil(h.messageCount / 2)}`}
+                          {h.documentCount > 0 &&
+                            ` · документів: ${h.documentCount}`}
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => deleteHistory(h)}
+                        className="shrink-0 px-2 py-1 text-xs text-muted hover:text-red-700 transition"
+                        aria-label={`Видалити ${h.title}`}
+                      >
+                        Видалити
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
         )}
 
@@ -670,11 +891,16 @@ export default function CaseAnalysisPage() {
                   <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
                     <h2 className="text-sm font-bold text-primary uppercase tracking-wide">
                       Сформований документ
+                      {activeDoc && (
+                        <span className="ml-2 normal-case font-medium text-muted">
+                          — {activeDoc.type}
+                        </span>
+                      )}
                     </h2>
                     <div className="flex items-center gap-2 flex-wrap">
                       <ExportButtons
                         onExport={(fmt) =>
-                          handleExport(generatedDoc, fmt, "Документ")
+                          handleExport(generatedDoc, fmt, activeDoc?.type ?? "Документ")
                         }
                       />
                       <button
@@ -689,6 +915,23 @@ export default function CaseAnalysisPage() {
                       </button>
                     </div>
                   </div>
+                  {documents.length > 1 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {documents.map((d, i) => (
+                        <button
+                          key={`${d.createdAt}-${i}`}
+                          onClick={() => setActiveDocIndex(i)}
+                          className={`px-3 py-1 text-xs rounded-lg border transition ${
+                            i === activeDocIndex
+                              ? "bg-accent border-accent text-primary font-semibold"
+                              : "bg-surface border-border text-muted hover:text-primary"
+                          }`}
+                        >
+                          {d.type} · {formatDate(d.createdAt)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   <div className="prose prose-sm max-w-none">
                     <MarkdownRenderer text={generatedDoc} />
                   </div>
@@ -783,7 +1026,53 @@ export default function CaseAnalysisPage() {
 
                 {/* Chat input */}
                 <div className="px-4 py-3 border-t border-border">
+                  {chatFiles.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {chatFiles.map((f, i) => (
+                        <span
+                          key={`${f.name}-${i}`}
+                          className="inline-flex items-center gap-1.5 max-w-full px-2.5 py-1 text-xs text-primary bg-surface rounded-lg border border-border"
+                        >
+                          <span className="truncate">📎 {f.name}</span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setChatFiles((prev) =>
+                                prev.filter((_, j) => j !== i)
+                              )
+                            }
+                            className="text-muted hover:text-primary shrink-0"
+                            aria-label={`Прибрати ${f.name}`}
+                          >
+                            &times;
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <div className="flex gap-2">
+                    <input
+                      ref={chatFileInputRef}
+                      type="file"
+                      accept={ACCEPTED_FILES}
+                      multiple
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files.length > 0) {
+                          addChatFiles(e.target.files);
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => chatFileInputRef.current?.click()}
+                      disabled={chatLoading}
+                      title="Додати документи до справи (PDF, фото, DOCX)"
+                      aria-label="Додати документи"
+                      className="h-11 w-11 shrink-0 rounded-xl border border-border bg-surface text-lg hover:bg-surface-dark transition disabled:opacity-40"
+                    >
+                      📎
+                    </button>
                     <input
                       type="text"
                       value={chatInput}
@@ -794,13 +1083,20 @@ export default function CaseAnalysisPage() {
                           handleSendChat();
                         }
                       }}
-                      placeholder="Запитайте про справу, судову практику, статті..."
+                      placeholder={
+                        chatFiles.length
+                          ? "Що перевірити в нових документах? (можна порожнім)"
+                          : "Запитайте про справу, судову практику, статті..."
+                      }
                       className="flex-1 h-11 px-4 rounded-xl border border-border bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition"
                       disabled={chatLoading}
                     />
                     <button
                       onClick={handleSendChat}
-                      disabled={!chatInput.trim() || chatLoading}
+                      disabled={
+                        (!chatInput.trim() && chatFiles.length === 0) ||
+                        chatLoading
+                      }
                       className="h-11 px-5 bg-accent text-primary font-semibold rounded-xl hover:bg-accent-hover transition disabled:opacity-40 shrink-0"
                     >
                       &rarr;

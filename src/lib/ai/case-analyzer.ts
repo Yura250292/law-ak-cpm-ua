@@ -34,6 +34,13 @@ export interface AnalysisResult {
 
 export type AnalysisMode = "synergy" | "gemini" | "claude";
 
+/**
+ * How much case text (extracted documents + documents added in chat) the chat
+ * keeps in context. Documents added in chat are appended at the end, so the old
+ * 20k cut would silently drop them.
+ */
+export const CASE_CONTEXT_MAX_CHARS = 100_000;
+
 // ─── Gemini ────────────────────────────────────────────────────────────────
 
 function getGenAI(): GoogleGenerativeAI | null {
@@ -632,6 +639,48 @@ function labelFor(model: string): string {
   return GEMINI_LABELS[model] ?? model;
 }
 
+// ─── Transcription ─────────────────────────────────────────────────────────
+
+const TRANSCRIBE_PROMPT = `Перепиши дослівно весь текст із доданого документа українською (або мовою оригіналу).
+- Зберігай усі цифри, суми, дати, номери, ПІБ, реквізити і таблиці (таблиці — у markdown).
+- Нічого не скорочуй, не аналізуй і не коментуй — лише текст документа.
+- Нерозбірливе місце познач [нерозбірливо].`;
+
+/**
+ * Turns a scanned PDF / photo into text once, so it can live in the chat's
+ * text context for every following question. Gemini first (native OCR, HEIC),
+ * Claude as fallback.
+ */
+export async function transcribeAttachment(att: Attachment): Promise<string> {
+  if (process.env.GEMINI_API_KEY) {
+    try {
+      const res = await callGemini([
+        { text: TRANSCRIBE_PROMPT },
+        { inlineData: { mimeType: att.mimeType, data: att.base64 } },
+      ]);
+      if (res?.text.trim()) return res.text.trim();
+    } catch (err) {
+      console.error(`Gemini transcription failed for ${att.fileName}, trying Claude:`, err);
+    }
+  }
+
+  const claudeReadable =
+    att.mimeType === "application/pdf" ||
+    (CLAUDE_IMAGE_TYPES as readonly string[]).includes(att.mimeType);
+  if (!claudeReadable) {
+    throw new Error(`Не вдалося розпізнати "${att.fileName}". Збережіть файл як PDF або JPG і спробуйте ще раз.`);
+  }
+
+  const res = await callClaude({
+    system: "Ти точно переписуєш текст із юридичних документів.",
+    user: TRANSCRIBE_PROMPT,
+    attachments: [att],
+    maxTokens: 16000,
+  });
+  if (!res) throw new Error("Жоден AI-провайдер не доступний для розпізнавання документа");
+  return res.text;
+}
+
 // ─── Chat ──────────────────────────────────────────────────────────────────
 
 export interface ChatResult {
@@ -657,7 +706,7 @@ export async function chatAboutCase(params: {
     .join("\n\n");
 
   const userPrompt = `═══ ТЕКСТ ДОКУМЕНТА (СПРАВА) ═══
-${caseContext.slice(0, 20000)}
+${caseContext.slice(0, CASE_CONTEXT_MAX_CHARS)}
 
 ═══ ПОПЕРЕДНІЙ АНАЛІЗ ЦІЄЇ СПРАВИ ═══
 ${analysisResult.slice(0, 15000)}

@@ -265,3 +265,23 @@ model AssistantMessage {
 
   @@index([chatId, createdAt])
 }
+
+/// Сесія «Аналіз справи»: аналіз, чат з помічником і згенеровані документи — щоб повернутись до неї пізніше.
+model CaseAnalysis {
+  id         String   @id @default(cuid())
+  title      String // назви файлів або початок завдання
+  lawyerTask String?  @db.Text
+  fileNames  String[]
+  mode       String // synergy | gemini | claude
+  models     String[] // які моделі брали участь в аналізі
+
+  analysis    String @db.Text
+  caseContext String @db.Text // текст справи + документи, додані в чаті
+  messages    Json   @default("[]") // { role: "user" | "assistant", text }[]
+  documents   Json   @default("[]") // { type, text, createdAt }[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([updatedAt(sort: Desc)])
+}

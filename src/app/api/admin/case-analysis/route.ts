@@ -3,33 +3,16 @@ import { requireAdmin, AdminAuthError } from "@/lib/admin-auth";
 import {
   analyzeLegalCase,
   analyzeLegalCaseWithImages,
+  CASE_CONTEXT_MAX_CHARS,
 } from "@/lib/ai/case-analyzer";
 import { getObjectFromR2, deleteFromR2 } from "@/lib/r2";
-
-const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"];
-const DOC_EXTENSIONS = [".pdf", ".docx", ".txt"];
-
-function isImage(name: string): boolean {
-  return IMAGE_EXTENSIONS.some((ext) => name.toLowerCase().endsWith(ext));
-}
-
-function getMimeType(name: string): string {
-  const ext = name.toLowerCase().split(".").pop();
-  const map: Record<string, string> = {
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-    png: "image/png",
-    webp: "image/webp",
-    heic: "image/heic",
-    heif: "image/heif",
-  };
-  return map[ext ?? ""] ?? "image/jpeg";
-}
-
-interface UploadedItem {
-  buffer: Buffer;
-  name: string;
-}
+import {
+  extractCaseFile,
+  CaseFileError,
+  type CaseAttachment,
+  type UploadedItem,
+} from "@/lib/case-files";
+import { saveAnalysis } from "@/lib/case-analysis-history";
 
 export const maxDuration = 300;
 
@@ -84,130 +67,25 @@ export async function POST(request: NextRequest) {
     }
 
     let documentText = "";
-    const images: { mimeType: string; base64: string; fileName: string }[] = [];
+    const images: CaseAttachment[] = [];
     const fileNames: string[] = [];
 
     for (const item of items) {
-      const buffer = item.buffer;
-      const fileName = item.name.toLowerCase();
       fileNames.push(item.name);
-      const file = { name: item.name } as { name: string };
-
-      if (isImage(fileName)) {
-        images.push({
-          mimeType: getMimeType(fileName),
-          base64: buffer.toString("base64"),
-          fileName: file.name,
-        });
-      } else if (fileName.endsWith(".pdf")) {
-        // 1) Спробуємо витягти текстовий шар. Імпортуємо внутрішній модуль —
-        //    pdf-parse/index.js на Vercel падає через debug-режим (ENOENT).
-        let extractedText = "";
-        let parseError: unknown = null;
-        try {
-          const pdfModule = await import(
-            /* @vite-ignore */ "pdf-parse/lib/pdf-parse.js" as string
-          );
-          const pdfParse = (pdfModule as any).default ?? pdfModule;
-          const parsed = await pdfParse(buffer);
-          extractedText = (parsed?.text ?? "").trim();
-        } catch (err) {
-          parseError = err;
-        }
-
-        if (extractedText.length >= 100) {
-          // Достатньо тексту — звичайний шлях.
-          documentText += extractedText + "\n\n";
-        } else {
-          // Скан-PDF або pdf-parse зламалось — віддаємо PDF напряму Gemini
-          // (він читає PDF нативно з OCR); у режимі «лише Claude» — як document-блок.
-          if (parseError) {
-            console.warn(
-              `pdf-parse failed for ${file.name}, falling back to Gemini PDF input:`,
-              parseError
-            );
-          } else {
-            console.warn(
-              `pdf-parse returned ${extractedText.length} chars for ${file.name} (likely scanned), falling back to Gemini PDF input`
-            );
-          }
-          images.push({
-            mimeType: "application/pdf",
-            base64: buffer.toString("base64"),
-            fileName: file.name,
-          });
-          // Якщо щось маленьке витягли — додамо як підказку.
-          if (extractedText.length > 0) {
-            documentText += extractedText + "\n\n";
-          }
-        }
-      } else if (fileName.endsWith(".docx")) {
-        try {
-          const mammoth = await import("mammoth");
-          const result = await mammoth.extractRawText({ buffer });
-          documentText += result.value + "\n\n";
-        } catch (err) {
+      let extracted;
+      try {
+        extracted = await extractCaseFile(item);
+      } catch (err) {
+        if (err instanceof CaseFileError) {
           return NextResponse.json(
-            {
-              error: `Не вдалося прочитати DOCX "${file.name}". Файл пошкоджений або не є валідним .docx. Відкрийте його у Word/Pages і збережіть як .docx, PDF або .txt.`,
-              details: err instanceof Error ? err.message : String(err),
-            },
+            { error: err.message, details: err.details },
             { status: 400 }
           );
         }
-      } else if (fileName.endsWith(".doc")) {
-        // Старий бінарний формат Word (OLE2). Використовуємо word-extractor.
-        try {
-          // @ts-expect-error — у пакета немає типів
-          const wordExtractorModule = await import("word-extractor");
-          const WordExtractor =
-            (wordExtractorModule as any).default ?? wordExtractorModule;
-          const extractor = new WordExtractor();
-          const doc = await extractor.extract(buffer);
-          const txt = (doc.getBody?.() ?? "").trim();
-          if (!txt) {
-            throw new Error("Empty .doc body");
-          }
-          documentText += txt + "\n\n";
-        } catch (err) {
-          return NextResponse.json(
-            {
-              error: `Не вдалося прочитати DOC "${file.name}". Файл може бути пошкоджений або захищений паролем. Відкрийте його у Word і збережіть як .docx або PDF.`,
-              details: err instanceof Error ? err.message : String(err),
-            },
-            { status: 400 }
-          );
-        }
-      } else if (fileName.endsWith(".rtf")) {
-        // RTF — простий текстовий формат з керуючими послідовностями.
-        // Витягуємо звичайний текст регекспом — досить для аналізу AI.
-        const raw = buffer.toString("utf-8");
-        const stripped = raw
-          .replace(/\\\*\\[a-z]+\s*[^{}]*?(?=[{}\\])/gi, "")
-          .replace(/\\[a-z]+-?\d* ?/gi, "")
-          .replace(/[{}]/g, "")
-          .replace(/\\'[0-9a-f]{2}/gi, "")
-          .replace(/\s+/g, " ")
-          .trim();
-        if (stripped.length < 20) {
-          return NextResponse.json(
-            {
-              error: `RTF "${file.name}" не вдалося розпарсити. Збережіть файл як .docx або PDF.`,
-            },
-            { status: 400 }
-          );
-        }
-        documentText += stripped + "\n\n";
-      } else if (fileName.endsWith(".txt")) {
-        documentText += buffer.toString("utf-8") + "\n\n";
-      } else {
-        return NextResponse.json(
-          {
-            error: `Непідтримуваний формат: ${file.name}. Підтримуються: PDF, DOCX, TXT, JPG, PNG, WEBP`,
-          },
-          { status: 400 }
-        );
+        throw err;
       }
+      if (extracted.attachment) images.push(extracted.attachment);
+      if (extracted.text.trim()) documentText += extracted.text + "\n\n";
     }
 
     // Add pasted text
@@ -249,10 +127,21 @@ export async function POST(request: NextRequest) {
     const displayName =
       fileNames.length > 0 ? fileNames.join(", ") : "Вставлений текст";
 
+    const caseContext = documentText.slice(0, CASE_CONTEXT_MAX_CHARS);
+    const analysisId = await saveAnalysis({
+      fileNames,
+      lawyerTask: lawyerTask?.trim() ?? "",
+      mode,
+      models: result.models,
+      analysis: result.text,
+      caseContext,
+    });
+
     return NextResponse.json({
+      analysisId,
       analysis: result.text,
       models: result.models,
-      documentText: documentText.slice(0, 20000),
+      documentText: caseContext,
       fileName: displayName,
       imageCount: images.length,
     });
