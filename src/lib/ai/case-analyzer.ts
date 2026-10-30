@@ -255,9 +255,13 @@ function stripUntrustedLinks(
   trusted: TrustedSourceInfo[]
 ): string {
   const known = new Set(sources.map((s) => s.url));
-  return text.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (match, label: string, url: string) =>
-    known.has(url) || matchOfficial(url, trusted) ? match : `${label} (посилання прибрано: неперевірене джерело)`
-  );
+  // Same link grammar as InlineFormatted in the case-analysis page renders.
+  return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, label: string, rawUrl: string) => {
+    const url = rawUrl.trim();
+    const safe =
+      /^https?:\/\/\S+$/i.test(url) && (known.has(url) || !!matchOfficial(url, trusted));
+    return safe ? `[${label}](${url})` : `${label} (посилання прибрано: неперевірене джерело)`;
+  });
 }
 
 function formatWebSources(sources: WebSource[]): string {

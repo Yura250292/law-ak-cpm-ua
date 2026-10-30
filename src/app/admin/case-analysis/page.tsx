@@ -61,6 +61,26 @@ async function prepareFiles(newFiles: FileList | File[]): Promise<File[]> {
 class UnauthorizedError extends Error {}
 
 /**
+ * Parses a JSON response. When the server is restarting or the process died
+ * mid-request, the proxy returns an empty/HTML 502 — res.json() would throw a
+ * cryptic "string did not match the expected pattern" (Safari).
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function readJson(res: Response): Promise<any> {
+  const raw = await res.text();
+  try {
+    return JSON.parse(raw);
+  } catch {
+    if (res.status === 502 || res.status === 503 || res.status === 504) {
+      throw new Error(
+        `Сервер не відповів (${res.status}) — він перезапускався або не впорався з запитом. Спробуйте ще раз за хвилину.`
+      );
+    }
+    throw new Error(`Сервер повернув неочікувану відповідь (${res.status}). Спробуйте ще раз.`);
+  }
+}
+
+/**
  * Uploads files directly to R2 via presigned URL (bypasses the server body
  * size limit) and returns their keys.
  */
@@ -76,7 +96,7 @@ async function uploadToR2(files: File[]): Promise<{ key: string; name: string }[
       }),
     });
     if (presignRes.status === 401) throw new UnauthorizedError();
-    const presignData = await presignRes.json();
+    const presignData = await readJson(presignRes);
     if (!presignRes.ok) {
       throw new Error(presignData.error ?? "Не вдалося отримати URL");
     }
@@ -162,7 +182,7 @@ export default function CaseAnalysisPage() {
         router.push("/admin/login");
         return;
       }
-      const data = await res.json();
+      const data = await readJson(res);
       if (res.ok) setHistory(data.items ?? []);
     } catch {
       // History is optional — the page works without it.
@@ -184,7 +204,7 @@ export default function CaseAnalysisPage() {
         router.push("/admin/login");
         return;
       }
-      const data = await res.json();
+      const data = await readJson(res);
       if (!res.ok) throw new Error(data.error ?? "Не вдалося відкрити аналіз");
       const item = data.item;
       const docs: GeneratedDocument[] = Array.isArray(item.documents) ? item.documents : [];
@@ -284,7 +304,7 @@ export default function CaseAnalysisPage() {
         return;
       }
 
-      const data = await res.json();
+      const data = await readJson(res);
 
       if (!res.ok) {
         throw new Error(data.error ?? "Помилка аналізу");
@@ -355,7 +375,7 @@ export default function CaseAnalysisPage() {
       });
 
       if (res.status === 401) throw new UnauthorizedError();
-      const data = await res.json();
+      const data = await readJson(res);
 
       if (!res.ok) {
         throw new Error(data.error ?? "Помилка");
@@ -375,6 +395,9 @@ export default function CaseAnalysisPage() {
         router.push("/admin/login");
         return;
       }
+      // Give the question and attached files back, so a retry is one click.
+      setChatInput((cur) => cur || q);
+      setChatFiles((cur) => (cur.length ? cur : attached));
       setChatMessages((prev) => [
         ...prev,
         {
@@ -423,7 +446,7 @@ export default function CaseAnalysisPage() {
         }),
       });
 
-      const data = await res.json();
+      const data = await readJson(res);
       if (!res.ok) throw new Error(data.error ?? "Помилка");
       // Buttons are disabled while generating, so `documents` is current here.
       setDocuments([
@@ -1300,6 +1323,10 @@ function InlineFormatted({ text }: { text: string }) {
         }
 
         const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+        // Only plain http(s) URLs become links — never javascript:, data: or URLs with spaces.
+        if (linkMatch && !/^https?:\/\/\S+$/i.test(linkMatch[2].trim())) {
+          return <span key={i}>{linkMatch[1]}</span>;
+        }
         if (linkMatch) {
           return (
             <a
