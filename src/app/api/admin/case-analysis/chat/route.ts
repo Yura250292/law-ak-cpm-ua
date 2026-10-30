@@ -1,9 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { requireAdmin, AdminAuthError } from "@/lib/admin-auth";
 import { chatAboutCase, transcribeAttachment } from "@/lib/ai/case-analyzer";
 import { getObjectFromR2, deleteFromR2 } from "@/lib/r2";
 import { extractCaseFile, CaseFileError } from "@/lib/case-files";
-import { appendToAnalysis } from "@/lib/case-analysis-history";
+import {
+  appendToAnalysis,
+  compactChatIfNeeded,
+  loadChatSession,
+} from "@/lib/case-analysis-history";
 
 export const maxDuration = 300;
 
@@ -77,12 +81,27 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const result = await chatAboutCase({
-      caseContext: (caseContext ?? "") + addedText,
-      analysisResult: analysisResult ?? "",
-      chatHistory: chatHistory ?? [],
-      question: question?.trim() || DEFAULT_FILES_QUESTION,
-    });
+    // A saved session is the source of truth: initial task, full case context,
+    // summary of compacted turns and the rest of the dialogue. Without one
+    // (DB unavailable) fall back to what the page sent.
+    const session = analysisId ? await loadChatSession(analysisId) : null;
+    const result = await chatAboutCase(
+      session
+        ? {
+            caseContext: session.caseContext + addedText,
+            analysisResult: session.analysis,
+            lawyerTask: session.lawyerTask,
+            summary: session.summary,
+            chatHistory: session.recentMessages,
+            question: question?.trim() || DEFAULT_FILES_QUESTION,
+          }
+        : {
+            caseContext: (caseContext ?? "") + addedText,
+            analysisResult: analysisResult ?? "",
+            chatHistory: (chatHistory ?? []).slice(-20),
+            question: question?.trim() || DEFAULT_FILES_QUESTION,
+          }
+    );
 
     if (analysisId) {
       const fileLine = files.length ? `📎 ${files.map((f) => f.name).join(", ")}` : "";
@@ -103,6 +122,8 @@ export async function POST(request: NextRequest) {
               ],
             }),
       });
+      // Summarize old turns after the response is sent — the lawyer doesn't wait for it.
+      if (!documentType) after(() => compactChatIfNeeded(analysisId));
     }
 
     // addedText goes back to the client, which appends it to caseContext.

@@ -127,6 +127,12 @@ export default function CaseAnalysisPage() {
   const [analysisId, setAnalysisId] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyQuery, setHistoryQuery] = useState("");
+  const visibleHistory = historyQuery.trim()
+    ? history.filter((h) =>
+        h.title.toLowerCase().includes(historyQuery.trim().toLowerCase())
+      )
+    : history;
 
   // Analysis state
   const [analysis, setAnalysis] = useState("");
@@ -197,6 +203,21 @@ export default function CaseAnalysisPage() {
       setPastedText("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не вдалося відкрити аналіз");
+    }
+  }
+
+  async function renameHistory(item: HistoryItem) {
+    const title = window.prompt("Назва справи", item.title)?.trim();
+    if (!title || title === item.title) return;
+    const res = await fetch(`/api/admin/case-analysis/history/${item.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title }),
+    });
+    if (res.ok) {
+      setHistory((prev) => prev.map((h) => (h.id === item.id ? { ...h, title } : h)));
+    } else {
+      setError("Не вдалося перейменувати справу");
     }
   }
 
@@ -727,14 +748,26 @@ export default function CaseAnalysisPage() {
                   <div className="animate-spin h-4 w-4 border-2 border-accent border-t-transparent rounded-full" />
                 )}
               </div>
+              {history.length > 5 && (
+                <input
+                  type="search"
+                  value={historyQuery}
+                  onChange={(e) => setHistoryQuery(e.target.value)}
+                  placeholder="Пошук за назвою справи…"
+                  className="w-full h-9 px-3 mb-2 rounded-lg border border-border bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-accent transition"
+                />
+              )}
               {history.length === 0 && !historyLoading ? (
                 <p className="text-xs text-muted">
                   Тут з’являться збережені аналізи — з чатом і сформованими
                   документами.
                 </p>
               ) : (
-                <ul className="divide-y divide-border">
-                  {history.map((h) => (
+                <ul className="divide-y divide-border max-h-[60vh] overflow-y-auto">
+                  {visibleHistory.length === 0 && (
+                    <li className="py-2.5 text-xs text-muted">Нічого не знайдено</li>
+                  )}
+                  {visibleHistory.map((h) => (
                     <li key={h.id} className="flex items-center gap-3 py-2.5">
                       <button
                         onClick={() => openHistory(h.id)}
@@ -750,6 +783,13 @@ export default function CaseAnalysisPage() {
                           {h.documentCount > 0 &&
                             ` · документів: ${h.documentCount}`}
                         </div>
+                      </button>
+                      <button
+                        onClick={() => renameHistory(h)}
+                        className="shrink-0 px-2 py-1 text-xs text-muted hover:text-primary transition"
+                        aria-label={`Перейменувати ${h.title}`}
+                      >
+                        Перейменувати
                       </button>
                       <button
                         onClick={() => deleteHistory(h)}

@@ -114,8 +114,10 @@ function toClaudeBlocks(attachments: Attachment[]): Anthropic.ContentBlockParam[
 }
 
 async function callClaude(params: {
-  system: string;
+  system: string | Anthropic.TextBlockParam[];
   user: string;
+  /** Earlier turns of a multi-turn chat, sent before `user`. */
+  history?: Anthropic.MessageParam[];
   attachments?: Attachment[];
   maxTokens?: number;
 }): Promise<{ text: string; model: string } | null> {
@@ -131,8 +133,13 @@ async function callClaude(params: {
     model: CLAUDE_MODEL,
     max_tokens: params.maxTokens ?? 8000,
     system: params.system,
-    messages: [{ role: "user", content }],
+    messages: [...(params.history ?? []), { role: "user", content }],
   });
+  if (res.usage.cache_read_input_tokens || res.usage.cache_creation_input_tokens) {
+    console.log(
+      `Claude cache: read=${res.usage.cache_read_input_tokens ?? 0} write=${res.usage.cache_creation_input_tokens ?? 0} input=${res.usage.input_tokens}`
+    );
+  }
 
   const text = res.content
     .filter((b): b is Anthropic.TextBlock => b.type === "text")
@@ -688,36 +695,7 @@ export interface ChatResult {
   model: string;
 }
 
-/**
- * Chat with AI about the case. Uses Claude if available (best for nuanced legal
- * follow-up), falls back to Gemini.
- */
-export async function chatAboutCase(params: {
-  caseContext: string;
-  analysisResult: string;
-  chatHistory: { role: "user" | "assistant"; text: string }[];
-  question: string;
-}): Promise<ChatResult> {
-  const { caseContext, analysisResult, chatHistory, question } = params;
-
-  const historyText = chatHistory
-    .slice(-10)
-    .map((m) => `${m.role === "user" ? "АДВОКАТ" : "ПОМІЧНИК"}: ${m.text}`)
-    .join("\n\n");
-
-  const userPrompt = `═══ ТЕКСТ ДОКУМЕНТА (СПРАВА) ═══
-${caseContext.slice(0, CASE_CONTEXT_MAX_CHARS)}
-
-═══ ПОПЕРЕДНІЙ АНАЛІЗ ЦІЄЇ СПРАВИ ═══
-${analysisResult.slice(0, 15000)}
-
-═══ ПОПЕРЕДНІЙ ДІАЛОГ ═══
-${historyText || "(початок діалогу)"}
-
-═══ ЗАПИТАННЯ АДВОКАТА ═══
-${question}
-
-═══ ПРАВИЛА ВІДПОВІДІ ═══
+const CHAT_RULES = `═══ ПРАВИЛА ВІДПОВІДІ ═══
 1. Відповідай КОНКРЕТНО по цій справі, а не загально
 2. Називай сторони по імені/назві з документа
 3. Посилайся ТІЛЬКИ на реальні статті з позначками [ТОЧНО] / [ПЕРЕВІРИТИ]
@@ -725,34 +703,136 @@ ${question}
 5. Для судової практики давай ключові слова для пошуку в ЄДРСР: https://reyestr.court.gov.ua/
 6. Прямі посилання на кодекси з https://zakon.rada.gov.ua/
 7. Якщо не впевнений — скажи чесно і вкажи де шукати
-8. Українською, конкретно, по суті`;
+8. Українською, конкретно, по суті
+9. Пам'ятай усю розмову: спирайся на свої попередні відповіді і на те, що адвокат уже уточнив`;
 
-  const chatSystem = `${CASE_ANALYSIS_SYSTEM}
+const CHAT_SYSTEM = `${CASE_ANALYSIS_SYSTEM}
 
 ═══ ТВОЯ РОЛЬ В ЦЬОМУ ЧАТІ ═══
-Ти — особистий юридичний помічник адвоката. Ти ПОВНІСТЮ володієш контекстом справи, яку адвокат завантажив для аналізу. Адвокат радиться з тобою.
+Ти — особистий юридичний помічник адвоката. Ти ПОВНІСТЮ володієш контекстом справи, яку адвокат завантажив для аналізу, і своїм аналізом цієї справи. Адвокат радиться з тобою.
 
 ВАЖЛИВО:
 - Ти ЗНАЄШ цю справу — відповідай конкретно, з прив'язкою до фактів
 - Не давай загальних відповідей — адвокат очікує конкретику по ЙОГО справі
-- Посилайся на факти зі справи, називай сторони по імені`;
+- Посилайся на факти зі справи, називай сторони по імені
 
-  // Try Claude first.
+${CHAT_RULES}`;
+
+export interface ChatTurn {
+  role: "user" | "assistant";
+  text: string;
+}
+
+/**
+ * Chat with AI about the case, like a regular Claude chat: the lawyer's task,
+ * case materials and the full analysis go into a cached system prompt, the
+ * dialogue goes as real turns. Older turns may be replaced by `summary`
+ * (see compactChat). Uses Claude if available, falls back to Gemini.
+ */
+export async function chatAboutCase(params: {
+  caseContext: string;
+  analysisResult: string;
+  lawyerTask?: string;
+  /** Summary of turns already compacted out of `chatHistory`. */
+  summary?: string | null;
+  chatHistory: ChatTurn[];
+  question: string;
+}): Promise<ChatResult> {
+  const { caseContext, analysisResult, lawyerTask, summary, question } = params;
+
+  // Stable for the whole session → cached by Anthropic, later questions pay ~10% for it.
+  const caseMaterial = `${lawyerTask ? `═══ ПОЧАТКОВЕ ЗАВДАННЯ АДВОКАТА ═══\n${lawyerTask}\n\n` : ""}═══ МАТЕРІАЛИ СПРАВИ ═══
+${caseContext.slice(0, CASE_CONTEXT_MAX_CHARS)}
+
+═══ ТВІЙ АНАЛІЗ ЦІЄЇ СПРАВИ (ти вже надав його адвокату) ═══
+${analysisResult}`;
+
+  const system: Anthropic.TextBlockParam[] = [
+    { type: "text", text: CHAT_SYSTEM },
+    { type: "text", text: caseMaterial, cache_control: { type: "ephemeral" } },
+  ];
+  if (summary) {
+    // Changes only on compaction → its own cache breakpoint.
+    system.push({
+      type: "text",
+      text: `═══ ПІДСУМОК ПОПЕРЕДНЬОЇ ЧАСТИНИ РОЗМОВИ З АДВОКАТОМ ═══\n${summary}`,
+      cache_control: { type: "ephemeral" },
+    });
+  }
+
+  // The API needs strictly alternating turns starting with the user.
+  const turns: ChatTurn[] = [];
+  for (const m of params.chatHistory) {
+    if (!m.text?.trim()) continue;
+    if (turns.length === 0 && m.role !== "user") continue;
+    if (turns.length && turns[turns.length - 1].role === m.role) {
+      turns[turns.length - 1] = { role: m.role, text: `${turns[turns.length - 1].text}\n\n${m.text}` };
+    } else {
+      turns.push({ role: m.role, text: m.text });
+    }
+  }
+  if (turns.length && turns[turns.length - 1].role === "user") turns.pop();
+
+  const history: Anthropic.MessageParam[] = turns.map((t, i) =>
+    i === turns.length - 1
+      ? // Cache the conversation so far — next question reuses it.
+        { role: t.role, content: [{ type: "text", text: t.text, cache_control: { type: "ephemeral" } }] }
+      : { role: t.role, content: t.text }
+  );
+
   if (process.env.ANTHROPIC_API_KEY) {
     try {
-      const res = await callClaude({
-        system: chatSystem,
-        user: userPrompt,
-        maxTokens: 4000,
-      });
+      const res = await callClaude({ system, history, user: question, maxTokens: 8000 });
       if (res) return { text: res.text, model: labelFor(res.model) };
     } catch (err) {
       console.error("Claude chat failed, falling back to Gemini:", err);
     }
   }
 
-  // Gemini fallback.
-  const gem = await callGemini([{ text: chatSystem + "\n\n" + userPrompt }]);
+  // Gemini fallback: same context flattened into one prompt.
+  const dialogue = turns
+    .map((t) => `${t.role === "user" ? "АДВОКАТ" : "ПОМІЧНИК"}: ${t.text}`)
+    .join("\n\n");
+  const gem = await callGemini([
+    {
+      text: `${CHAT_SYSTEM}\n\n${caseMaterial}\n\n${summary ? `═══ ПІДСУМОК ПОПЕРЕДНЬОЇ ЧАСТИНИ РОЗМОВИ ═══\n${summary}\n\n` : ""}═══ ДІАЛОГ ═══\n${dialogue || "(початок діалогу)"}\n\n═══ ЗАПИТАННЯ АДВОКАТА ═══\n${question}`,
+    },
+  ]);
   if (!gem) throw new Error("Жоден AI-провайдер не доступний");
   return { text: gem.text, model: labelFor(gem.model) };
+}
+
+// ─── Chat compaction ───────────────────────────────────────────────────────
+
+/** Compact when the not-yet-summarized dialogue grows past this many characters. */
+export const COMPACT_TRIGGER_CHARS = 60_000;
+/** Messages always kept verbatim after compaction (even → ends on an assistant turn). */
+export const COMPACT_KEEP_RECENT = 6;
+
+const COMPACT_SYSTEM = `Ти стискаєш розмову адвоката з AI-помічником по одній справі, щоб помічник міг продовжити її без втрати суті.
+Збережи ДОСЛІВНО: суми, дати, номери документів і справ, статті законів, ПІБ і назви сторін.
+Збережи: що адвокат уточнив або виправив, які факти з'ясовано, які висновки й рекомендації дав помічник, яку стратегію обрано, які документи сформовано, що лишилось відкритим.
+Без води і без оцінок. Структуровано, українською.`;
+
+/** Folds old turns into the running summary. */
+export async function summarizeChat(params: {
+  previousSummary?: string | null;
+  turns: ChatTurn[];
+}): Promise<string> {
+  const dialogue = params.turns
+    .map((t) => `${t.role === "user" ? "АДВОКАТ" : "ПОМІЧНИК"}: ${t.text}`)
+    .join("\n\n");
+  const user = `${params.previousSummary ? `═══ ПІДСУМОК ЩЕ РАНІШОЇ ЧАСТИНИ ═══\n${params.previousSummary}\n\n` : ""}═══ ПРОДОВЖЕННЯ РОЗМОВИ ═══\n${dialogue}\n\nСклади єдиний оновлений підсумок усієї розмови до цього моменту.`;
+
+  if (process.env.ANTHROPIC_API_KEY) {
+    try {
+      const res = await callClaude({ system: COMPACT_SYSTEM, user, maxTokens: 4000 });
+      if (res) return res.text;
+    } catch (err) {
+      console.error("Claude chat summary failed, trying Gemini:", err);
+    }
+  }
+  const gem = await callGemini([{ text: `${COMPACT_SYSTEM}\n\n${user}` }]);
+  if (!gem) throw new Error("Жоден AI-провайдер не доступний для підсумку чату");
+  return gem.text;
 }

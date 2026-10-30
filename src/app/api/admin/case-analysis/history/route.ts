@@ -7,7 +7,7 @@ export async function GET() {
   return withAdminResult(async () => {
     const rows = await prisma.caseAnalysis.findMany({
       orderBy: { updatedAt: "desc" },
-      take: 100,
+      take: 500,
       select: {
         id: true,
         title: true,

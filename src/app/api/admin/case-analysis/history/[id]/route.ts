@@ -17,6 +17,18 @@ export async function GET(_request: NextRequest, { params }: Params) {
   });
 }
 
+export async function PATCH(request: NextRequest, { params }: Params) {
+  return withAdminResult(async () => {
+    const { id } = await params;
+    const body = (await request.json()) as { title?: unknown };
+    const title = typeof body.title === "string" ? body.title.trim().slice(0, 200) : "";
+    if (!title) throw new ApiError(400, "Назва не може бути порожньою");
+    const { count } = await prisma.caseAnalysis.updateMany({ where: { id }, data: { title } });
+    if (!count) throw new ApiError(404, "Аналіз не знайдено");
+    return { ok: true, title };
+  });
+}
+
 export async function DELETE(_request: NextRequest, { params }: Params) {
   return withAdminResult(async () => {
     const { id } = await params;

@@ -280,6 +280,10 @@ model CaseAnalysis {
   messages    Json   @default("[]") // { role: "user" | "assistant", text }[]
   documents   Json   @default("[]") // { type, text, createdAt }[]
 
+  // Автокомпакт чату: перші summarizedCount повідомлень стиснуті в chatSummary.
+  chatSummary     String? @db.Text
+  summarizedCount Int     @default(0)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

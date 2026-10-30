@@ -1,5 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import { CASE_CONTEXT_MAX_CHARS } from "@/lib/ai/case-analyzer";
+import {
+  CASE_CONTEXT_MAX_CHARS,
+  COMPACT_KEEP_RECENT,
+  COMPACT_TRIGGER_CHARS,
+  summarizeChat,
+} from "@/lib/ai/case-analyzer";
 
 export interface StoredMessage {
   role: "user" | "assistant";
@@ -76,5 +81,65 @@ export async function appendToAnalysis(
     });
   } catch (err) {
     console.error(`Failed to update case analysis ${id}:`, err);
+  }
+}
+
+/** What the chat needs from a saved session: context plus the not-yet-summarized turns. */
+export async function loadChatSession(id: string) {
+  const row = await prisma.caseAnalysis.findUnique({
+    where: { id },
+    select: {
+      lawyerTask: true,
+      analysis: true,
+      caseContext: true,
+      messages: true,
+      chatSummary: true,
+      summarizedCount: true,
+    },
+  });
+  if (!row) return null;
+  const messages = (row.messages as unknown as StoredMessage[]) ?? [];
+  return {
+    lawyerTask: row.lawyerTask ?? "",
+    analysis: row.analysis,
+    caseContext: row.caseContext,
+    summary: row.chatSummary,
+    recentMessages: messages.slice(row.summarizedCount),
+  };
+}
+
+/**
+ * Auto-compaction: once the not-yet-summarized dialogue exceeds
+ * COMPACT_TRIGGER_CHARS, fold all but the last COMPACT_KEEP_RECENT messages
+ * into chatSummary. The full message list stays in the DB for the UI.
+ */
+export async function compactChatIfNeeded(id: string): Promise<void> {
+  try {
+    const row = await prisma.caseAnalysis.findUnique({
+      where: { id },
+      select: { messages: true, chatSummary: true, summarizedCount: true },
+    });
+    if (!row) return;
+    const messages = (row.messages as unknown as StoredMessage[]) ?? [];
+    const pending = messages.slice(row.summarizedCount);
+    const pendingChars = pending.reduce((n, m) => n + m.text.length, 0);
+    if (pendingChars < COMPACT_TRIGGER_CHARS || pending.length <= COMPACT_KEEP_RECENT) return;
+
+    let foldCount = pending.length - COMPACT_KEEP_RECENT;
+    if (foldCount % 2) foldCount -= 1; // keep user/assistant pairs together
+    if (foldCount <= 0) return;
+
+    const summary = await summarizeChat({
+      previousSummary: row.chatSummary,
+      turns: pending.slice(0, foldCount),
+    });
+    // Guard against a concurrent compaction having moved the counter meanwhile.
+    await prisma.caseAnalysis.updateMany({
+      where: { id, summarizedCount: row.summarizedCount },
+      data: { chatSummary: summary, summarizedCount: row.summarizedCount + foldCount },
+    });
+    console.log(`Case chat ${id} compacted: ${foldCount} messages → summary (${summary.length} chars)`);
+  } catch (err) {
+    console.error(`Case chat compaction failed for ${id}:`, err);
   }
 }
