@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
           documentText += extractedText + "\n\n";
         } else {
           // Скан-PDF або pdf-parse зламалось — віддаємо PDF напряму Gemini
-          // (він читає PDF нативно з OCR). Claude PDF не приймає inline.
+          // (він читає PDF нативно з OCR); у режимі «лише Claude» — як document-блок.
           if (parseError) {
             console.warn(
               `pdf-parse failed for ${file.name}, falling back to Gemini PDF input:`,

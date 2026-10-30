@@ -76,19 +76,55 @@ function getAnthropic(): Anthropic | null {
   return new Anthropic({ apiKey: key });
 }
 
+type Attachment = { mimeType: string; base64: string; fileName: string };
+
+const CLAUDE_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"] as const;
+
+/** Scanned PDFs and photos as Claude content blocks (HEIC is not supported by Claude). */
+function toClaudeBlocks(attachments: Attachment[]): Anthropic.ContentBlockParam[] {
+  const blocks: Anthropic.ContentBlockParam[] = [];
+  for (const a of attachments) {
+    if (a.mimeType === "application/pdf") {
+      blocks.push({
+        type: "document",
+        source: { type: "base64", media_type: "application/pdf", data: a.base64 },
+        title: a.fileName,
+      });
+    } else if ((CLAUDE_IMAGE_TYPES as readonly string[]).includes(a.mimeType)) {
+      blocks.push({
+        type: "image",
+        source: {
+          type: "base64",
+          media_type: a.mimeType as (typeof CLAUDE_IMAGE_TYPES)[number],
+          data: a.base64,
+        },
+      });
+    } else {
+      console.warn(`Claude does not support ${a.mimeType} (${a.fileName}), skipping`);
+    }
+  }
+  return blocks;
+}
+
 async function callClaude(params: {
   system: string;
   user: string;
+  attachments?: Attachment[];
   maxTokens?: number;
 }): Promise<{ text: string; model: string } | null> {
   const client = getAnthropic();
   if (!client) return null;
 
+  const attachmentBlocks = toClaudeBlocks(params.attachments ?? []);
+  const content: string | Anthropic.ContentBlockParam[] = attachmentBlocks.length
+    ? [...attachmentBlocks, { type: "text", text: params.user }]
+    : params.user;
+
   const res = await client.messages.create({
     model: CLAUDE_MODEL,
     max_tokens: params.maxTokens ?? 8000,
     system: params.system,
-    messages: [{ role: "user", content: params.user }],
+    messages: [{ role: "user", content }],
   });
 
   const text = res.content
@@ -483,6 +519,7 @@ export async function analyzeLegalCaseWithImages(params: {
     documentText: documentText + (images.length ? `\n\n[+ ${images.length} зображень документів]` : ""),
     lawyerTask,
     hasImages: images.length > 0,
+    attachments: images,
     mode,
   });
 }
@@ -528,6 +565,8 @@ async function runSynergy(params: {
   documentText: string;
   lawyerTask?: string;
   hasImages: boolean;
+  /** Scanned PDFs / photos — Gemini gets them via runDraft, Claude-only mode needs them directly. */
+  attachments?: Attachment[];
   mode: AnalysisMode;
 }): Promise<AnalysisResult> {
   const hasGemini = !!process.env.GEMINI_API_KEY;
@@ -540,10 +579,15 @@ async function runSynergy(params: {
 
   // Користувач явно вибрав Claude-only, або Gemini-ключа немає.
   if ((mode === "claude" && hasClaude) || (!hasGemini && hasClaude)) {
-    const claudePrompt = `${params.lawyerTask ? `═══ ЗАВДАННЯ ВІД АДВОКАТА ═══\n${params.lawyerTask}\n\n` : ""}ТЕКСТ ДОКУМЕНТА:\n---\n${params.documentText.slice(0, 30000)}\n---\n\n${ANALYSIS_INSTRUCTIONS}`;
+    const attachments = params.attachments ?? [];
+    const attachmentsNote = attachments.length
+      ? `До справи додано ${attachments.length} PDF/фото документів (вище). Уважно прочитай кожен — це частина матеріалів справи.\n\n`
+      : "";
+    const claudePrompt = `${params.lawyerTask ? `═══ ЗАВДАННЯ ВІД АДВОКАТА ═══\n${params.lawyerTask}\n\n` : ""}${attachmentsNote}ТЕКСТ ДОКУМЕНТА:\n---\n${params.documentText.slice(0, 30000)}\n---\n\n${ANALYSIS_INSTRUCTIONS}`;
     const claudeRes = await callClaude({
       system: CASE_ANALYSIS_SYSTEM,
       user: claudePrompt,
+      attachments,
       maxTokens: 8000,
     });
     if (!claudeRes) throw new Error("Claude недоступний");
