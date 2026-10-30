@@ -22,6 +22,15 @@ function getMimeType(name: string): string {
   return map[ext ?? ""] ?? "image/jpeg";
 }
 
+/** A page with fewer letters than this has no real text layer (scan, stamp, signature). */
+const MIN_LETTERS_PER_PAGE = 50;
+/** More scanned pages than this share → the model reads the PDF itself. */
+const MAX_SCANNED_PAGE_SHARE = 0.2;
+
+function letterCount(text: string): number {
+  return text.match(/\p{L}/gu)?.length ?? 0;
+}
+
 export interface UploadedItem {
   buffer: Buffer;
   name: string;
@@ -64,15 +73,22 @@ export async function extractCaseFile(item: UploadedItem): Promise<ExtractedCase
   }
 
   if (fileName.endsWith(".pdf")) {
-    // 1) Спробуємо витягти текстовий шар (pdf-parse v2).
+    // 1) Спробуємо витягти текстовий шар (pdf-parse v2). Рахуємо по сторінках:
+    //    parsed.text містить роздільники "-- 1 of 10 --", і в скані без тексту
+    //    вони одні набирали б «достатньо» символів.
     let extractedText = "";
+    let lowTextPages = 0;
+    let totalPages = 0;
     let parseError: unknown = null;
     try {
       const { PDFParse } = await import("pdf-parse");
       const parser = new PDFParse({ data: new Uint8Array(buffer) });
       try {
         const parsed = await parser.getText();
-        extractedText = (parsed?.text ?? "").trim();
+        const pageTexts = (parsed?.pages ?? []).map((p) => (p.text ?? "").trim());
+        totalPages = parsed?.total || pageTexts.length;
+        lowTextPages = pageTexts.filter((t) => letterCount(t) < MIN_LETTERS_PER_PAGE).length;
+        extractedText = pageTexts.filter(Boolean).join("\n\n");
       } finally {
         await parser.destroy();
       }
@@ -80,7 +96,12 @@ export async function extractCaseFile(item: UploadedItem): Promise<ExtractedCase
       parseError = err;
     }
 
-    if (extractedText.length >= 100) {
+    const mostlyText =
+      !parseError &&
+      totalPages > 0 &&
+      letterCount(extractedText) >= 100 &&
+      lowTextPages / totalPages <= MAX_SCANNED_PAGE_SHARE;
+    if (mostlyText) {
       // Достатньо тексту — звичайний шлях.
       return { name, text: extractedText };
     }
@@ -91,7 +112,7 @@ export async function extractCaseFile(item: UploadedItem): Promise<ExtractedCase
       console.warn(`pdf-parse failed for ${name}, passing PDF to the model:`, parseError);
     } else {
       console.warn(
-        `pdf-parse returned ${extractedText.length} chars for ${name} (likely scanned), passing PDF to the model`
+        `${name}: ${lowTextPages}/${totalPages} pages without a text layer (likely scanned), passing PDF to the model`
       );
     }
     return {
