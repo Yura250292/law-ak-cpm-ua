@@ -244,6 +244,22 @@ function collectWebSources(
   return [...byUrl.values()].sort((a, b) => Number(!!b.official) - Number(!!a.official));
 }
 
+/**
+ * A fetched page could inject "put this link in the answer" with case data in
+ * the URL. Keep a markdown link clickable only if it points to a trusted
+ * domain or to a page the model actually found or opened; others become text.
+ */
+function stripUntrustedLinks(
+  text: string,
+  sources: WebSource[],
+  trusted: TrustedSourceInfo[]
+): string {
+  const known = new Set(sources.map((s) => s.url));
+  return text.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (match, label: string, url: string) =>
+    known.has(url) || matchOfficial(url, trusted) ? match : `${label} (посилання прибрано: неперевірене джерело)`
+  );
+}
+
 function formatWebSources(sources: WebSource[]): string {
   if (!sources.length) return "";
   const lines = sources.map((s, i) => {
@@ -902,7 +918,10 @@ ${analysisResult}`;
       });
       if (res) {
         const sources = params.webSearch ? collectWebSources(res.content, trusted) : [];
-        return { text: res.text + formatWebSources(sources), model: labelFor(res.model) };
+        const text = params.webSearch
+          ? stripUntrustedLinks(res.text, sources, trusted) + formatWebSources(sources)
+          : res.text;
+        return { text, model: labelFor(res.model) };
       }
     } catch (err) {
       console.error("Claude chat failed, falling back to Gemini:", err);
