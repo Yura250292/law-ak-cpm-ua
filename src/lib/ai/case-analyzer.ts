@@ -15,6 +15,7 @@
  */
 import { GoogleGenerativeAI, type Part } from "@google/generative-ai";
 import Anthropic from "@anthropic-ai/sdk";
+import { matchOfficial, type TrustedSourceInfo } from "@/lib/trusted-sources";
 
 const GEMINI_PRIMARY = "gemini-2.5-pro";
 const GEMINI_FALLBACKS = ["gemini-2.5-flash", "gemini-2.0-flash"];
@@ -119,8 +120,10 @@ async function callClaude(params: {
   /** Earlier turns of a multi-turn chat, sent before `user`. */
   history?: Anthropic.MessageParam[];
   attachments?: Attachment[];
+  /** Server tools (web search / fetch) — run on Anthropic's side. */
+  tools?: Anthropic.ToolUnion[];
   maxTokens?: number;
-}): Promise<{ text: string; model: string } | null> {
+}): Promise<{ text: string; model: string; content: Anthropic.ContentBlock[] } | null> {
   const client = getAnthropic();
   if (!client) return null;
 
@@ -129,26 +132,127 @@ async function callClaude(params: {
     ? [...attachmentBlocks, { type: "text", text: params.user }]
     : params.user;
 
-  const res = await client.messages.create({
-    model: CLAUDE_MODEL,
-    max_tokens: params.maxTokens ?? 8000,
-    system: params.system,
-    messages: [...(params.history ?? []), { role: "user", content }],
-  });
-  if (res.usage.cache_read_input_tokens || res.usage.cache_creation_input_tokens) {
-    console.log(
-      `Claude cache: read=${res.usage.cache_read_input_tokens ?? 0} write=${res.usage.cache_creation_input_tokens ?? 0} input=${res.usage.input_tokens}`
-    );
+  const messages: Anthropic.MessageParam[] = [
+    ...(params.history ?? []),
+    { role: "user", content },
+  ];
+  const collected: Anthropic.ContentBlock[] = [];
+
+  // A long server-tool turn may stop with pause_turn: send it back and the
+  // server continues the same turn.
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const res = await client.messages.create({
+      model: CLAUDE_MODEL,
+      max_tokens: params.maxTokens ?? 8000,
+      system: params.system,
+      messages,
+      ...(params.tools?.length ? { tools: params.tools } : {}),
+    });
+    if (res.usage.cache_read_input_tokens || res.usage.cache_creation_input_tokens) {
+      console.log(
+        `Claude cache: read=${res.usage.cache_read_input_tokens ?? 0} write=${res.usage.cache_creation_input_tokens ?? 0} input=${res.usage.input_tokens}`
+      );
+    }
+    if (res.usage.server_tool_use) {
+      console.log(
+        `Claude web: search=${res.usage.server_tool_use.web_search_requests ?? 0} fetch=${res.usage.server_tool_use.web_fetch_requests ?? 0}`
+      );
+    }
+    collected.push(...res.content);
+    if (res.stop_reason !== "pause_turn") break;
+    messages.push({ role: "assistant", content: res.content });
   }
 
-  const text = res.content
+  // With tools the model may write "шукаю…" before searching — the answer is
+  // the text after the last tool result. Cited text comes split into several
+  // blocks, so they are joined without separators.
+  const lastToolIdx = collected.reduce(
+    (idx, b, i) =>
+      b.type === "server_tool_use" ||
+      b.type === "web_search_tool_result" ||
+      b.type === "web_fetch_tool_result"
+        ? i
+        : idx,
+    -1
+  );
+  const text = collected
+    .slice(lastToolIdx + 1)
     .filter((b): b is Anthropic.TextBlock => b.type === "text")
     .map((b) => b.text)
-    .join("\n")
+    .join("")
     .trim();
 
   if (!text) throw new Error("Claude вернув порожню відповідь");
-  return { text, model: CLAUDE_MODEL };
+  return { text, model: CLAUDE_MODEL, content: collected };
+}
+
+// ─── Web sources ───────────────────────────────────────────────────────────
+
+const WEB_MAX_SEARCHES = 5;
+const WEB_MAX_FETCHES = 5;
+
+const WEB_TOOLS: Anthropic.ToolUnion[] = [
+  { type: "web_search_20260209", name: "web_search", max_uses: WEB_MAX_SEARCHES },
+  {
+    type: "web_fetch_20260209",
+    name: "web_fetch",
+    max_uses: WEB_MAX_FETCHES,
+    citations: { enabled: true },
+    max_content_tokens: 30000,
+  },
+];
+
+function webSearchInstructions(sources: TrustedSourceInfo[]): string {
+  const list = sources.map((s) => `- ${s.name}: ${s.domain}`).join("\n");
+  return `═══ ПОШУК В ІНТЕРНЕТІ ═══
+У тебе є web_search і web_fetch. Користуйся ними, коли потрібні актуальні дані: чинна редакція статті, свіжа постанова, судова практика, розміри виплат, роз'яснення органів. Якщо відповідь є в матеріалах справи — не шукай.
+
+ПОРЯДОК:
+1. СПЕРШУ шукай на офіційних сайтах зі списку нижче (запит із site:домен або web_fetch сторінки цього сайту).
+2. Лише якщо там немає потрібного — шукай ширше в інтернеті.
+3. Факти з інтернету підкріплюй цитатою з джерела. Якщо джерело неофіційне — так і скажи в тексті.
+4. Не пиши в кінці власний список джерел — він додається автоматично.
+${list ? `\nОФІЦІЙНІ ДЖЕРЕЛА (пріоритет):\n${list}` : ""}`;
+}
+
+interface WebSource {
+  url: string;
+  title: string;
+  official: TrustedSourceInfo | null;
+}
+
+/** Pages the answer actually relied on: cited search results and fetched pages. */
+function collectWebSources(
+  content: Anthropic.ContentBlock[],
+  trusted: TrustedSourceInfo[]
+): WebSource[] {
+  const byUrl = new Map<string, WebSource>();
+  const add = (url: string, title: string | null | undefined) => {
+    if (!/^https?:\/\//i.test(url) || byUrl.has(url)) return;
+    byUrl.set(url, { url, title: title?.trim() || url, official: matchOfficial(url, trusted) });
+  };
+  for (const b of content) {
+    if (b.type === "text") {
+      for (const c of b.citations ?? []) {
+        if (c.type === "web_search_result_location") add(c.url, c.title);
+      }
+    } else if (b.type === "web_fetch_tool_result" && b.content.type === "web_fetch_result") {
+      add(b.content.url, b.content.content.title);
+    }
+  }
+  // Official first, otherwise in the order the model used them.
+  return [...byUrl.values()].sort((a, b) => Number(!!b.official) - Number(!!a.official));
+}
+
+function formatWebSources(sources: WebSource[]): string {
+  if (!sources.length) return "";
+  const lines = sources.map((s, i) => {
+    const title = s.title.replace(/[[\]]/g, "");
+    const url = s.url.replace(/\)/g, "%29");
+    const mark = s.official ? ` — 🏛 **Офіційний сайт** (${s.official.name})` : "";
+    return `${i + 1}. [${title}](${url})${mark}`;
+  });
+  return `\n\n---\n**Джерела:**\n${lines.join("\n")}`;
 }
 
 // ─── Prompts ───────────────────────────────────────────────────────────────
@@ -737,8 +841,12 @@ export async function chatAboutCase(params: {
   summary?: string | null;
   chatHistory: ChatTurn[];
   question: string;
+  /** Let Claude search the web, official sources first. */
+  webSearch?: boolean;
+  trustedSources?: TrustedSourceInfo[];
 }): Promise<ChatResult> {
   const { caseContext, analysisResult, lawyerTask, summary, question } = params;
+  const trusted = params.trustedSources ?? [];
 
   // Stable for the whole session → cached by Anthropic, later questions pay ~10% for it.
   const caseMaterial = `${lawyerTask ? `═══ ПОЧАТКОВЕ ЗАВДАННЯ АДВОКАТА ═══\n${lawyerTask}\n\n` : ""}═══ МАТЕРІАЛИ СПРАВИ ═══
@@ -748,7 +856,10 @@ ${caseContext.slice(0, CASE_CONTEXT_MAX_CHARS)}
 ${analysisResult}`;
 
   const system: Anthropic.TextBlockParam[] = [
-    { type: "text", text: CHAT_SYSTEM },
+    {
+      type: "text",
+      text: params.webSearch ? `${CHAT_SYSTEM}\n\n${webSearchInstructions(trusted)}` : CHAT_SYSTEM,
+    },
     { type: "text", text: caseMaterial, cache_control: { type: "ephemeral" } },
   ];
   if (summary) {
@@ -782,8 +893,17 @@ ${analysisResult}`;
 
   if (process.env.ANTHROPIC_API_KEY) {
     try {
-      const res = await callClaude({ system, history, user: question, maxTokens: 8000 });
-      if (res) return { text: res.text, model: labelFor(res.model) };
+      const res = await callClaude({
+        system,
+        history,
+        user: question,
+        tools: params.webSearch ? WEB_TOOLS : undefined,
+        maxTokens: 8000,
+      });
+      if (res) {
+        const sources = params.webSearch ? collectWebSources(res.content, trusted) : [];
+        return { text: res.text + formatWebSources(sources), model: labelFor(res.model) };
+      }
     } catch (err) {
       console.error("Claude chat failed, falling back to Gemini:", err);
     }

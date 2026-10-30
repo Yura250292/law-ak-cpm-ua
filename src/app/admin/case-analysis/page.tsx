@@ -526,6 +526,13 @@ export default function CaseAnalysisPage() {
               </>
             )}
           </div>
+          <div className="flex items-center gap-4">
+          <Link
+            href="/admin/sources"
+            className="text-sm text-white/70 hover:text-white transition"
+          >
+            Джерела
+          </Link>
           {hasAnalysis && (
             <button
               onClick={handleReset}
@@ -534,6 +541,7 @@ export default function CaseAnalysisPage() {
               Нова справа
             </button>
           )}
+          </div>
         </div>
       </header>
 

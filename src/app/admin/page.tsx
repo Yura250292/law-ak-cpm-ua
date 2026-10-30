@@ -155,6 +155,12 @@ export default function AdminDashboardPage() {
             >
               Аналіз справи
             </Link>
+            <Link
+              href="/admin/sources"
+              className="text-sm text-accent hover:text-accent-hover transition font-medium"
+            >
+              Джерела
+            </Link>
             <button
               onClick={handleLogout}
               className="text-sm text-white/70 hover:text-white transition"

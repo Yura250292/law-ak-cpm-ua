@@ -3,6 +3,7 @@ import { requireAdmin, AdminAuthError } from "@/lib/admin-auth";
 import { chatAboutCase, transcribeAttachment } from "@/lib/ai/case-analyzer";
 import { getObjectFromR2, deleteFromR2 } from "@/lib/r2";
 import { extractCaseFile, CaseFileError } from "@/lib/case-files";
+import { listTrustedSources } from "@/lib/trusted-sources";
 import {
   appendToAnalysis,
   compactChatIfNeeded,
@@ -85,9 +86,14 @@ export async function POST(request: NextRequest) {
     // summary of compacted turns and the rest of the dialogue. Without one
     // (DB unavailable) fall back to what the page sent.
     const session = analysisId ? await loadChatSession(analysisId) : null;
+    // Web search for chat questions; document generation stays offline (fast, no extra cost).
+    const web = documentType
+      ? { webSearch: false }
+      : { webSearch: true, trustedSources: await listTrustedSources() };
     const result = await chatAboutCase(
       session
         ? {
+            ...web,
             caseContext: session.caseContext + addedText,
             analysisResult: session.analysis,
             lawyerTask: session.lawyerTask,
@@ -96,6 +102,7 @@ export async function POST(request: NextRequest) {
             question: question?.trim() || DEFAULT_FILES_QUESTION,
           }
         : {
+            ...web,
             caseContext: (caseContext ?? "") + addedText,
             analysisResult: analysisResult ?? "",
             chatHistory: (chatHistory ?? []).slice(-20),

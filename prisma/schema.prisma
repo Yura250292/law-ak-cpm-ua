@@ -289,3 +289,12 @@ model CaseAnalysis {
 
   @@index([updatedAt(sort: Desc)])
 }
+
+/// Офіційні джерела, які AI-помічник у чаті справи шукає в першу чергу (керує адвокат у меню «Джерела»).
+model TrustedSource {
+  id        String   @id @default(cuid())
+  name      String
+  url       String // як ввів адвокат — для показу
+  domain    String   @unique // нормалізований хост без www — для пошуку й позначки «офіційний»
+  createdAt DateTime @default(now())
+}
