@@ -165,6 +165,7 @@ export default function CaseAnalysisPage() {
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
   const [chatFiles, setChatFiles] = useState<File[]>([]);
+  const [pdfComposerOpen, setPdfComposerOpen] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -1014,13 +1015,22 @@ export default function CaseAnalysisPage() {
             <div className="flex flex-col h-[calc(100vh-140px)]">
               <div className="bg-white rounded-2xl border border-border flex-1 flex flex-col overflow-hidden">
                 {/* Chat header */}
-                <div className="px-5 py-3 border-b border-border bg-surface rounded-t-2xl">
-                  <h2 className="text-sm font-bold text-primary uppercase tracking-wide">
-                    Чат з помічником
-                  </h2>
-                  <p className="text-xs text-muted mt-0.5">
-                    Запитуйте про справу, судову практику, статті кодексів
-                  </p>
+                <div className="px-5 py-3 border-b border-border bg-surface rounded-t-2xl flex items-start justify-between gap-3">
+                  <div>
+                    <h2 className="text-sm font-bold text-primary uppercase tracking-wide">
+                      Чат з помічником
+                    </h2>
+                    <p className="text-xs text-muted mt-0.5">
+                      Запитуйте про справу, судову практику, статті кодексів
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setPdfComposerOpen(true)}
+                    className="shrink-0 px-3 py-1.5 text-xs font-semibold rounded-lg bg-accent text-primary hover:bg-accent-hover transition"
+                    title="Зібрати PDF з аналізу, повідомлень чату і документів"
+                  >
+                    📄 PDF
+                  </button>
                 </div>
 
                 {/* Chat messages */}
@@ -1066,7 +1076,26 @@ export default function CaseAnalysisPage() {
                         }`}
                       >
                         {msg.role === "assistant" ? (
-                          <MarkdownRenderer text={msg.text} />
+                          <>
+                            <MarkdownRenderer text={msg.text} />
+                            {!msg.text.startsWith("Помилка:") && (
+                              <div className="mt-2 pt-2 border-t border-border flex justify-end">
+                                <button
+                                  onClick={() =>
+                                    handleExport(
+                                      toExportMarkdown(msg.text),
+                                      "pdf",
+                                      `${fileName || "Справа"} — відповідь помічника`
+                                    )
+                                  }
+                                  className="text-[11px] text-muted hover:text-primary transition"
+                                  title="Зберегти цю відповідь у PDF"
+                                >
+                                  ⬇ PDF
+                                </button>
+                              </div>
+                            )}
+                          </>
                         ) : (
                           msg.text
                         )}
@@ -1179,6 +1208,255 @@ export default function CaseAnalysisPage() {
           </div>
         )}
       </main>
+
+      {pdfComposerOpen && (
+        <PdfComposer
+          defaultTitle={fileName || "Аналіз справи"}
+          analysis={analysis}
+          messages={chatMessages}
+          documents={documents}
+          onClose={() => setPdfComposerOpen(false)}
+          onExport={(content, fmt, title) => handleExport(content, fmt, title)}
+        />
+      )}
+    </div>
+  );
+}
+
+/** Markdown from the chat → what the PDF/Word generator prints well. */
+function toExportMarkdown(text: string): string {
+  return text
+    .replace(/^\s*-{3,}\s*$/gm, "") // horizontal rules would print as "---"
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1 ($2)"); // links → "title (url)"
+}
+
+/**
+ * Lets the lawyer pick what goes into the file: the analysis, any chat
+ * messages and generated documents.
+ */
+function PdfComposer({
+  defaultTitle,
+  analysis,
+  messages,
+  documents,
+  onClose,
+  onExport,
+}: {
+  defaultTitle: string;
+  analysis: string;
+  messages: ChatMessage[];
+  documents: GeneratedDocument[];
+  onClose: () => void;
+  onExport: (content: string, fmt: "pdf" | "doc", title: string) => Promise<void>;
+}) {
+  const realMessages = messages
+    .map((m, i) => ({ ...m, i }))
+    .filter((m) => !(m.role === "assistant" && m.text.startsWith("Помилка:")));
+  const [title, setTitle] = useState(defaultTitle);
+  const [includeAnalysis, setIncludeAnalysis] = useState(true);
+  const [selectedMsgs, setSelectedMsgs] = useState<Set<number>>(
+    () => new Set(realMessages.filter((m) => m.role === "assistant").map((m) => m.i))
+  );
+  const [selectedDocs, setSelectedDocs] = useState<Set<number>>(() => new Set());
+  const [busy, setBusy] = useState<"pdf" | "doc" | null>(null);
+
+  function toggle(set: Set<number>, i: number, apply: (s: Set<number>) => void) {
+    const next = new Set(set);
+    if (next.has(i)) next.delete(i);
+    else next.add(i);
+    apply(next);
+  }
+
+  function selectMessages(kind: "all" | "assistant" | "none") {
+    setSelectedMsgs(
+      new Set(
+        kind === "none"
+          ? []
+          : realMessages.filter((m) => kind === "all" || m.role === "assistant").map((m) => m.i)
+      )
+    );
+  }
+
+  const nothingSelected = !includeAnalysis && selectedMsgs.size === 0 && selectedDocs.size === 0;
+
+  function buildContent(): string {
+    // The title is printed by the export itself.
+    const parts: string[] = [];
+    if (includeAnalysis && analysis.trim()) {
+      parts.push(`## Аналіз справи\n\n${analysis}`);
+    }
+    const picked = realMessages.filter((m) => selectedMsgs.has(m.i));
+    if (picked.length) {
+      const body = picked
+        .map((m) =>
+          m.role === "user"
+            ? `**Адвокат:** ${m.text}`
+            : picked.some((p) => p.role === "user")
+              ? `**Помічник:**\n\n${m.text}`
+              : m.text
+        )
+        .join("\n\n");
+      parts.push(`## Консультація з помічником\n\n${body}`);
+    }
+    documents.forEach((d, i) => {
+      if (selectedDocs.has(i)) parts.push(`## ${d.type}\n\n${d.text}`);
+    });
+    return toExportMarkdown(parts.join("\n\n"));
+  }
+
+  async function handle(fmt: "pdf" | "doc") {
+    setBusy(fmt);
+    try {
+      await onExport(buildContent(), fmt, title.trim() || defaultTitle);
+      onClose();
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  const preview = (text: string) => {
+    const flat = text.replace(/[#*`>|]/g, "").replace(/\s+/g, " ").trim();
+    return flat.length > 140 ? flat.slice(0, 140) + "…" : flat;
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] bg-black/40 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-label="Сформувати PDF"
+      >
+        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+          <h2 className="text-base font-bold text-primary">Сформувати PDF</h2>
+          <button
+            onClick={onClose}
+            className="text-muted hover:text-primary text-xl leading-none"
+            aria-label="Закрити"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+          <label className="block">
+            <span className="text-xs font-semibold text-primary">Назва файлу</span>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="mt-1 w-full h-10 px-3 rounded-xl border border-border bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-accent transition"
+            />
+          </label>
+
+          {analysis.trim() && (
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={includeAnalysis}
+                onChange={(e) => setIncludeAnalysis(e.target.checked)}
+                className="mt-1"
+              />
+              <span>
+                <span className="text-sm font-semibold text-primary">Аналіз справи</span>
+                <span className="block text-xs text-muted">{preview(analysis)}</span>
+              </span>
+            </label>
+          )}
+
+          {realMessages.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+                <span className="text-sm font-semibold text-primary">
+                  Повідомлення чату ({selectedMsgs.size} з {realMessages.length})
+                </span>
+                <div className="flex gap-2 text-xs">
+                  <button onClick={() => selectMessages("assistant")} className="text-blue-600 hover:underline">
+                    лише відповіді
+                  </button>
+                  <button onClick={() => selectMessages("all")} className="text-blue-600 hover:underline">
+                    усі
+                  </button>
+                  <button onClick={() => selectMessages("none")} className="text-blue-600 hover:underline">
+                    жодного
+                  </button>
+                </div>
+              </div>
+              <ul className="space-y-1.5">
+                {realMessages.map((m) => (
+                  <li key={m.i}>
+                    <label className="flex items-start gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedMsgs.has(m.i)}
+                        onChange={() => toggle(selectedMsgs, m.i, setSelectedMsgs)}
+                        className="mt-1"
+                      />
+                      <span className="text-xs">
+                        <span className={m.role === "user" ? "font-semibold text-primary" : "font-semibold text-primary-light"}>
+                          {m.role === "user" ? "Адвокат: " : "Помічник: "}
+                        </span>
+                        <span className="text-muted">{preview(m.text)}</span>
+                      </span>
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {documents.length > 0 && (
+            <div>
+              <span className="text-sm font-semibold text-primary block mb-2">
+                Сформовані документи
+              </span>
+              <ul className="space-y-1.5">
+                {documents.map((d, i) => (
+                  <li key={`${d.createdAt}-${i}`}>
+                    <label className="flex items-start gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedDocs.has(i)}
+                        onChange={() => toggle(selectedDocs, i, setSelectedDocs)}
+                        className="mt-1"
+                      />
+                      <span className="text-xs">
+                        <span className="font-semibold text-primary">{d.type}</span>
+                        <span className="text-muted"> — {preview(d.text)}</span>
+                      </span>
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        <div className="px-5 py-4 border-t border-border flex items-center justify-between gap-3 flex-wrap">
+          <span className="text-xs text-muted">
+            {nothingSelected ? "Оберіть, що додати у файл" : "Порядок: аналіз → чат → документи"}
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handle("doc")}
+              disabled={nothingSelected || busy !== null}
+              className="h-10 px-4 rounded-xl border border-border bg-surface text-sm font-medium hover:bg-surface-dark transition disabled:opacity-40"
+            >
+              {busy === "doc" ? "…" : "Word"}
+            </button>
+            <button
+              onClick={() => handle("pdf")}
+              disabled={nothingSelected || busy !== null}
+              className="h-10 px-5 rounded-xl bg-accent text-primary text-sm font-semibold hover:bg-accent-hover transition disabled:opacity-40"
+            >
+              {busy === "pdf" ? "Формую…" : "Завантажити PDF"}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
